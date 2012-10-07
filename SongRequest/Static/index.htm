@@ -1,0 +1,397 @@
+﻿<!DOCTYPE HTML>
+<html>
+<head>
+    <title>SongRequest</title>
+    <style type="text/css">
+        body
+        {
+            margin:0px;
+            padding:0px;
+            background-color:#C4D0ED;
+            height: 100%;
+            
+            font-size:11px;
+            font-family:Verdana, Helvetica, Arial;
+        }
+        
+        .top {
+          /* fallback */
+          background-color: #555555;
+          
+          /* Firefox 3.6+ */
+          background: -moz-linear-gradient(100% 100% 90deg, #222222, #555555);
+          
+          /* Safari 4-5, Chrome 1-9 */
+          /* -webkit-gradient(<type>, <point> [, <radius>]?, <point> [, <radius>]? [, <stop>]*) */
+          background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#555555), to(#222222));
+          
+          /* Safari 5.1+, Chrome 10+ */
+          background: -webkit-linear-gradient(#555555, #222222);
+          
+          /* Opera 11.10+ */
+          background: -o-linear-gradient(#555555, #222222);
+          
+          height:60px;
+          border:solid 0px #111111;
+          border-bottom-width:2px;
+          padding-top:10px;
+        }
+        
+        .play
+        {
+            background-color: #70B0FF;
+            
+            /* Firefox 3.6+ */
+            background: -moz-linear-gradient(100% 100% 90deg, #70B0FF, #ADCEFF);
+
+            /* Safari 4-5, Chrome 1-9 */
+            /* -webkit-gradient(<type>, <point> [, <radius>]?, <point> [, <radius>]? [, <stop>]*) */
+            background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#70B0FF), to(#ADCEFF));
+
+            /* Safari 5.1+, Chrome 10+ */
+            background: -webkit-linear-gradient(#70B0FF, #ADCEFF);
+
+            /* Opera 11.10+ */
+            background: -o-linear-gradient(#70B0FF, #ADCEFF);
+            
+            border:inset 1px #111111;
+            /*
+            border-radius:6px;
+            -moz-border-radius:6px; 
+            */
+            
+            width:500px;
+            height:40px;
+            margin-left:10px;
+        }
+        .playinfo
+        {
+            margin-left:4px;
+            margin-top:4px;
+        }
+        
+        .content
+        {
+            min-width:1120px;
+            width:100%;
+        }
+        
+        #queue
+        {
+            background-color: #DBE0E5;
+            min-width:300px;
+        	min-height:700px;
+            
+            -moz-box-shadow: 10px 10px 5px #888888; /* Firefox 3.6 and earlier */
+            -webkit-box-shadow: 10px 10px 5px #888888; /* Safari and Chrome */
+            box-shadow: 5px 5px 5px #888888;
+            
+            float:left;
+        }
+        
+        .right
+        {
+            background-color: #DBE0E5;
+            width:65%;
+            min-width:755px;
+            
+        	min-height: 700px;
+            
+            -moz-box-shadow: 10px 10px 5px #888888; /* Firefox 3.6 and earlier */
+            -webkit-box-shadow: 10px 10px 5px #888888; /* Safari and Chrome */
+            box-shadow: 5px 5px 5px #888888;
+            
+            float:left;
+            margin-left:20px;
+            
+            border-bottom-right-radius:20px;
+            -moz-border-bottom-right-radius:20px; 
+        }
+        
+        .list, .playlist
+        {
+            border-collapse:collapse;
+            width:100%;
+        }
+        .list th, .list td, .playlist th, .playlist td
+        {
+            min-width:100px;
+            text-align:left;
+            padding-left:4px;
+        }
+        
+        .listheader, .playlistheader
+        {
+            background-color: #cccccc;
+            
+            /* Firefox 3.6+ */
+            background: -moz-linear-gradient(100% 100% 90deg, #cccccc, #eeeeee);
+
+            /* Safari 4-5, Chrome 1-9 */
+            /* -webkit-gradient(<type>, <point> [, <radius>]?, <point> [, <radius>]? [, <stop>]*) */
+            background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#cccccc), to(#eeeeee));
+
+            /* Safari 5.1+, Chrome 10+ */
+            background: -webkit-linear-gradient(#cccccc, #eeeeee);
+
+            /* Opera 11.10+ */
+            background: -o-linear-gradient(#cccccc, #eeeeee);
+            
+            height:20px;
+            
+            
+            border:solid 0px #aaaaaa;
+            border-bottom-width:1px;
+        }
+        
+        .evenrow, .oddrow
+        {
+            border:solid 0px #aaaaaa;
+            border-bottom-width:1px;
+        }
+        
+        .evenrow
+        {
+            background-color:#F9F9F9;
+        }
+        
+        .oddrow
+        {
+            background-color: #70B0FF;
+
+            /* Firefox 3.6+ */
+            background: -moz-linear-gradient(100% 100% 90deg, #70B0FF, #ADCEFF);
+
+            /* Safari 4-5, Chrome 1-9 */
+            /* -webkit-gradient(<type>, <point> [, <radius>]?, <point> [, <radius>]? [, <stop>]*) */
+            background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#70B0FF), to(#ADCEFF));
+
+            /* Safari 5.1+, Chrome 10+ */
+            background: -webkit-linear-gradient(#70B0FF, #ADCEFF);
+
+            /* Opera 11.10+ */
+            background: -o-linear-gradient(#70B0FF, #ADCEFF);
+        }
+        
+        .evenqueueitemcontainer, .oddqueueitemcontainer
+        {
+            height:40px;
+            width:100%;
+            
+            border:solid 0px #aaaaaa;
+            border-bottom-width:1px;
+        }
+        .evenqueueitemcontainer
+        {
+            background-color: #70B0FF;
+
+            /* Firefox 3.6+ */
+            background: -moz-linear-gradient(100% 100% 90deg, #70B0FF, #ADCEFF);
+
+            /* Safari 4-5, Chrome 1-9 */
+            /* -webkit-gradient(<type>, <point> [, <radius>]?, <point> [, <radius>]? [, <stop>]*) */
+            background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#70B0FF), to(#ADCEFF));
+
+            /* Safari 5.1+, Chrome 10+ */
+            background: -webkit-linear-gradient(#70B0FF, #ADCEFF);
+
+            /* Opera 11.10+ */
+            background: -o-linear-gradient(#70B0FF, #ADCEFF);
+        }
+        .oddqueueitemcontainer
+        {
+            background-color: #F9F9F9;
+        }
+        
+        .queueitem
+        {
+            padding:3px;
+            color:#222222;
+        }
+        
+        .searchbox
+        {
+            height:30px;
+        }
+        
+        #searchtext
+        {
+            width:300px;
+        }
+        
+        .button
+        {
+            border:solid 1px #777777;
+        }
+                
+        .searchbox .button
+        {
+            width:80px;
+        }
+        
+        .smallcolumn
+        {
+            width:60px;
+            min-width:0px !important;
+        }
+        
+        .smallcolumn .button
+        {
+            font-size:9px;
+        }
+        
+        .queueheader
+        {
+            font-weight:bold;
+            padding-left:3px;
+        }
+    </style>
+    <script type="text/javascript" src="/static/underscore-min.js"></script>
+    <script type="text/javascript" src="/static/jquery-1.8.2.min.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            window.SongRequest = { page: 0 };
+
+            var queueTemplate = _.template($("#queueTemplate").html());
+            var playlistTemplate = _.template($("#playlistTemplate").html());
+
+            var refreshQueue = function () {
+                $.get('/dynamic/queue', function (data) {
+                    $("#queue").off('dblclick', '.qitem');
+
+                    $("#queue").html(
+                        queueTemplate({ songs: data })
+                    );
+
+                    $("#queue").on('dblclick', '.qitem', function (event) {
+                        var songId = $(this).attr('data');
+                        $.ajax({
+                            url: '/dynamic/queue',
+                            type: 'DELETE',
+                            data: songId,
+                            success: function (data) {
+                                refreshQueue();
+                            }
+                        });
+                    });
+                });
+            }
+
+            var getPlayList = function (page) {
+                $.get('/dynamic/playlist/' + String(page), function (data) {
+
+                    $(".playlist").off("click", ".button");
+
+                    $("#playlistContainer").html(
+                        playlistTemplate({ songs: data })
+                    );
+
+                    $(".playlist").on("click", ".button", function (event) {
+                        var songId = $(this).attr('data');
+                        $.post('/dynamic/queue', songId, function (data) {
+                            refreshQueue();
+                        });
+                    });
+                });
+            }
+
+            $(document).dblclick(function () {
+                if (window.getSelection)
+                    window.getSelection().removeAllRanges();
+                else if (document.selection)
+                    document.selection.empty();
+            });
+
+            refreshQueue();
+            setInterval(refreshQueue, 2000);
+
+            getPlayList(window.SongRequest.page);
+        });
+    </script>
+</head>
+<body>
+<script id="queueTemplate" type="text/template">
+<div class="listheader queueheader">
+    Queue (<%- songs.length %>)
+</div>
+<% _.each(songs, function(song, index) { %>
+<div class="qitem <%- index%2===0?'even':'odd' %>queueitemcontainer" data="<%= song.TempId %>">
+    <div class="queueitem">
+        <strong><%- song.Artist %> - <%- song.Name %> - <%- song.Duration.replace(/^00:(\d\d):(\d\d)$/, '$1:$2') %></strong>
+        <div>Requested by: DSR960</div>
+    </div>
+</div>
+<% }); %>
+</script>
+<script id="playlistTemplate" type="text/template">
+<table class="playlist">
+    <tr class="playlistheader">
+        <th class="smallcolumn">Action</th>
+        <th>Name</th>
+        <th>Artist</th>
+        <th>Length</th>
+    </tr>
+    <% _.each(songs, function(song, index) { %>
+    <tr class="<%- index%2===0?'odd':'even' %>row">
+        <td class="smallcolumn"><input type="button" class="button" data="<%= song.TempId %>" value="+"></td>
+        <td><%- song.Name %></td>
+        <td><%- song.Artist %></td>
+        <td><%- song.Duration %></td>
+    </tr>
+    <% }); %>
+</table>
+</script>
+
+<div class="top">
+    <div class="play">
+        <div class="playinfo">  
+            <strong>4 Strings - Take me away - 4:30</strong><br>
+            <div>Requested by: DSR960</div>
+        </div>
+    </div>
+</div>
+<div class="content">
+    <div id="queue">
+        <div class="listheader queueheader">
+        Queue
+        </div>
+    </div>
+    <div class="right">
+        <table class="list searchbox">
+            <tr class="listheader">
+                <th>Search</th>
+                <th>Page</th>
+                <th></th>
+            </tr>
+            <tr class="evenrow">
+                <td>
+                    <input type="text" name="searchtext" id="searchtext">
+                    <input type="button" class="button" name="searchbutton" id="searchbutton" value="Search">
+                    <input type="button" class="button" name="clearbutton" id="clearbutton" value="Clear">
+                </td>
+                <td>
+                    1 of 2
+                </td>
+                <td class="controls" style="text-align:right;">
+                    <input type="button" class="button" name="previousbutton" id="previousbutton" value="Previous">
+                    <input type="button" class="button" name="nextbutton" id="nextbutton" value="Next">
+                </td>
+            </tr>
+        </table>
+        <br>
+        <div id="playlistContainer">
+            <table class="playlist">
+                <tr class="playlistheader">
+                    <th class="smallcolumn">Action</th>
+                    <th>Name</th>
+                    <th>Artist</th>
+                    <th>Length</th>
+                </tr>
+           </table>
+       </div>
+       <br>
+       <br/>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,13 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Net;
+
+namespace SongRequest.Interfaces
+{
+    public interface IHandler
+    {
+        void Process(HttpListenerRequest request, HttpListenerResponse response);
+    }
+}
