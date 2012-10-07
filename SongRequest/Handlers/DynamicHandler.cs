@@ -12,19 +12,10 @@ namespace SongRequest.Handlers
 {
     public class DynamicHandler : BaseHandler
     {
-        private static List<Song> _songs = new List<Song> {
-            new Song(){ Artist="4 Strings", Name="Summer Sun", Duration = TimeSpan.FromSeconds(320), FileName="4.mp3"},
-            new Song(){ Artist="Adele", Name="Set Fire To The Rain", Duration = TimeSpan.FromSeconds(410), FileName="A.mp3"},
-            new Song(){ Artist="Silverblue", Name="Step Back", Duration = TimeSpan.FromSeconds(340), FileName="S.mp3"},
-            new Song(){ Artist="Ilse DeLange", Name="I'm not so tough", Duration = TimeSpan.FromSeconds(523), FileName="I.mp3"},
-            new Song(){ Artist="Coldplay", Name="Clocks", Duration = TimeSpan.FromSeconds(333), FileName="C.mp3"},
-            new Song(){ Artist="Queen", Name="Bohemian Rapsody", Duration = TimeSpan.FromSeconds(621), FileName="Q.mp3"},
-        };
-
+		private static ISongplayer _songPlayer = new SongPlayerMock();
+		
         const int _pageSize = 50;
 
-        private List<Song> _queue = new List<Song>(_songs.Take(3));
-        
         public override void Process(HttpListenerRequest request, HttpListenerResponse response)
         {
             string[] actionPath = request.RawUrl.Split(new[]{'/'}, StringSplitOptions.RemoveEmptyEntries);
@@ -39,22 +30,25 @@ namespace SongRequest.Handlers
                     {
                         case "GET":
                             response.ContentType = "application/json";
-                            WriteUtf8String(response.OutputStream, JsonConvert.SerializeObject(_queue));
+                            WriteUtf8String(response.OutputStream, JsonConvert.SerializeObject(_songPlayer.PlayQueue.ToList()));
                             break;
                         case "POST":
                             using (var reader = new StreamReader(request.InputStream))
                             {
                                 long posted = long.Parse(reader.ReadToEnd());
-                                Song song = _songs.FirstOrDefault(x => x.TempId == posted);
+                                Song song = _songPlayer.PlayList.FirstOrDefault(x => x.TempId == posted);
                                 if (song != null)
-                                    _queue.Add(song);
+									_songPlayer.Enqueue(song);
                             }
                             break;
                         case "DELETE":
                             using (var reader = new StreamReader(request.InputStream))
                             {
                                 long posted = long.Parse(reader.ReadToEnd());
-                                _queue.RemoveAll(x => x.TempId == posted);
+								//TODO: if the same song is in the list twice, which one is removed?
+                                Song song = _songPlayer.PlayList.FirstOrDefault(x => x.TempId == posted);
+                                if (song != null)
+									_songPlayer.Dequeue(song);
                             }
                             break;
                     }
@@ -63,7 +57,7 @@ namespace SongRequest.Handlers
                     int page = int.Parse(argument);
                     response.ContentType = "application/json";
                     WriteUtf8String(response.OutputStream, JsonConvert.SerializeObject(
-                        Enumerable.Range(0, 100).SelectMany(x => _songs).Skip(page * _pageSize).Take(_pageSize))
+                        Enumerable.Range(0, 100).SelectMany(x => _songPlayer.PlayList).Skip(page * _pageSize).Take(_pageSize))
                     );
                     break;
                 default:
