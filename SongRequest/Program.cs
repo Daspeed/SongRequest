@@ -51,8 +51,15 @@ namespace SongRequest
                     {
                         Dispatcher.ProcessRequest(context);
                         Console.WriteLine("Request ended - {0}ms", watch.ElapsedMilliseconds);
-						Console.WriteLine("Currently playing: {0}", SongPlayerFactory.CreateSongPlayer().PlayerStatus.Song.FileName);
-						Console.WriteLine("Position: {0}", SongPlayerFactory.CreateSongPlayer().PlayerStatus.Position);
+                        if (SongPlayerFactory.CreateSongPlayer().PlayerStatus.Song != null)
+                        {
+                            Console.WriteLine("Currently playing: {0}", SongPlayerFactory.CreateSongPlayer().PlayerStatus.Song.FileName);
+                            Console.WriteLine("Position: {0}", SongPlayerFactory.CreateSongPlayer().PlayerStatus.Position);
+                        }
+                        else
+                        {
+                            Console.WriteLine("No song playing...");
+                        }
                         watch.Stop();
                     }
                     catch (Exception ex)
