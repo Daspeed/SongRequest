@@ -30,7 +30,12 @@ namespace SongRequest.Handlers
                     {
                         case "GET":
                             response.ContentType = "application/json";
-                            WriteUtf8String(response.OutputStream, JsonConvert.SerializeObject(songPlayer.PlayQueue.ToList()));
+                            WriteUtf8String(response.OutputStream, JsonConvert.SerializeObject(
+                                new {
+                                    Queue = songPlayer.PlayQueue.ToList(),
+                                    PlayerStatus = songPlayer.PlayerStatus
+                                }
+                            ));
                             break;
                         case "POST":
                             using (var reader = new StreamReader(request.InputStream))
