@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.IO;
+using Id3;
 
 namespace SongRequest
 {
@@ -20,6 +21,19 @@ namespace SongRequest
 			foreach(string fileName in Directory.GetFiles(directory, "*.mp3", SearchOption.AllDirectories))
 			{
 				//Do some magic...
+                Song song = new Song();
+                song.FileName = fileName;
+
+                using (var mp3 = new Mp3File(fileName))
+                {
+                    Id3Tag tag = mp3.GetTag(Id3TagFamily.FileStartTag);
+                    song.Name = tag.Title.Value;
+                    song.Artist = tag.Artists.Value;
+                    song.Duration = mp3.Audio.Duration;
+                }
+
+                _songs.Add(song);
+
 			}
 		}		
 		
