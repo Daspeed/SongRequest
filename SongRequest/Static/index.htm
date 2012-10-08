@@ -357,8 +357,8 @@
             $(".info").click(function () {
                 var newVolume = prompt('New volume', $("#volumeContainer").text());
                 if (newVolume) {
-                    ajaxCall('/dynamic/volume', 'POST', newVolume, function (data) {
-                        $("#volumeContainer").text(data.PlayerStatus.Volume);
+                    ajaxCall('/dynamic/volume', 'POST', newVolume, function (volume) {
+                        $("#volumeContainer").text(volume);
                     });
                 }
             });
