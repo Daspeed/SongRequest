@@ -49,6 +49,8 @@ namespace SongRequest
                     {
                         Dispatcher.ProcessRequest(context);
                         Console.WriteLine("Request ended - {0}ms", watch.ElapsedMilliseconds);
+						Console.WriteLine("Currently playing: {0}", SongPlayerFactory.CreateSongPlayer().PlayerStatus.Song.FileName);
+						Console.WriteLine("Position: {0}", SongPlayerFactory.CreateSongPlayer().PlayerStatus.Position);
                         watch.Stop();
                     }
                     catch (Exception ex)

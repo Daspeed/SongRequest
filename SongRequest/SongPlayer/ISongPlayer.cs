@@ -5,7 +5,7 @@ namespace SongRequest
 {
 	public interface ISongplayer
 	{
-		Song CurrentSong {get;}
+		PlayerStatus PlayerStatus {get;}
 		
 		IEnumerable<Song> PlayList {get;}
 		
