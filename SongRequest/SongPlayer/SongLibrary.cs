@@ -32,7 +32,7 @@ namespace SongRequest
                             Id3Tag tag = mp3.GetTag(Id3TagFamily.FileStartTag);
                             song.Name = tag == null || tag.Title == null ? "unknown" : tag.Title.Value;
                             song.Artist = tag == null || tag.Artists == null ? "unknown" : tag.Artists.Value;
-                            song.Duration = mp3.Audio.Duration;
+                            song.Duration = (int)mp3.Audio.Duration.TotalSeconds;
                         }
 
                         _songs.Add(song);
@@ -59,7 +59,7 @@ namespace SongRequest
             if (_songs.Count == 0)
                 return null;
 
-            return _songs[random.Next(_songs.Count())];
+            return _songs[random.Next(_songs.Count)];
         }
     }
 }
