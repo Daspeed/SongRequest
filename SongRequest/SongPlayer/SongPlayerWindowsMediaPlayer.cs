@@ -9,7 +9,7 @@ namespace SongRequest
     public class SongPlayerWindowsMediaPlayer : ISongplayer
     {
         private SongLibrary _songLibrary;
-        private WindowsMediaPlayer player = new WindowsMediaPlayer();
+        private WindowsMediaPlayer player;
 
         private List<Song> _queue;
         private Song _currentSong;
@@ -17,22 +17,14 @@ namespace SongRequest
 
         public SongPlayerWindowsMediaPlayer()
         {
+            player = new WindowsMediaPlayer();
             _queue = new List<Song>();
             _songLibrary = new SongLibrary();
             _songLibrary.ScanSongs("c:\\music");
-            player.PlayStateChange += new _WMPOCXEvents_PlayStateChangeEventHandler(player_PlayStateChange);
-
-            Next();
+            
+            Update();
         }
 
-        void player_PlayStateChange(int NewState)
-        {
-            //8==mediaended
-            if (NewState == 8)
-            {
-                Next();
-            }
-        }
 
         public void Next()
         {
@@ -49,14 +41,26 @@ namespace SongRequest
 			}
 					
 			_currentSongStart = DateTime.Now;
-            player.URL = string.Empty; //first clear filename -> needed when the same file is played twice in a row
-            player.URL = _currentSong.FileName;
+
+            if (_currentSong != null)
+            {
+                player.URL = _currentSong.FileName;
+            }
+        }
+
+        public void Update()
+        {
+            if (player.playState != WMPPlayState.wmppsPlaying)
+                Next();
         }
 
         public PlayerStatus PlayerStatus
         {
             get
             {
+                //TODO: Find a better place for this... should be called as often as possible
+                Update();
+
                 PlayerStatus playerStatus = new PlayerStatus();
                 playerStatus.Song = _currentSong;
                 playerStatus.Position = (int)(DateTime.Now - _currentSongStart).TotalSeconds;
