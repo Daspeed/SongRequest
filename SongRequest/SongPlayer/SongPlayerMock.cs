@@ -9,7 +9,9 @@ namespace SongRequest
 		private List<Song> _songs;
 		private List<Song> _queue;
 		private Song _currentSong;
-		
+		private DateTime _currentSongStart;
+		private Random random = new Random();
+
 		public SongPlayerMock ()
 		{
 			_songs = new List<Song> {
@@ -23,15 +25,36 @@ namespace SongRequest
 							        };
 			
 			_queue = new List<Song>(_songs.Take(3));	
-			
-			_currentSong = _songs[0];
 		}
 		
-		public Song CurrentSong 
+		public PlayerStatus PlayerStatus 
 		{
 			get
 			{
-				return _currentSong;
+				if ( _currentSong == null ||
+				     _currentSong.Duration == null ||
+				    (_currentSong.Duration.Value - (DateTime.Now - _currentSongStart)).TotalSeconds == 0)
+				{
+					if (_queue.Count > 0)
+					{					
+						//Take next song from queue
+						_currentSong = _queue[0];
+						
+						_queue.Remove(_currentSong);
+					} else
+					{
+						//Take random song
+						_currentSong = _songs[random.Next(_songs.Count - 1)];
+					}
+					
+					_currentSongStart = DateTime.Now;
+				}
+				
+				PlayerStatus playerStatus = new PlayerStatus();
+				playerStatus.Song = _currentSong;
+				playerStatus.Position = DateTime.Now - _currentSongStart;
+					
+				return playerStatus;
 			}
 		}
 		

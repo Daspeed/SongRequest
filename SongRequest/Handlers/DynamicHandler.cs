@@ -60,6 +60,10 @@ namespace SongRequest.Handlers
                         Enumerable.Range(0, 100).SelectMany(x => _songPlayer.PlayList).Skip(page * _pageSize).Take(_pageSize))
                     );
                     break;
+                case "playerstatus":
+                    response.ContentType = "application/json";
+                    WriteUtf8String(response.OutputStream, JsonConvert.SerializeObject(_songPlayer.PlayerStatus));
+                    break;
                 default:
                     response.ContentType = "text/plain";
                     WriteUtf8String(response.OutputStream, request.RawUrl);
