@@ -288,7 +288,7 @@
                     );
 
                     $(".play").on('dblclick', '.playinfo', function (event) {
-                        ajaxCall('/dynamic/next', 'NEXT', '0', function (data) {
+                        ajaxCall('/dynamic/next', 'GET', null, function (data) {
                             refreshQueue();
                         });
                     });
