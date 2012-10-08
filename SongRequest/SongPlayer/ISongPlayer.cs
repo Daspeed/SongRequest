@@ -16,6 +16,8 @@ namespace SongRequest
 		void Enqueue(Song song);
 		
 		void Dequeue(Song song);
+
+        int Volume { get; set; }
 	}
 }
 

@@ -25,7 +25,11 @@ namespace SongRequest
             songLibrary.AddSong(new Song() { Artist = "The prodigy", Name = "Smack My Bitch Up", Duration = (int)TimeSpan.FromSeconds(36).TotalSeconds, FileName = "Q.mp3" });
 			
 			_queue = new List<Song>(songLibrary.GetSongs(string.Empty, 0, 3));
+
+            this.Volume = 100;
 		}
+
+        public int Volume { get; set; }
 		
 		public PlayerStatus PlayerStatus 
 		{
@@ -41,7 +45,8 @@ namespace SongRequest
 				PlayerStatus playerStatus = new PlayerStatus();
 				playerStatus.Song = _currentSong;
 				playerStatus.Position = (int)(DateTime.Now - _currentSongStart).TotalSeconds;
-					
+                playerStatus.Volume = this.Volume;
+
 				return playerStatus;
 			}
 		}

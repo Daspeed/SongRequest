@@ -13,6 +13,8 @@ namespace SongRequest
 			get;
 			set;
 		}
+
+        public int Volume { get; set; }
 	}
 }
 

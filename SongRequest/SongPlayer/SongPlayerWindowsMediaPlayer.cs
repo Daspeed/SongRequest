@@ -18,6 +18,7 @@ namespace SongRequest
         public SongPlayerWindowsMediaPlayer()
         {
             player = new WindowsMediaPlayer();
+            player.settings.volume = 10;
             _queue = new List<Song>();
             _songLibrary = new SongLibrary();
             _songLibrary.ScanSongs("c:\\music");
@@ -25,6 +26,17 @@ namespace SongRequest
             Next();
         }
 
+        public int Volume
+        {
+            get
+            {
+                return player.settings.volume;
+            }
+            set
+            {
+                player.settings.volume = Math.Max(Math.Min(value, 100), 0);
+            }
+        }
 
         public void Next()
         {
@@ -64,6 +76,7 @@ namespace SongRequest
                 PlayerStatus playerStatus = new PlayerStatus();
                 playerStatus.Song = _currentSong;
                 playerStatus.Position = (int)(DateTime.Now - _currentSongStart).TotalSeconds;
+                playerStatus.Volume = this.Volume;
 
                 return playerStatus;
             }

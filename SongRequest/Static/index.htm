@@ -39,6 +39,8 @@
         
         .play
         {
+            float:left;
+            
             background-color: #70B0FF;
             
             /* Firefox 3.6+ */
@@ -68,6 +70,27 @@
         {
             margin-left:4px;
             margin-top:4px;
+        }
+        
+        .info
+        {
+        	float:left;
+        	width:60px;
+            height:40px;
+            margin-left:10px;
+        	/* Firefox 3.6+ */
+            background: -moz-linear-gradient(100% 100% 90deg, #70CCB0, #ADCCCE);
+
+            /* Safari 4-5, Chrome 1-9 */
+            /* -webkit-gradient(<type>, <point> [, <radius>]?, <point> [, <radius>]? [, <stop>]*) */
+            background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#70CCB0), to(#ADCCCE));
+
+            /* Safari 5.1+, Chrome 10+ */
+            background: -webkit-linear-gradient(#70CCB0, #ADCCCE);
+
+            /* Opera 11.10+ */
+            background: -o-linear-gradient(#70CCB0, #ADCCCE);
+        	border:inset 1px #111111;
         }
         
         .content
@@ -287,6 +310,8 @@
                         statusTemplate({ status: data.PlayerStatus })
                     );
 
+                    $("#volumeContainer").text(data.PlayerStatus.Volume);
+
                     $(".play").on('dblclick', '.playinfo', function (event) {
                         ajaxCall('/dynamic/next', 'GET', null, function (data) {
                             refreshQueue();
@@ -327,6 +352,15 @@
                     window.getSelection().removeAllRanges();
                 else if (document.selection)
                     document.selection.empty();
+            });
+
+            $(".info").click(function () {
+                var newVolume = prompt('New volume', $("#volumeContainer").text());
+                if (newVolume) {
+                    ajaxCall('/dynamic/volume', 'POST', newVolume, function (data) {
+                        $("#volumeContainer").text(data.PlayerStatus.Volume);
+                    });
+                }
             });
 
             refreshQueue();
@@ -382,6 +416,13 @@
             <div>Requested by: UKNOWN</div>
         </div>
     </div>
+    <div class="info">
+        <div class="playinfo">  
+            <strong>Volume</strong><br>
+            <div id="volumeContainer"></div>
+        </div>
+    </div>
+    <div style="clear:left;"></div>
 </div>
 <div class="content">
     <div id="queue">

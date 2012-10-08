@@ -8,7 +8,7 @@ namespace SongRequest
 {
     public class SongLibrary
     {
-        private Random random = new Random();
+        private Random random = new Random(Environment.TickCount);
         private List<Song> _songs;
 
         public SongLibrary()

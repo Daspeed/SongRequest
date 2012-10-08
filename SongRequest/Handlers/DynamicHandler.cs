@@ -20,7 +20,6 @@ namespace SongRequest.Handlers
 
             string action = actionPath[1];
             
-			
 			ISongplayer songPlayer = SongPlayerFactory.CreateSongPlayer();
 			
             switch (action)
@@ -79,6 +78,19 @@ namespace SongRequest.Handlers
                     response.ContentType = "application/json";
                     songPlayer.Next();
                     WriteUtf8String(response.OutputStream, JsonConvert.SerializeObject(songPlayer.PlayerStatus));
+                    break;
+                case "volume":
+                    response.ContentType = "application/json";
+                    if (request.HttpMethod == "POST")
+                    {
+                        using (var reader = new StreamReader(request.InputStream))
+                        {
+                            string posted = reader.ReadToEnd();
+                            songPlayer.Volume = int.Parse(posted);
+
+                            WriteUtf8String(response.OutputStream, JsonConvert.SerializeObject(songPlayer.Volume));
+                        }
+                    }
                     break;
                 default:
                     response.ContentType = "text/plain";
