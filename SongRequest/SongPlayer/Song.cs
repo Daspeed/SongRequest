@@ -19,6 +19,6 @@ namespace SongRequest
         public string Artist { get; set; }
         public string Name { get; set; }
         public string FileName { get; set; }
-        public TimeSpan? Duration { get; set; }
+        public int? Duration { get; set; }
     }
 }

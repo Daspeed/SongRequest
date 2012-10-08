@@ -16,13 +16,13 @@ namespace SongRequest
 		{
 			songLibrary = new SongLibrary();
 			
-			songLibrary.AddSong(new Song(){ Artist="4 Strings", Name="Summer Sun", Duration = TimeSpan.FromSeconds(6), FileName="4.mp3"});
-			songLibrary.AddSong(new Song(){ Artist="Adele", Name="Set Fire To The Rain", Duration = TimeSpan.FromSeconds(41), FileName="A.mp3"});
-			songLibrary.AddSong(new Song(){ Artist="Silverblue", Name="Step Back", Duration = TimeSpan.FromSeconds(34), FileName="S.mp3"});
-			songLibrary.AddSong(new Song(){ Artist="Ilse DeLange", Name="I'm not so tough", Duration = TimeSpan.FromSeconds(52), FileName="I.mp3"});
-			songLibrary.AddSong(new Song(){ Artist="Coldplay", Name="Clocks", Duration = TimeSpan.FromSeconds(33), FileName="C.mp3"});
-			songLibrary.AddSong(new Song(){ Artist="Queen", Name="Bohemian Rapsody", Duration = TimeSpan.FromSeconds(21), FileName="Q.mp3"});
-			songLibrary.AddSong(new Song(){ Artist="The prodigy", Name="Smack My Bitch Up", Duration = TimeSpan.FromSeconds(36), FileName="Q.mp3"});
+			songLibrary.AddSong(new Song(){ Artist="4 Strings", Name="Summer Sun", Duration = (int)TimeSpan.FromSeconds(6).TotalSeconds, FileName="4.mp3"});
+            songLibrary.AddSong(new Song() { Artist = "Adele", Name = "Set Fire To The Rain", Duration = (int)TimeSpan.FromSeconds(41).TotalSeconds, FileName = "A.mp3" });
+            songLibrary.AddSong(new Song() { Artist = "Silverblue", Name = "Step Back", Duration = (int)TimeSpan.FromSeconds(34).TotalSeconds, FileName = "S.mp3" });
+            songLibrary.AddSong(new Song() { Artist = "Ilse DeLange", Name = "I'm not so tough", Duration = (int)TimeSpan.FromSeconds(52).TotalSeconds, FileName = "I.mp3" });
+            songLibrary.AddSong(new Song() { Artist = "Coldplay", Name = "Clocks", Duration = (int)TimeSpan.FromSeconds(33).TotalSeconds, FileName = "C.mp3" });
+            songLibrary.AddSong(new Song() { Artist = "Queen", Name = "Bohemian Rapsody", Duration = (int)TimeSpan.FromSeconds(21).TotalSeconds, FileName = "Q.mp3" });
+            songLibrary.AddSong(new Song() { Artist = "The prodigy", Name = "Smack My Bitch Up", Duration = (int)TimeSpan.FromSeconds(36).TotalSeconds, FileName = "Q.mp3" });
 			
 			_queue = new List<Song>(songLibrary.GetSongs(string.Empty, 0, 3));
 		}
@@ -33,7 +33,7 @@ namespace SongRequest
 			{
 				if ( _currentSong == null ||
 				     _currentSong.Duration == null ||
-				    (_currentSong.Duration.Value - (DateTime.Now - _currentSongStart)).TotalSeconds <= 0)
+				    (_currentSong.Duration.Value - (DateTime.Now - _currentSongStart).TotalSeconds) <= 0)
 				{
 					if (_queue.Count > 0)
 					{					
@@ -52,7 +52,7 @@ namespace SongRequest
 				
 				PlayerStatus playerStatus = new PlayerStatus();
 				playerStatus.Song = _currentSong;
-				playerStatus.Position = DateTime.Now - _currentSongStart;
+				playerStatus.Position = (int)(DateTime.Now - _currentSongStart).TotalSeconds;
 					
 				return playerStatus;
 			}

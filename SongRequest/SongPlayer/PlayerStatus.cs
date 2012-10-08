@@ -9,7 +9,7 @@ namespace SongRequest
 			set;
 		}
 		
-		public TimeSpan? Position {
+		public int? Position {
 			get;
 			set;
 		}

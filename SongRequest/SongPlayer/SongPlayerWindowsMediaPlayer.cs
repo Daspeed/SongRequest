@@ -59,7 +59,7 @@ namespace SongRequest
             {
                 PlayerStatus playerStatus = new PlayerStatus();
                 playerStatus.Song = _currentSong;
-                playerStatus.Position = DateTime.Now - _currentSongStart;
+                playerStatus.Position = (int)(DateTime.Now - _currentSongStart).TotalSeconds;
 
                 return playerStatus;
             }

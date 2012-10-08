@@ -250,7 +250,15 @@
     <script type="text/javascript" src="/static/jquery-1.8.2.min.js"></script>
     <script type="text/javascript">
         $(function () {
-            window.SongRequest = { page: 0 };
+            window.SongRequest = {
+                page: 0,
+                convertNumberToTime: function (num) {
+                    var minutes = parseInt(num / 60, 10);
+                    var seconds = parseInt(num % 60, 10);
+
+                    return String(minutes) + ((seconds < 10) ? ':0' : ':') + String(seconds);
+                }
+            };
 
             var queueTemplate = _.template($("#queueTemplate").html());
             var playlistTemplate = _.template($("#playlistTemplate").html());
@@ -327,7 +335,7 @@
 <% _.each(songs, function(song, index) { %>
 <div class="qitem <%- index%2===0?'even':'odd' %>queueitemcontainer" data="<%= song.TempId %>">
     <div class="queueitem">
-        <strong><%- song.Artist %> - <%- song.Name %> - <%- song.Duration.replace(/^00:(\d\d):(\d\d)$/, '$1:$2') %></strong>
+        <strong><%- song.Artist %> - <%- song.Name %> - <%- window.SongRequest.convertNumberToTime(song.Duration) %></strong>
         <div>Requested by: UKNOWN</div>
     </div>
 </div>
@@ -346,14 +354,14 @@
         <td class="smallcolumn"><input type="button" class="button" data="<%= song.TempId %>" value="+"></td>
         <td><%- song.Name %></td>
         <td><%- song.Artist %></td>
-        <td><%- song.Duration %></td>
+        <td><%- window.SongRequest.convertNumberToTime(song.Duration) %></td>
     </tr>
     <% }); %>
 </table>
 </script>
 <script id="statusTemplate" type="text/template">
 <div class="playinfo">  
-    <strong><%- status.Song.Artist %> - <%- status.Song.Name %> - <%- status.Position.replace(/^00:(\d\d):(\d\d)$/, '$1:$2') %> / <%- status.Song.Duration.replace(/^00:(\d\d):(\d\d)$/, '$1:$2') %></strong><br>
+    <strong><%- status.Song.Artist %> - <%- status.Song.Name %> - <%- window.SongRequest.convertNumberToTime(status.Position) %> / <%- window.SongRequest.convertNumberToTime(status.Song.Duration)%></strong><br>
     <div>Requested by: UKNOWN</div>
 </div>
 </script>
