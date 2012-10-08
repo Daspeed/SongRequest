@@ -254,31 +254,41 @@
 
             var queueTemplate = _.template($("#queueTemplate").html());
             var playlistTemplate = _.template($("#playlistTemplate").html());
+            var statusTemplate = _.template($("#statusTemplate").html());
+
+            var ajaxCall = function (url, type, data, fnSuccess) {
+                $.ajax({
+                    'url': url,
+                    'type': type,
+                    'data': data,
+                    'success': fnSuccess
+                });
+            };
 
             var refreshQueue = function () {
-                $.get('/dynamic/queue', function (data) {
+                ajaxCall('/dynamic/queue', 'GET', null, function (data) {
                     $("#queue").off('dblclick', '.qitem');
 
                     $("#queue").html(
-                        queueTemplate({ songs: data })
+                        queueTemplate({ songs: data.Queue })
+                    );
+
+                    $(".play").html(
+                        statusTemplate({ status: data.PlayerStatus })
                     );
 
                     $("#queue").on('dblclick', '.qitem', function (event) {
                         var songId = $(this).attr('data');
-                        $.ajax({
-                            url: '/dynamic/queue',
-                            type: 'DELETE',
-                            data: songId,
-                            success: function (data) {
-                                refreshQueue();
-                            }
+
+                        ajaxCall('/dynamic/queue', 'DELETE', songId, function (data) {
+                            refreshQueue();
                         });
                     });
                 });
             }
 
             var getPlayList = function (page) {
-                $.get('/dynamic/playlist/' + String(page), function (data) {
+                ajaxCall('/dynamic/playlist/' + String(page), 'GET', null, function (data) {
 
                     $(".playlist").off("click", ".button");
 
@@ -288,7 +298,7 @@
 
                     $(".playlist").on("click", ".button", function (event) {
                         var songId = $(this).attr('data');
-                        $.post('/dynamic/queue', songId, function (data) {
+                        ajaxCall('/dynamic/queue', 'POST', songId, function (data) {
                             refreshQueue();
                         });
                     });
@@ -303,7 +313,7 @@
             });
 
             refreshQueue();
-            setInterval(refreshQueue, 2000);
+            setInterval(refreshQueue, 1000);
 
             getPlayList(window.SongRequest.page);
         });
@@ -318,7 +328,7 @@
 <div class="qitem <%- index%2===0?'even':'odd' %>queueitemcontainer" data="<%= song.TempId %>">
     <div class="queueitem">
         <strong><%- song.Artist %> - <%- song.Name %> - <%- song.Duration.replace(/^00:(\d\d):(\d\d)$/, '$1:$2') %></strong>
-        <div>Requested by: DSR960</div>
+        <div>Requested by: UKNOWN</div>
     </div>
 </div>
 <% }); %>
@@ -341,12 +351,18 @@
     <% }); %>
 </table>
 </script>
+<script id="statusTemplate" type="text/template">
+<div class="playinfo">  
+    <strong><%- status.Song.Artist %> - <%- status.Song.Name %> - <%- status.Position.replace(/^00:(\d\d):(\d\d)$/, '$1:$2') %> / <%- status.Song.Duration.replace(/^00:(\d\d):(\d\d)$/, '$1:$2') %></strong><br>
+    <div>Requested by: UKNOWN</div>
+</div>
+</script>
 
 <div class="top">
     <div class="play">
         <div class="playinfo">  
-            <strong>4 Strings - Take me away - 4:30</strong><br>
-            <div>Requested by: DSR960</div>
+            <strong>UNKNOWN - 00:00</strong><br>
+            <div>Requested by: UKNOWN</div>
         </div>
     </div>
 </div>
