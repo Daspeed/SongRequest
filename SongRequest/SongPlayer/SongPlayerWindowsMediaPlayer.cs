@@ -21,8 +21,8 @@ namespace SongRequest
             _queue = new List<Song>();
             _songLibrary = new SongLibrary();
             _songLibrary.ScanSongs("c:\\music");
-            
-            Update();
+
+            Next();
         }
 
 
@@ -33,7 +33,7 @@ namespace SongRequest
 				//Take next song from queue
 				_currentSong = _queue[0];
 						
-				_queue.Remove(_currentSong);
+				_queue.Remove(_currentSong);    
 			} else
 			{
 				//Take random song
@@ -50,7 +50,7 @@ namespace SongRequest
 
         public void Update()
         {
-            if (player.playState != WMPPlayState.wmppsPlaying)
+            if (player.playState == WMPPlayState.wmppsStopped)
                 Next();
         }
 

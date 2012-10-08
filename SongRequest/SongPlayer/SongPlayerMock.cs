@@ -35,19 +35,7 @@ namespace SongRequest
 				     _currentSong.Duration == null ||
 				    (_currentSong.Duration.Value - (DateTime.Now - _currentSongStart).TotalSeconds) <= 0)
 				{
-					if (_queue.Count > 0)
-					{					
-						//Take next song from queue
-						_currentSong = _queue[0];
-						
-						_queue.Remove(_currentSong);
-					} else
-					{
-						//Take random song
-						_currentSong = songLibrary.GetRandomSong();
-					}
-					
-					_currentSongStart = DateTime.Now;
+                    Next();
 				}
 				
 				PlayerStatus playerStatus = new PlayerStatus();
@@ -70,6 +58,24 @@ namespace SongRequest
 				return _queue;
 			}
 		}
+
+        public void Next()
+        {
+            if (_queue.Count > 0)
+            {
+                //Take next song from queue
+                _currentSong = _queue[0];
+
+                _queue.Remove(_currentSong);
+            }
+            else
+            {
+                //Take random song
+                _currentSong = songLibrary.GetRandomSong();
+            }
+
+            _currentSongStart = DateTime.Now;
+        }
 		
 		public void Enqueue(Song song)
 		{

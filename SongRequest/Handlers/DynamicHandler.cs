@@ -75,6 +75,11 @@ namespace SongRequest.Handlers
                         }
                         break;
                     }
+                case "next":
+                    response.ContentType = "application/json";
+                    songPlayer.Next();
+                    WriteUtf8String(response.OutputStream, JsonConvert.SerializeObject(songPlayer.PlayerStatus));
+                    break;
                 default:
                     response.ContentType = "text/plain";
                     WriteUtf8String(response.OutputStream, request.RawUrl);

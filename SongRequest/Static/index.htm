@@ -281,9 +281,17 @@
                         queueTemplate({ songs: data.Queue })
                     );
 
+                    $(".play").off('dblclick', '.playinfo');
+
                     $(".play").html(
                         statusTemplate({ status: data.PlayerStatus })
                     );
+
+                    $(".play").on('dblclick', '.playinfo', function (event) {
+                        ajaxCall('/dynamic/next', 'NEXT', '0', function (data) {
+                            refreshQueue();
+                        });
+                    });
 
                     $("#queue").on('dblclick', '.qitem', function (event) {
                         var songId = $(this).attr('data');
