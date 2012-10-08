@@ -295,8 +295,9 @@
                 });
             }
 
-            var getPlayList = function (page) {
-                ajaxCall('/dynamic/playlist/' + String(page), 'GET', null, function (data) {
+            var getPlayList = function (filter, page) {
+                var message = '{ Filter: "' + filter.replace(/"/, '') + '", Page: ' + String(page) + '}';
+                ajaxCall('/dynamic/playlist', 'POST', message, function (data) {
 
                     $(".playlist").off("click", ".button");
 
@@ -323,7 +324,7 @@
             refreshQueue();
             setInterval(refreshQueue, 1000);
 
-            getPlayList(window.SongRequest.page);
+            getPlayList('', window.SongRequest.page);
         });
     </script>
 </head>

@@ -19,7 +19,7 @@ namespace SongRequest.Handlers
             string[] actionPath = request.RawUrl.Split(new[]{'/'}, StringSplitOptions.RemoveEmptyEntries);
 
             string action = actionPath[1];
-            string argument = actionPath.Length > 2 ? actionPath[2] : null;
+            
 			
 			ISongplayer songPlayer = SongPlayerFactory.CreateSongPlayer();
 			
@@ -59,16 +59,22 @@ namespace SongRequest.Handlers
                     }
                     break;
                 case "playlist":
-                    int page = int.Parse(argument);
-                    response.ContentType = "application/json";
-                    WriteUtf8String(response.OutputStream, JsonConvert.SerializeObject(
-                        songPlayer.GetPlayList(string.Empty, page * _pageSize, _pageSize))
-                    );
-                    break;
-                case "playerstatus":
-                    response.ContentType = "application/json";
-                    WriteUtf8String(response.OutputStream, JsonConvert.SerializeObject(songPlayer.PlayerStatus));
-                    break;
+                    {
+                        if (request.HttpMethod == "POST")
+                        {
+                            using (var reader = new StreamReader(request.InputStream))
+                            {
+                                string posted = reader.ReadToEnd();
+                                var playlistRequest = JsonConvert.DeserializeAnonymousType(posted, new { Filter = string.Empty, Page = 0 });
+
+                                response.ContentType = "application/json";
+                                WriteUtf8String(response.OutputStream, JsonConvert.SerializeObject(
+                                    songPlayer.GetPlayList(playlistRequest.Filter, playlistRequest.Page * _pageSize, _pageSize))
+                                );
+                            }
+                        }
+                        break;
+                    }
                 default:
                     response.ContentType = "text/plain";
                     WriteUtf8String(response.OutputStream, request.RawUrl);
