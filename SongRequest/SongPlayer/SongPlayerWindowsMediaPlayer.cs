@@ -8,7 +8,7 @@ namespace SongRequest
 {
     public class SongPlayerWindowsMediaPlayer : ISongplayer
     {
-        private SongLibrary songLibrary;
+        private SongLibrary _songLibrary;
         private WindowsMediaPlayer player = new WindowsMediaPlayer();
 
         private List<Song> _queue;
@@ -17,10 +17,9 @@ namespace SongRequest
 
         public SongPlayerWindowsMediaPlayer()
         {
-            songLibrary = new SongLibrary();
-            songLibrary.ScanSongs("c:\\music");
-
-            _queue = new List<Song>(songLibrary.GetSongs(string.Empty, 0, 3));
+            _queue = new List<Song>();
+            _songLibrary = new SongLibrary();
+            _songLibrary.ScanSongs("c:\\music");
             player.PlayStateChange += new _WMPOCXEvents_PlayStateChangeEventHandler(player_PlayStateChange);
 
             Next();
@@ -28,8 +27,8 @@ namespace SongRequest
 
         void player_PlayStateChange(int NewState)
         {
-            //1==stopped
-            if (NewState == 1)
+            //8==mediaended
+            if (NewState == 8)
             {
                 Next();
             }
@@ -46,11 +45,11 @@ namespace SongRequest
 			} else
 			{
 				//Take random song
-				_currentSong = songLibrary.GetRandomSong();
+				_currentSong = _songLibrary.GetRandomSong();
 			}
 					
 			_currentSongStart = DateTime.Now;
-
+            player.URL = string.Empty; //first clear filename -> needed when the same file is played twice in a row
             player.URL = _currentSong.FileName;
         }
 
@@ -70,7 +69,7 @@ namespace SongRequest
         {
             get
             {
-                return songLibrary.GetSongs(string.Empty, 0, 100);
+                return _songLibrary.GetSongs(string.Empty, 0, 100);
             }
         }
 
