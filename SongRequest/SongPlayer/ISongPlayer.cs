@@ -7,7 +7,7 @@ namespace SongRequest
 	{
 		PlayerStatus PlayerStatus {get;}
 		
-		IEnumerable<Song> PlayList {get;}
+        IEnumerable<Song> GetPlayList(string filter, int skip, int count);
 		
 		IEnumerable<Song> PlayQueue {get;}
 		

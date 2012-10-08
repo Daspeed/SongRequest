@@ -49,9 +49,9 @@ namespace SongRequest
             _songs.Add(song);
         }
 
-        public IEnumerable<Song> GetSongs(string filter, int top, int count)
+        public IEnumerable<Song> GetSongs(string filter, int skip, int count)
         {
-            return _songs.Where(s => s.FileName.ToLower().Contains(filter.ToLower())).Skip(top).Take(count);
+            return _songs.Where(s => s.FileName.ToLower().Contains(filter.ToLower())).Skip(skip).Take(count);
         }
 
         public Song GetRandomSong()
