@@ -41,7 +41,7 @@ namespace SongRequest.Handlers
                             using (var reader = new StreamReader(request.InputStream))
                             {
                                 long posted = long.Parse(reader.ReadToEnd());
-                                Song song = songPlayer.PlayList.FirstOrDefault(x => x.TempId == posted);
+                                Song song = songPlayer.GetPlayList(string.Empty, 0, 100).FirstOrDefault(x => x.TempId == posted);
                                 if (song != null)
 									songPlayer.Enqueue(song);
                             }
@@ -51,7 +51,7 @@ namespace SongRequest.Handlers
                             {
                                 long posted = long.Parse(reader.ReadToEnd());
 								//TODO: if the same song is in the list twice, which one is removed?
-                                Song song = songPlayer.PlayList.FirstOrDefault(x => x.TempId == posted);
+                                Song song = songPlayer.GetPlayList(string.Empty, 0, 100).FirstOrDefault(x => x.TempId == posted);
                                 if (song != null)
 									songPlayer.Dequeue(song);
                             }
@@ -62,7 +62,7 @@ namespace SongRequest.Handlers
                     int page = int.Parse(argument);
                     response.ContentType = "application/json";
                     WriteUtf8String(response.OutputStream, JsonConvert.SerializeObject(
-                        songPlayer.PlayList.Skip(page * _pageSize).Take(_pageSize))
+                        songPlayer.GetPlayList(string.Empty, page * _pageSize, _pageSize))
                     );
                     break;
                 case "playerstatus":

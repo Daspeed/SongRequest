@@ -58,12 +58,9 @@ namespace SongRequest
 			}
 		}
 		
-		public IEnumerable<Song> PlayList 
+		public IEnumerable<Song> GetPlayList(string filter, int skip, int count)
 		{
-			get
-			{
-				return songLibrary.GetSongs(string.Empty, 0, 100);
-			}
+    		return songLibrary.GetSongs(filter, skip, count);
 		}
 		
 		public IEnumerable<Song> PlayQueue 
