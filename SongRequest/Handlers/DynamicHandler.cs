@@ -65,6 +65,11 @@ namespace SongRequest.Handlers
                         songPlayer.GetPlayList(string.Empty, page * _pageSize, _pageSize))
                     );
                     break;
+                case "next":
+                    response.ContentType = "application/json";
+                    songPlayer.Next();
+                    WriteUtf8String(response.OutputStream, JsonConvert.SerializeObject(songPlayer.PlayerStatus));
+                    break;
                 case "playerstatus":
                     response.ContentType = "application/json";
                     WriteUtf8String(response.OutputStream, JsonConvert.SerializeObject(songPlayer.PlayerStatus));
