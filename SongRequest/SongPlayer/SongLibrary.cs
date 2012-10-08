@@ -20,6 +20,12 @@ namespace SongRequest
 			foreach(string fileName in Directory.GetFiles(directory, "*.mp3", SearchOption.AllDirectories))
 			{
 				//Do some magic...
+                Song song = new Song();
+                song.FileName = fileName;
+                song.Artist = "dontcare";
+                song.Duration = new TimeSpan(20022);
+                song.Name = "dontknow";
+                _songs.Add(song);
 			}
 		}		
 		
