@@ -33,17 +33,24 @@ namespace SongRequest
         {
             Console.Clear();
 
-            SongPlayerFactory.CreateSongPlayer().LibraryStatusChanged += new StatusChangedEventHandler(Program_LibraryStatusChanged);
-            SongPlayerFactory.CreateSongPlayer().PlayerStatusChanged += new StatusChangedEventHandler(Program_PlayerStatusChanged);
-
             using (HttpListener listener = new HttpListener())
             {
-                int port = ConfigReader.SongRequestPort ?? 8765;
+                int port;
+
+                if (!int.TryParse(SongPlayerFactory.GetConfigFile().GetValue("server.path"), out port))
+                    port = 8765;
+
+                Console.SetCursorPosition(0, 1);
+                Console.Write("Listening on port: {0}", port);
+                Console.SetCursorPosition(0, 2);
+                Console.Write("Library: {0}", SongPlayerFactory.GetConfigFile().GetValue("library.path"));
+
+                SongPlayerFactory.CreateSongPlayer().LibraryStatusChanged += new StatusChangedEventHandler(Program_LibraryStatusChanged);
+                SongPlayerFactory.CreateSongPlayer().PlayerStatusChanged += new StatusChangedEventHandler(Program_PlayerStatusChanged);
 
                 listener.Prefixes.Add(string.Format("http://*:{0}/", port));
                 listener.Start();
-                Console.SetCursorPosition(0, 1);
-                Console.Write("Listening on port: {0}...", port);
+
                 while (_running)
                 {
                     HttpListenerContext context = listener.GetContext();
@@ -74,28 +81,39 @@ namespace SongRequest
             //Console.WriteLine("No longer listening");
         }
 
-        static void Program_LastRequestChanged(string status)
+        static object consoleLock = new object();
+
+        static void Program_LibraryStatusChanged(string status)
         {
-            Console.SetCursorPosition(0, 5);
-            Console.Write(new string(' ', Console.WindowWidth));
-            Console.SetCursorPosition(0, 5);
-            Console.Write(status.Substring(0, Math.Min(status.Length, Console.WindowWidth)));
+            lock (consoleLock)
+            {
+                Console.SetCursorPosition(0, 3);
+                Console.Write(new string(' ', Console.WindowWidth));
+                Console.SetCursorPosition(0, 3);
+                Console.Write(status.Substring(0, Math.Min(status.Length, Console.WindowWidth)));
+            }
         }
 
         static void Program_PlayerStatusChanged(string status)
         {
-            Console.SetCursorPosition(0, 2);
-            Console.Write(new string(' ', Console.WindowWidth));
-            Console.SetCursorPosition(0, 2);
-            Console.Write(status.Substring(0, Math.Min(status.Length, Console.WindowWidth)));
+            lock (consoleLock)
+            {
+                Console.SetCursorPosition(0, 4);
+                Console.Write(new string(' ', Console.WindowWidth));
+                Console.SetCursorPosition(0, 4);
+                Console.Write(status.Substring(0, Math.Min(status.Length, Console.WindowWidth)));
+            }
         }
 
-        static void Program_LibraryStatusChanged(string status)
+        static void Program_LastRequestChanged(string status)
         {
-            Console.SetCursorPosition(0, 3);
-            Console.Write(new string(' ', Console.WindowWidth));
-            Console.SetCursorPosition(0, 3);
-            Console.Write(status.Substring(0, Math.Min(status.Length, Console.WindowWidth)));
+            lock (consoleLock)
+            {
+                Console.SetCursorPosition(0, 6);
+                Console.Write(new string(' ', Console.WindowWidth));
+                Console.SetCursorPosition(0, 6);
+                Console.Write(status.Substring(0, Math.Min(status.Length, Console.WindowWidth)));
+            }
         }
     }
 }

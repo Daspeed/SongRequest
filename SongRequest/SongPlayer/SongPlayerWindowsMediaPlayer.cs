@@ -3,6 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 using WMPLib;
 using System.Threading;
+using SongRequest.Config;
 
 
 namespace SongRequest
@@ -25,7 +26,7 @@ namespace SongRequest
             player = new WindowsMediaPlayer();
             player.settings.volume = 10;
             _queue = new List<Song>();
-            _songLibrary = new SongLibrary("c:\\music");
+            _songLibrary = new SongLibrary(SongPlayerFactory.GetConfigFile().GetValue("library.path"));
             _songLibrary.StatusChanged += OnLibraryStatusChanged;
 
             _updateThread = new Thread(new ThreadStart(Update));
@@ -97,7 +98,7 @@ namespace SongRequest
 
                 string status;
                 if (SongPlayerFactory.CreateSongPlayer().PlayerStatus.Song != null)
-                    status = string.Format("Currently playing: {0} - {1}", SongPlayerFactory.CreateSongPlayer().PlayerStatus.Position, SongPlayerFactory.CreateSongPlayer().PlayerStatus.Song.FileName);
+                    status = string.Format("Currently playing: {0} sec - {1}", SongPlayerFactory.CreateSongPlayer().PlayerStatus.Position, SongPlayerFactory.CreateSongPlayer().PlayerStatus.Song.Name);
                 else
                     status = "No song playing...";
 

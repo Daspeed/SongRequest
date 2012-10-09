@@ -49,7 +49,12 @@ namespace SongRequest
             }
             else
             {
-                _nextFullUpdate = DateTime.Now + TimeSpan.FromMinutes(1);
+                int minutesBetweenScans;
+
+                if (!int.TryParse(SongPlayerFactory.GetConfigFile().GetValue("library.minutesbetweenscans"), out minutesBetweenScans))
+                    minutesBetweenScans = 2;
+
+                _nextFullUpdate = DateTime.Now + TimeSpan.FromMinutes(minutesBetweenScans);
                 OnStatusChanged("Library update completed. Next scan: " + _nextFullUpdate.ToShortTimeString());
             }
         }
