@@ -37,7 +37,7 @@ namespace SongRequest
             {
                 int port;
 
-                if (!int.TryParse(SongPlayerFactory.GetConfigFile().GetValue("server.path"), out port))
+                if (!int.TryParse(SongPlayerFactory.GetConfigFile().GetValue("server.port"), out port))
                     port = 8765;
 
                 Console.SetCursorPosition(0, 1);
