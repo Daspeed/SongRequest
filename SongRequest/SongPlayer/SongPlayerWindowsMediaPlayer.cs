@@ -2,11 +2,12 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using WMPLib;
+using System.Threading;
 
 
 namespace SongRequest
 {
-    public class SongPlayerWindowsMediaPlayer : ISongplayer
+    public class SongPlayerWindowsMediaPlayer : ISongplayer, IDisposable
     {
         private SongLibrary _songLibrary;
         private WindowsMediaPlayer player;
@@ -14,18 +15,36 @@ namespace SongRequest
         private List<Song> _queue;
         private Song _currentSong;
         private DateTime _currentSongStart;
+        private Thread _updateThread;
+        public event StatusChangedEventHandler LibraryStatusChanged;
+        public event StatusChangedEventHandler PlayerStatusChanged;
+
 
         public SongPlayerWindowsMediaPlayer()
         {
             player = new WindowsMediaPlayer();
             player.settings.volume = 10;
             _queue = new List<Song>();
-            _songLibrary = new SongLibrary();
-            _songLibrary.ScanSongs("c:\\music");
+            _songLibrary = new SongLibrary("c:\\music");
+            _songLibrary.StatusChanged += OnLibraryStatusChanged;
 
-            Next();
+            _updateThread = new Thread(new ThreadStart(Update));
+            _updateThread.Start();
+
         }
 
+        protected virtual void OnLibraryStatusChanged(string status)
+        {
+            if (LibraryStatusChanged != null)
+                LibraryStatusChanged(status);
+        }
+
+        protected virtual void OnPlayerStatusChanged(string status)
+        {
+            if (PlayerStatusChanged != null)
+                PlayerStatusChanged(status);
+        }
+        
         public int Volume
         {
             get
@@ -62,17 +81,36 @@ namespace SongRequest
 
         public void Update()
         {
-            if (player.playState == WMPPlayState.wmppsStopped)
-                Next();
+            while (true)
+            {
+                _songLibrary.ScanLibrary();
+
+                try
+                {
+                    if (player.playState == WMPPlayState.wmppsStopped ||
+                        player.playState == WMPPlayState.wmppsUndefined)
+                        Next();
+                }
+                catch
+                {
+                }
+
+                string status;
+                if (SongPlayerFactory.CreateSongPlayer().PlayerStatus.Song != null)
+                    status = string.Format("Currently playing: {0} - {1}", SongPlayerFactory.CreateSongPlayer().PlayerStatus.Position, SongPlayerFactory.CreateSongPlayer().PlayerStatus.Song.FileName);
+                else
+                    status = "No song playing...";
+
+                OnPlayerStatusChanged(status);
+
+                Thread.Sleep(100);
+            }
         }
 
         public PlayerStatus PlayerStatus
         {
             get
             {
-                //TODO: Find a better place for this... should be called as often as possible
-                Update();
-
                 PlayerStatus playerStatus = new PlayerStatus();
                 playerStatus.Song = _currentSong;
                 playerStatus.Position = (int)(DateTime.Now - _currentSongStart).TotalSeconds;
@@ -103,6 +141,15 @@ namespace SongRequest
         public void Dequeue(Song song)
         {
             _queue.Remove(song);
+        }
+
+        public void Dispose()
+        {
+            if (_updateThread != null &&
+                _updateThread.IsAlive)
+            {
+                _updateThread.Abort();
+            }
         }
     }
 }

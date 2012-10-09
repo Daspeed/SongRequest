@@ -49,12 +49,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Id3">
-      <HintPath>..\dlls\Id3.dll</HintPath>
-    </Reference>
-    <Reference Include="Id3.Files">
-      <HintPath>..\dlls\Id3.Files.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -64,6 +58,9 @@
       <HintPath>..\dlls\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System.Configuration" />
+    <Reference Include="taglib-sharp">
+      <HintPath>..\dlls\taglib-sharp.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConfigReader.cs" />

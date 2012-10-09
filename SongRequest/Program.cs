@@ -31,35 +31,34 @@ namespace SongRequest
 
         private static void Run()
         {
+            Console.Clear();
+
+            SongPlayerFactory.CreateSongPlayer().LibraryStatusChanged += new StatusChangedEventHandler(Program_LibraryStatusChanged);
+            SongPlayerFactory.CreateSongPlayer().PlayerStatusChanged += new StatusChangedEventHandler(Program_PlayerStatusChanged);
+
             using (HttpListener listener = new HttpListener())
             {
                 int port = ConfigReader.SongRequestPort ?? 8765;
 
                 listener.Prefixes.Add(string.Format("http://*:{0}/", port));
                 listener.Start();
-                Console.WriteLine("Listening on port: {0}...", port);
+                Console.SetCursorPosition(0, 1);
+                Console.Write("Listening on port: {0}...", port);
                 while (_running)
                 {
                     HttpListenerContext context = listener.GetContext();
                     Stopwatch watch = Stopwatch.StartNew();
 
-                    Console.WriteLine("Accepted new request - {0}", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+                    //Console.WriteLine("Accepted new request - {0}", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
 
-                    Console.WriteLine("{0}\t{1}", context.Request.UserHostAddress, context.Request.RawUrl);
+                    //Console.WriteLine("{0}\t{1}", context.Request.UserHostAddress, context.Request.RawUrl);
+                    Program_LastRequestChanged(string.Format("{0} - {1}\t{2}", DateTime.Now.ToString("HH:mm:ss"), context.Request.UserHostAddress, context.Request.RawUrl));
 
                     try
                     {
                         Dispatcher.ProcessRequest(context);
-                        Console.WriteLine("Request ended - {0}ms", watch.ElapsedMilliseconds);
-                        if (SongPlayerFactory.CreateSongPlayer().PlayerStatus.Song != null)
-                        {
-                            Console.WriteLine("Currently playing: {0}", SongPlayerFactory.CreateSongPlayer().PlayerStatus.Song.FileName);
-                            Console.WriteLine("Position: {0}", SongPlayerFactory.CreateSongPlayer().PlayerStatus.Position);
-                        }
-                        else
-                        {
-                            Console.WriteLine("No song playing...");
-                        }
+                        //Console.WriteLine("Request ended - {0}ms", watch.ElapsedMilliseconds);
+
                         watch.Stop();
                     }
                     catch (Exception ex)
@@ -69,22 +68,34 @@ namespace SongRequest
                         using (var writer = new StreamWriter(context.Response.OutputStream))
                             writer.Write(ex.ToString());
                     }
-                    Console.WriteLine();
                 }
             }
 
-            Console.WriteLine("No longer listening");
+            //Console.WriteLine("No longer listening");
+        }
+
+        static void Program_LastRequestChanged(string status)
+        {
+            Console.SetCursorPosition(0, 5);
+            Console.Write(new string(' ', Console.WindowWidth));
+            Console.SetCursorPosition(0, 5);
+            Console.Write(status.Substring(0, Math.Min(status.Length, Console.WindowWidth)));
+        }
+
+        static void Program_PlayerStatusChanged(string status)
+        {
+            Console.SetCursorPosition(0, 2);
+            Console.Write(new string(' ', Console.WindowWidth));
+            Console.SetCursorPosition(0, 2);
+            Console.Write(status.Substring(0, Math.Min(status.Length, Console.WindowWidth)));
+        }
+
+        static void Program_LibraryStatusChanged(string status)
+        {
+            Console.SetCursorPosition(0, 3);
+            Console.Write(new string(' ', Console.WindowWidth));
+            Console.SetCursorPosition(0, 3);
+            Console.Write(status.Substring(0, Math.Min(status.Length, Console.WindowWidth)));
         }
     }
 }
-
-
-//using (Process p = new Process())
-//            {
-//                ProcessStartInfo info = new ProcessStartInfo(@"C:\Program Files (x86)\VideoLAN\VLC\vlc.exe", "--intf http --http-host 127.0.0.1:8090");
-//                info.CreateNoWindow = true;
-//                info.UseShellExecute = true;
-//                info.WindowStyle = ProcessWindowStyle.Normal;
-//                p.StartInfo = info;
-//                p.Start();
-//            }

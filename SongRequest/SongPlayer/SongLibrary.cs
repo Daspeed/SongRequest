@@ -2,64 +2,208 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.IO;
-using Id3;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace SongRequest
 {
     public class SongLibrary
     {
+        private object lockObject = new object();
         private Random random = new Random(Environment.TickCount);
         private List<Song> _songs;
+        private string _directory;
+        private DateTime _nextFullUpdate;
+        public event StatusChangedEventHandler StatusChanged;
 
-        public SongLibrary()
+        public SongLibrary(string directory)
         {
             _songs = new List<Song>();
+            _directory = directory;
+            _nextFullUpdate = DateTime.Now;
+
+            OnStatusChanged("Library created...");
+            Deserialize();
         }
 
-        public void ScanSongs(string directory)
+        protected virtual void OnStatusChanged(string status)
         {
-            if (Directory.Exists("c:\\music"))
-                foreach (string fileName in Directory.GetFiles(directory, "*.mp3", SearchOption.AllDirectories))
+            if (StatusChanged != null)
+                StatusChanged(status);
+        }
+
+        public void ScanLibrary()
+        {
+            //No need to scan...
+            if (_nextFullUpdate > DateTime.Now)
+                return;
+
+            int fileChanges = ScanSongs();
+            int tagChanges = UpdateTags();
+            if (fileChanges > 0 || tagChanges > 0)
+            {
+                int songCount = _songs.Count();
+                int noTagCount = _songs.Count(s => !s.TagRead);
+                OnStatusChanged(string.Format("Library updated: {0} songs. Tags read: {1}/{0}", songCount, noTagCount));
+                Serialize();
+                OnStatusChanged(string.Format("Library updated: {0} songs. Tags read: {1}/{0} (saved)", songCount, noTagCount));
+            }
+            else
+            {
+                _nextFullUpdate = DateTime.Now + TimeSpan.FromMinutes(1);
+                OnStatusChanged("Library update completed. Next scan: " + _nextFullUpdate.ToShortTimeString());
+            }
+        }
+
+        private void Serialize()
+        {
+            try
+            {
+                lock (lockObject)
+                {
+                    using (Stream stream = File.Open("library.bin", FileMode.Create))
+                    {
+                        BinaryFormatter bin = new BinaryFormatter();
+                        bin.Serialize(stream, _songs);
+                    }
+                }
+            }
+            catch (IOException)
+            {
+            }
+        }
+
+        private void Deserialize()
+        {
+            try
+            {
+                lock (lockObject)
+                {
+                    if (File.Exists("library.bin"))
+                    {
+                        using (Stream stream = File.Open("library.bin", FileMode.Open))
+                        {
+                            if (stream.Length > 0)
+                            {
+                                BinaryFormatter bin = new BinaryFormatter();
+                                _songs = (List<Song>)bin.Deserialize(stream);
+                            }
+                        }
+                    }
+                }
+
+                OnStatusChanged("Loaded library containing " + _songs.Count() + " songs");
+            }
+            catch (IOException)
+            {
+                OnStatusChanged("Error loading library...");
+            }
+        }
+
+        private int ScanSongs()
+        {
+            int changesMade = 0;
+            if (Directory.Exists(_directory))
+            {
+                string[] files = Directory.GetFiles(_directory, "*.mp3", SearchOption.AllDirectories);
+
+                //Find removed songs
+                lock (lockObject)
+                {
+                    if (_songs.RemoveAll(s => !files.Any(f => f == s.FileName)) > 0)
+                        changesMade++;
+                }
+
+                //Find added songs
+                foreach (string fileName in files)
+                {
+                    lock (lockObject)
+                    {
+                        if (_songs.Any(s => s.FileName == fileName))
+                            continue;
+                    }
+
+                    Song song = new Song();
+                    song.FileName = fileName;
+                    song.Name = fileName;
+
+                    AddSong(song);
+
+                    changesMade++;
+                }
+            }
+
+            return changesMade;
+        }
+
+        private int UpdateTags()
+        {
+            Song song;
+            int songsTagged = 0;
+
+            do
+            {
+                //Lock collection as short as possible
+                lock (lockObject)
+                {
+                    song = _songs.FirstOrDefault(s => s.TagRead == false);
+                }
+
+                if (song != null)
                 {
                     try
                     {
-                        //Do some magic...
-                        Song song = new Song();
-                        song.FileName = fileName;
 
-                        using (var mp3 = new Mp3File(fileName))
+                        TagLib.File taglibFile = TagLib.File.Create(song.FileName);
+
+                        if (taglibFile.Tag != null)
                         {
-                            Id3Tag tag = mp3.GetTag(Id3TagFamily.FileStartTag);
-                            song.Name = tag == null || tag.Title == null ? "unknown" : tag.Title.Value;
-                            song.Artist = tag == null || tag.Artists == null ? "unknown" : tag.Artists.Value;
-                            song.Duration = (int)mp3.Audio.Duration.TotalSeconds;
-                        }
+                            if (!string.IsNullOrEmpty(taglibFile.Tag.Title))
+                                song.Name = taglibFile.Tag.Title;
 
-                        _songs.Add(song);
+                            song.Artist = taglibFile.Tag.JoinedPerformers;
+                            song.Duration = (int)taglibFile.Properties.Duration.TotalSeconds;
+                        }
                     }
                     catch
                     {
                     }
 
+                    song.TagRead = true;
+                    songsTagged++;
                 }
+            } while (song != null && songsTagged < 200);
+
+            return songsTagged;
         }
 
         public void AddSong(Song song)
         {
-            _songs.Add(song);
+            lock (lockObject)
+            {
+                _songs.Add(song);
+            }
         }
 
         public IEnumerable<Song> GetSongs(string filter, int skip, int count)
         {
-            return _songs.Where(s => s.FileName.ToLower().Contains(filter.ToLower())).Skip(skip).Take(count);
+            lock (lockObject)
+            {
+                return _songs.Where(s => s.FileName.ToLower().Contains(filter.ToLower()) ||
+                                         s.Name.ToLower().Contains(filter.ToLower()) ||
+                                         s.Artist.ToLower().Contains(filter.ToLower())                    
+                                    ).Skip(skip).Take(count);
+            }
         }
 
         public Song GetRandomSong()
         {
-            if (_songs.Count == 0)
-                return null;
+            lock (lockObject)
+            {
+                if (_songs.Count == 0)
+                    return null;
 
-            return _songs[random.Next(_songs.Count)];
+                return _songs[random.Next(_songs.Count)];
+            }
         }
     }
 }
