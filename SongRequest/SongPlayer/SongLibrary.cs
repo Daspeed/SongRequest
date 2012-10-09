@@ -55,7 +55,7 @@ namespace SongRequest
                     minutesBetweenScans = 2;
 
                 _nextFullUpdate = DateTime.Now + TimeSpan.FromMinutes(minutesBetweenScans);
-                OnStatusChanged("Library update completed. Next scan: " + _nextFullUpdate.ToShortTimeString());
+                OnStatusChanged("Library update completed (" + _songs.Count() + " songs). Next scan: " + _nextFullUpdate.ToShortTimeString());
             }
         }
 
