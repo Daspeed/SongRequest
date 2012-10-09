@@ -19,6 +19,7 @@ namespace SongRequest
         public event StatusChangedEventHandler LibraryStatusChanged;
         public event StatusChangedEventHandler PlayerStatusChanged;
 
+        private volatile bool _running = true;
 
         public SongPlayerWindowsMediaPlayer()
         {
@@ -81,7 +82,7 @@ namespace SongRequest
 
         public void Update()
         {
-            while (true)
+            while (_running)
             {
                 _songLibrary.ScanLibrary();
 
@@ -145,11 +146,7 @@ namespace SongRequest
 
         public void Dispose()
         {
-            if (_updateThread != null &&
-                _updateThread.IsAlive)
-            {
-                _updateThread.Abort();
-            }
+            _running = false;
         }
     }
 }
