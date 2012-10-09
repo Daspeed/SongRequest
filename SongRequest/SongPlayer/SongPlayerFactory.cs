@@ -7,11 +7,10 @@ namespace SongRequest
 	{
 		private static ISongplayer _songPlayer;
 
-		public static ISongplayer CreateSongPlayer()
+		public static ISongplayer GetSongPlayer()
 		{
             if (_songPlayer == null)
             {
-                //_songPlayer = new SongPlayerMock();
                 _songPlayer = new SongPlayerWindowsMediaPlayer();
             }
 			

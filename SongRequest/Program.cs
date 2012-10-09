@@ -45,8 +45,8 @@ namespace SongRequest
                 Console.SetCursorPosition(0, 2);
                 Console.Write("Library: {0}", SongPlayerFactory.GetConfigFile().GetValue("library.path"));
 
-                SongPlayerFactory.CreateSongPlayer().LibraryStatusChanged += new StatusChangedEventHandler(Program_LibraryStatusChanged);
-                SongPlayerFactory.CreateSongPlayer().PlayerStatusChanged += new StatusChangedEventHandler(Program_PlayerStatusChanged);
+                SongPlayerFactory.GetSongPlayer().LibraryStatusChanged += new StatusChangedEventHandler(Program_LibraryStatusChanged);
+                SongPlayerFactory.GetSongPlayer().PlayerStatusChanged += new StatusChangedEventHandler(Program_PlayerStatusChanged);
 
                 listener.Prefixes.Add(string.Format("http://*:{0}/", port));
                 listener.Start();

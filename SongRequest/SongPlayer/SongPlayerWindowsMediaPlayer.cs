@@ -98,8 +98,8 @@ namespace SongRequest
                 }
 
                 string status;
-                if (SongPlayerFactory.CreateSongPlayer().PlayerStatus.Song != null)
-                    status = string.Format("Currently playing: {0} sec - {1}", SongPlayerFactory.CreateSongPlayer().PlayerStatus.Position, SongPlayerFactory.CreateSongPlayer().PlayerStatus.Song.Name);
+                if (SongPlayerFactory.GetSongPlayer().PlayerStatus.Song != null)
+                    status = string.Format("Currently playing: {0} sec - {1}", SongPlayerFactory.GetSongPlayer().PlayerStatus.Position, SongPlayerFactory.GetSongPlayer().PlayerStatus.Song.Name);
                 else
                     status = "No song playing...";
 
@@ -135,9 +135,25 @@ namespace SongRequest
             }
         }
 
+        public void Enqueue(long id)
+        {
+            Song song = _songLibrary.GetSongs(string.Empty, 0, int.MaxValue).FirstOrDefault(x => x.TempId == id);
+            
+            if(song != null)
+                Enqueue(song);
+        }
+
         public void Enqueue(Song song)
         {
             _queue.Add(song);
+        }
+
+        public void Dequeue(long id)
+        {
+            Song song = _songLibrary.GetSongs(string.Empty, 0, int.MaxValue).FirstOrDefault(x => x.TempId == id);
+
+            if (song != null)
+                Dequeue(song);
         }
 
         public void Dequeue(Song song)

@@ -20,7 +20,7 @@ namespace SongRequest.Handlers
 
             string action = actionPath[1];
             
-			ISongplayer songPlayer = SongPlayerFactory.CreateSongPlayer();
+			ISongplayer songPlayer = SongPlayerFactory.GetSongPlayer();
 			
             switch (action)
             {
@@ -40,19 +40,14 @@ namespace SongRequest.Handlers
                             using (var reader = new StreamReader(request.InputStream))
                             {
                                 long posted = long.Parse(reader.ReadToEnd());
-                                Song song = songPlayer.GetPlayList(string.Empty, 0, 100).FirstOrDefault(x => x.TempId == posted);
-                                if (song != null)
-									songPlayer.Enqueue(song);
+                                songPlayer.Enqueue(posted);
                             }
                             break;
                         case "DELETE":
                             using (var reader = new StreamReader(request.InputStream))
                             {
                                 long posted = long.Parse(reader.ReadToEnd());
-								//TODO: if the same song is in the list twice, which one is removed?
-                                Song song = songPlayer.GetPlayList(string.Empty, 0, 100).FirstOrDefault(x => x.TempId == posted);
-                                if (song != null)
-									songPlayer.Dequeue(song);
+                                songPlayer.Dequeue(posted);
                             }
                             break;
                     }

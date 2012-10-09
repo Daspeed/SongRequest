@@ -18,8 +18,10 @@ namespace SongRequest
 
         void Next();
 
+        void Enqueue(long id);
 		void Enqueue(Song song);
-		
+
+        void Dequeue(long id);
 		void Dequeue(Song song);
 
         int Volume { get; set; }

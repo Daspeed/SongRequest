@@ -79,7 +79,6 @@
     <Compile Include="SongPlayer\SongPlayerWindowsMediaPlayer.cs" />
     <Compile Include="SongPlayer\ISongPlayer.cs" />
     <Compile Include="SongPlayer\Song.cs" />
-    <Compile Include="SongPlayer\SongPlayerMock.cs" />
     <Compile Include="SongPlayer\PlayerStatus.cs" />
     <Compile Include="SongPlayer\SongLibrary.cs" />
     <Compile Include="SongPlayer\SongPlayerFactory.cs" />
