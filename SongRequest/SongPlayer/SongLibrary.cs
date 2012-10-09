@@ -3,6 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Text.RegularExpressions;
 
 namespace SongRequest
 {
@@ -129,7 +130,7 @@ namespace SongRequest
 
                     Song song = new Song();
                     song.FileName = fileName;
-                    song.Name = fileName;
+                    song.Name = Regex.Replace(new FileInfo(fileName).Name, @"\.mp3$", string.Empty, RegexOptions.IgnoreCase);
 
                     AddSong(song);
 

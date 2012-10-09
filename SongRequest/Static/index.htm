@@ -380,6 +380,11 @@
             $("#searchbutton").click(function () {
                 getPlayList($("#searchtext").val(), 1);
             });
+            $("#searchForm").on('submit', function () {
+                getPlayList($("#searchtext").val(), 1);
+                return false;
+            });
+
             $("#previousbutton").click(function () {
                 getPlayList($("#searchtext").val(), Math.max(1, parseInt($("#currentPage").text(), 10) - 1));
             });
@@ -463,7 +468,7 @@
             </tr>
             <tr class="evenrow">
                 <td>
-                    <form action="/static/404.htm">
+                    <form id="searchForm" action="/static/404.htm">
                         <input type="text" name="searchtext" id="searchtext">
                         <input type="button" class="button" name="searchbutton" id="searchbutton" value="Search">
                         <input type="reset" class="button" name="clearbutton" id="clearbutton" value="Clear">
