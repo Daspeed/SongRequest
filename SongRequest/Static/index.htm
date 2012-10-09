@@ -62,7 +62,7 @@
             -moz-border-radius:6px; 
             */
             
-            width:500px;
+            min-width:500px;
             height:40px;
             margin-left:10px;
         }
@@ -70,6 +70,7 @@
         {
             margin-left:4px;
             margin-top:4px;
+            margin-right:4px;
         }
         
         .info
@@ -407,7 +408,14 @@
 <% _.each(songs, function(song, index) { %>
 <div class="qitem <%- index%2===0?'even':'odd' %>queueitemcontainer" data="<%= song.TempId %>">
     <div class="queueitem">
-        <strong><%- song.Artist %> - <%- song.Name %> - <%- window.SongRequest.convertNumberToTime(song.Duration) %></strong>
+        <strong>
+        <%- song.Artist %>
+        <% if(song.Artist && song.Name){ %>
+        -
+        <% } %>
+        <%- song.Name %>
+        (<%- window.SongRequest.convertNumberToTime(song.Duration) %>)
+        </strong>
         <div>Requested by: UKNOWN</div>
     </div>
 </div>
@@ -433,7 +441,14 @@
 </script>
 <script id="statusTemplate" type="text/template">
 <div class="playinfo">  
-    <strong><%- status.Song.Artist %> - <%- status.Song.Name %> - <%- window.SongRequest.convertNumberToTime(status.Position) %> / <%- window.SongRequest.convertNumberToTime(status.Song.Duration)%></strong><br>
+    <strong>
+        <%- status.Song.Artist %>
+        <% if(status.Song.Artist && status.Song.Name){ %>
+        -
+        <% } %>
+        <%- status.Song.Name %>
+        <%- window.SongRequest.convertNumberToTime(status.Position) %> / <%- window.SongRequest.convertNumberToTime(status.Song.Duration)%>
+    </strong><br>
     <div>Requested by: UKNOWN</div>
 </div>
 </script>
