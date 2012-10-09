@@ -64,6 +64,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConfigReader.cs" />
+    <Compile Include="Config\ConfigSection.cs" />
+    <Compile Include="Config\ConfigFile.cs" />
     <Compile Include="Dispatcher.cs" />
     <Compile Include="Handlers\BaseHandler.cs" />
     <Compile Include="Handlers\DynamicHandler.cs" />
@@ -84,9 +86,6 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Static\404.htm" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Static\index.htm" />
