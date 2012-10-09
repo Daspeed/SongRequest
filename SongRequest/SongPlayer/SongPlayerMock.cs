@@ -11,10 +11,12 @@ namespace SongRequest
 		private List<Song> _queue;
 		private Song _currentSong;
 		private DateTime _currentSongStart;
+        public event StatusChangedEventHandler LibraryStatusChanged;
+        public event StatusChangedEventHandler PlayerStatusChanged;
 
 		public SongPlayerMock ()
 		{
-			songLibrary = new SongLibrary();
+			songLibrary = new SongLibrary("q:\\music");
 			
 			songLibrary.AddSong(new Song(){ Artist="4 Strings", Name="Summer Sun", Duration = (int)TimeSpan.FromSeconds(6).TotalSeconds, FileName="4.mp3"});
             songLibrary.AddSong(new Song() { Artist = "Adele", Name = "Set Fire To The Rain", Duration = (int)TimeSpan.FromSeconds(41).TotalSeconds, FileName = "A.mp3" });
