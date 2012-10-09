@@ -13,13 +13,13 @@ namespace SongRequest
 		PlayerStatus PlayerStatus {get;}
 		
         IEnumerable<Song> GetPlayList(string filter, int skip, int count);
-		
-		IEnumerable<Song> PlayQueue {get;}
+
+        IEnumerable<RequestedSong> PlayQueue { get; }
 
         void Next();
 
-        void Enqueue(long id);
-		void Enqueue(Song song);
+        void Enqueue(long id, string requesterName);
+        void Enqueue(Song song, string requesterName);
 
         void Dequeue(long id);
 		void Dequeue(Song song);

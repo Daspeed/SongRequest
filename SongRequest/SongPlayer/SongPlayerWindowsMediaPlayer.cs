@@ -13,8 +13,8 @@ namespace SongRequest
         private SongLibrary _songLibrary;
         private WindowsMediaPlayer player;
 
-        private List<Song> _queue;
-        private Song _currentSong;
+        private List<RequestedSong> _queue;
+        private RequestedSong _currentSong;
         private DateTime _currentSongStart;
         private Thread _updateThread;
         public event StatusChangedEventHandler LibraryStatusChanged;
@@ -26,7 +26,7 @@ namespace SongRequest
         {
             player = new WindowsMediaPlayer();
             player.settings.volume = 10;
-            _queue = new List<Song>();
+            _queue = new List<RequestedSong>();
             _songLibrary = new SongLibrary(SongPlayerFactory.GetConfigFile().GetValue("library.path"));
             _songLibrary.StatusChanged += OnLibraryStatusChanged;
 
@@ -77,7 +77,7 @@ namespace SongRequest
 
             if (_currentSong != null)
             {
-                player.URL = _currentSong.FileName;
+                player.URL = _currentSong.Song.FileName;
             }
         }
 
@@ -98,8 +98,8 @@ namespace SongRequest
                 }
 
                 string status;
-                if (SongPlayerFactory.GetSongPlayer().PlayerStatus.Song != null)
-                    status = string.Format("Currently playing: {0} sec - {1}", SongPlayerFactory.GetSongPlayer().PlayerStatus.Position, SongPlayerFactory.GetSongPlayer().PlayerStatus.Song.Name);
+                if (SongPlayerFactory.GetSongPlayer().PlayerStatus.RequestedSong != null)
+                    status = string.Format("Currently playing: {0} sec - {1}", SongPlayerFactory.GetSongPlayer().PlayerStatus.Position, SongPlayerFactory.GetSongPlayer().PlayerStatus.RequestedSong.Song.Name);
                 else
                     status = "No song playing...";
 
@@ -114,7 +114,7 @@ namespace SongRequest
             get
             {
                 PlayerStatus playerStatus = new PlayerStatus();
-                playerStatus.Song = _currentSong;
+                playerStatus.RequestedSong = _currentSong;
                 playerStatus.Position = (int)(DateTime.Now - _currentSongStart).TotalSeconds;
                 playerStatus.Volume = this.Volume;
 
@@ -127,7 +127,7 @@ namespace SongRequest
             return _songLibrary.GetSongs(filter, skip, count);
         }
 
-        public IEnumerable<Song> PlayQueue
+        public IEnumerable<RequestedSong> PlayQueue
         {
             get
             {
@@ -135,17 +135,17 @@ namespace SongRequest
             }
         }
 
-        public void Enqueue(long id)
+        public void Enqueue(long id, string requesterName)
         {
             Song song = _songLibrary.GetSongs(string.Empty, 0, int.MaxValue).FirstOrDefault(x => x.TempId == id);
             
             if(song != null)
-                Enqueue(song);
+                Enqueue(song, requesterName);
         }
 
-        public void Enqueue(Song song)
+        public void Enqueue(Song song, string requesterName)
         {
-            _queue.Add(song);
+            _queue.Add(new RequestedSong { Song = song, RequesterName = requesterName });
         }
 
         public void Dequeue(long id)
@@ -158,7 +158,15 @@ namespace SongRequest
 
         public void Dequeue(Song song)
         {
-            _queue.Remove(song);
+            bool found = false;
+            _queue.RemoveAll(x => {
+                if (x.Song == song && !found)
+                {
+                    found = true;
+                    return true;
+                }
+                return false;
+            });
         }
 
         public void Dispose()

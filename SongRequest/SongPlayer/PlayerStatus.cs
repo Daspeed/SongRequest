@@ -4,7 +4,8 @@ namespace SongRequest
 {
 	public class PlayerStatus
 	{
-		public Song Song {
+        public RequestedSong RequestedSong
+        {
 			get;
 			set;
 		}

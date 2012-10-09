@@ -301,7 +301,7 @@
                     $("#queue").off('dblclick', '.qitem');
 
                     $("#queue").html(
-                        queueTemplate({ songs: data.Queue })
+                        queueTemplate({ requestedSongs: data.Queue })
                     );
 
                     $(".play").off('dblclick', '.playinfo');
@@ -403,20 +403,20 @@
 <body>
 <script id="queueTemplate" type="text/template">
 <div class="listheader queueheader">
-    Queue (<%- songs.length %>)
+    Queue (<%- requestedSongs.length %>)
 </div>
-<% _.each(songs, function(song, index) { %>
-<div class="qitem <%- index%2===0?'even':'odd' %>queueitemcontainer" data="<%= song.TempId %>">
+<% _.each(requestedSongs, function(requestedSong, index) { %>
+<div class="qitem <%- index%2===0?'even':'odd' %>queueitemcontainer" data="<%= requestedSong.Song.TempId %>">
     <div class="queueitem">
         <strong>
-        <%- song.Artist %>
-        <% if(song.Artist && song.Name){ %>
+        <%- requestedSong.Song.Artist %>
+        <% if(requestedSong.Song.Artist && requestedSong.Song.Name){ %>
         -
         <% } %>
-        <%- song.Name %>
-        (<%- window.SongRequest.convertNumberToTime(song.Duration) %>)
+        <%- requestedSong.Song.Name %>
+        (<%- window.SongRequest.convertNumberToTime(requestedSong.Song.Duration) %>)
         </strong>
-        <div>Requested by: UKNOWN</div>
+        <div>Requested by: <%- requestedSong.RequesterName %></div>
     </div>
 </div>
 <% }); %>
@@ -442,14 +442,14 @@
 <script id="statusTemplate" type="text/template">
 <div class="playinfo">  
     <strong>
-        <%- status.Song.Artist %>
-        <% if(status.Song.Artist && status.Song.Name){ %>
+        <%- status.RequestedSong.Song.Artist %>
+        <% if(status.RequestedSong.Song.Artist && status.RequestedSong.Song.Name){ %>
         -
         <% } %>
-        <%- status.Song.Name %>
-        <%- window.SongRequest.convertNumberToTime(status.Position) %> / <%- window.SongRequest.convertNumberToTime(status.Song.Duration)%>
+        <%- status.RequestedSong.Song.Name %>
+        <%- window.SongRequest.convertNumberToTime(status.Position) %> / <%- window.SongRequest.convertNumberToTime(status.RequestedSong.Song.Duration)%>
     </strong><br>
-    <div>Requested by: UKNOWN</div>
+    <div>Requested by: <%- status.RequestedSong.RequesterName %></div>
 </div>
 </script>
 

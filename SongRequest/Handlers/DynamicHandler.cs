@@ -40,7 +40,7 @@ namespace SongRequest.Handlers
                             using (var reader = new StreamReader(request.InputStream))
                             {
                                 long posted = long.Parse(reader.ReadToEnd());
-                                songPlayer.Enqueue(posted);
+                                songPlayer.Enqueue(posted, request.UserHostName);
                             }
                             break;
                         case "DELETE":

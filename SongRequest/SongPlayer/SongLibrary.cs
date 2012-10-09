@@ -201,14 +201,17 @@ namespace SongRequest
             }
         }
 
-        public Song GetRandomSong()
+        public RequestedSong GetRandomSong()
         {
             lock (lockObject)
             {
                 if (_songs.Count == 0)
                     return null;
 
-                return _songs[random.Next(_songs.Count)];
+                return new RequestedSong() {
+                    Song = _songs[random.Next(_songs.Count)],
+                    RequesterName = "randomizer"
+                };
             }
         }
     }
