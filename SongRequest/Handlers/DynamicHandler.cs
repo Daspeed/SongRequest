@@ -66,10 +66,16 @@ namespace SongRequest.Handlers
                                 string posted = reader.ReadToEnd();
                                 var playlistRequest = JsonConvert.DeserializeAnonymousType(posted, new { Filter = string.Empty, Page = 0 });
 
+                                Song[] songs = songPlayer.GetPlayList(playlistRequest.Filter, 0, int.MaxValue).ToArray();
+
                                 response.ContentType = "application/json";
                                 WriteUtf8String(response.OutputStream, JsonConvert.SerializeObject(
-                                    songPlayer.GetPlayList(playlistRequest.Filter, playlistRequest.Page * _pageSize, _pageSize))
-                                );
+                                    new{
+                                        TotalPageCount = (songs.Length + (_pageSize-1)) / _pageSize,
+                                        CurrentPage = playlistRequest.Page,
+                                        SongsForCurrentPage = songs.Skip((playlistRequest.Page-1) * _pageSize).Take(_pageSize).ToArray()
+                                    }
+                                ));
                             }
                         }
                         break;

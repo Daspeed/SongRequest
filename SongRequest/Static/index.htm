@@ -274,7 +274,6 @@
     <script type="text/javascript">
         $(function () {
             window.SongRequest = {
-                page: 0,
                 convertNumberToTime: function (num) {
                     var minutes = parseInt(num / 60, 10);
                     var seconds = parseInt(num % 60, 10);
@@ -331,12 +330,27 @@
             var getPlayList = function (filter, page) {
                 var message = '{ Filter: "' + filter.replace(/"/, '') + '", Page: ' + String(page) + '}';
                 ajaxCall('/dynamic/playlist', 'POST', message, function (data) {
+                    var currentPage = Math.max(data.CurrentPage, 1);
+                    var totalPageCount = Math.max(data.TotalPageCount, 1);
 
                     $(".playlist").off("click", ".button");
 
                     $("#playlistContainer").html(
-                        playlistTemplate({ songs: data })
+                        playlistTemplate({ songs: data.SongsForCurrentPage })
                     );
+
+                    $("#currentPage").text(String(currentPage));
+                    $("#pageCount").text(String(totalPageCount));
+
+                    if (currentPage > 1)
+                        $("#previousbutton").removeAttr('disabled');
+                    else
+                        $("#previousbutton").attr('disabled', 'disabled');
+
+                    if (currentPage < totalPageCount)
+                        $("#nextbutton").removeAttr('disabled');
+                    else
+                        $("#nextbutton").attr('disabled', 'disabled');
 
                     $(".playlist").on("click", ".button", function (event) {
                         var songId = $(this).attr('data');
@@ -363,10 +377,20 @@
                 }
             });
 
+            $("#searchbutton").click(function () {
+                getPlayList($("#searchtext").val(), 1);
+            });
+            $("#previousbutton").click(function () {
+                getPlayList($("#searchtext").val(), Math.max(1, parseInt($("#currentPage").text(), 10) - 1));
+            });
+            $("#nextbutton").click(function () {
+                getPlayList($("#searchtext").val(), Math.max(1, parseInt($("#currentPage").text(), 10) + 1));
+            });
+
             refreshQueue();
             setInterval(refreshQueue, 1000);
 
-            getPlayList('', window.SongRequest.page);
+            getPlayList('', 0);
         });
     </script>
 </head>
@@ -439,16 +463,18 @@
             </tr>
             <tr class="evenrow">
                 <td>
-                    <input type="text" name="searchtext" id="searchtext">
-                    <input type="button" class="button" name="searchbutton" id="searchbutton" value="Search">
-                    <input type="button" class="button" name="clearbutton" id="clearbutton" value="Clear">
+                    <form action="/static/404.htm">
+                        <input type="text" name="searchtext" id="searchtext">
+                        <input type="button" class="button" name="searchbutton" id="searchbutton" value="Search">
+                        <input type="reset" class="button" name="clearbutton" id="clearbutton" value="Clear">
+                    </form>
                 </td>
                 <td>
-                    1 of 2
+                    <span id="currentPage">1</span> of <span id="pageCount">1</span>
                 </td>
                 <td class="controls" style="text-align:right;">
-                    <input type="button" class="button" name="previousbutton" id="previousbutton" value="Previous">
-                    <input type="button" class="button" name="nextbutton" id="nextbutton" value="Next">
+                    <input type="button" class="button" name="previousbutton" disabled="disabled" id="previousbutton" value="Previous">
+                    <input type="button" class="button" name="nextbutton" disabled="disabled" id="nextbutton" value="Next">
                 </td>
             </tr>
         </table>

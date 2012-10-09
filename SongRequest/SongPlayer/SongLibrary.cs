@@ -193,9 +193,9 @@ namespace SongRequest
         {
             lock (lockObject)
             {
-                return _songs.Where(s => s.FileName.ToLower().Contains(filter.ToLower()) ||
-                                         s.Name.ToLower().Contains(filter.ToLower()) ||
-                                         s.Artist.ToLower().Contains(filter.ToLower())                    
+                return _songs.Where(s => (s.FileName??string.Empty).ToLower().Contains(filter.ToLower()) ||
+                                         (s.Name??string.Empty).ToLower().Contains(filter.ToLower()) ||
+                                         (s.Artist??string.Empty).ToLower().Contains(filter.ToLower())                    
                                     ).Skip(skip).Take(count);
             }
         }
