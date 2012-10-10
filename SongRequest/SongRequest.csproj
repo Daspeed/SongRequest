@@ -76,6 +76,7 @@
     <Compile Include="Interfaces\IHandler.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SongPlayer\FairQueue.cs" />
     <Compile Include="SongPlayer\RequestedSong.cs" />
     <Compile Include="SongPlayer\SongPlayerWindowsMediaPlayer.cs" />
     <Compile Include="SongPlayer\ISongPlayer.cs" />

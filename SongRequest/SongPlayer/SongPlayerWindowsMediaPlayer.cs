@@ -14,7 +14,7 @@ namespace SongRequest
         private SongLibrary _songLibrary;
         private WindowsMediaPlayer player;
 
-        private List<RequestedSong> _queue;
+        private FairQueue _queue;
         private RequestedSong _currentSong;
         private DateTime _currentSongStart;
         private Thread _updateThread;
@@ -28,7 +28,7 @@ namespace SongRequest
             player = new WindowsMediaPlayer();
             player.settings.volume = 75;
 
-            _queue = new List<RequestedSong>();
+            _queue = new FairQueue();
             _songLibrary = new SongLibrary();
             _songLibrary.StatusChanged += OnLibraryStatusChanged;
 
@@ -75,7 +75,7 @@ namespace SongRequest
             if (_queue.Count > 0)
             {
                 //Take next song from queue
-                _currentSong = _queue[0];
+                _currentSong = _queue.Current.First();
 
                 _queue.Remove(_currentSong);
             }
@@ -159,7 +159,7 @@ namespace SongRequest
         {
             get
             {
-                return _queue;
+                return _queue.Current.ToArray();
             }
         }
 
@@ -192,7 +192,7 @@ namespace SongRequest
                 return;
 
             SongLibrary.UpdateSingleTag(song);
-            _queue.Add(new RequestedSong { Song = song, RequesterName = requesterName });
+            _queue.Add(new RequestedSong { Song = song, RequesterName = requesterName, RequestedDate = DateTime.Now });
         }
 
         public void Dequeue(string id, string requesterName)
@@ -208,16 +208,7 @@ namespace SongRequest
             if (!ClientAllowed(requesterName))
                 return;
 
-            bool found = false;
-            _queue.RemoveAll(x =>
-            {
-                if (x.Song == song && !found)
-                {
-                    found = true;
-                    return true;
-                }
-                return false;
-            });
+            _queue.Remove(song.TempId);
         }
 
         public void Dispose()

@@ -9,5 +9,6 @@ namespace SongRequest
     {
         public Song Song { get; set; }
         public string RequesterName { get; set; }
+        public DateTime RequestedDate { get; set; }
     }
 }

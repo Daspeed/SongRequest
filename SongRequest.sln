@@ -5,7 +5,19 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dlls", "dlls", "{996BB787-D
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SongRequest", "SongRequest\SongRequest.csproj", "{3156BF98-361E-4C62-A228-01E0F233BA9E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SongRequest.Test", "SongRequest.Test\SongRequest.Test.csproj", "{CB6EC13B-B65E-44A7-9641-C5631929891B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{95C355DE-8974-47EB-A2CC-95F3E357EF73}"
+	ProjectSection(SolutionItems) = preProject
+		Local.testsettings = Local.testsettings
+		SongRequest.vsmdi = SongRequest.vsmdi
+		TraceAndTestImpact.testsettings = TraceAndTestImpact.testsettings
+	EndProjectSection
+EndProject
 Global
+	GlobalSection(TestCaseManagementSettings) = postSolution
+		CategoryFile = SongRequest.vsmdi
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
@@ -15,6 +27,10 @@ Global
 		{3156BF98-361E-4C62-A228-01E0F233BA9E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3156BF98-361E-4C62-A228-01E0F233BA9E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3156BF98-361E-4C62-A228-01E0F233BA9E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CB6EC13B-B65E-44A7-9641-C5631929891B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CB6EC13B-B65E-44A7-9641-C5631929891B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CB6EC13B-B65E-44A7-9641-C5631929891B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CB6EC13B-B65E-44A7-9641-C5631929891B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
