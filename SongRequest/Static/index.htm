@@ -403,7 +403,8 @@
 <body>
 <script id="queueTemplate" type="text/template">
 <div class="listheader queueheader">
-    Queue (<%- requestedSongs.length %>)
+    Queue (<%- requestedSongs.length %> song<%- requestedSongs.length!=1?'s':'' %>,
+    <%- window.SongRequest.convertNumberToTime(_.chain(requestedSongs).map(function(requestedSong){ return requestedSong.Song.Duration; }).reduce(function(state, value){ return state+value;}, 0).value()) %>)
 </div>
 <% _.each(requestedSongs, function(requestedSong, index) { %>
 <div class="qitem <%- index%2===0?'even':'odd' %>queueitemcontainer" data="<%= requestedSong.Song.TempId %>">
