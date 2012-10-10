@@ -101,7 +101,7 @@ namespace SongRequest
             while (_running)
             {
                 if (!_songLibrary.ScanLibrary())
-                    Thread.Sleep(400);
+                    Thread.Sleep(500);
 
                 try
                 {
