@@ -381,6 +381,10 @@
             $("#searchbutton").click(function () {
                 getPlayList($("#searchtext").val(), 1);
             });
+            $("#clearbutton").click(function () {
+                $("#searchtext").val('');
+                getPlayList('', 1);
+            });
             $("#searchForm").on('submit', function () {
                 getPlayList($("#searchtext").val(), 1);
                 return false;
@@ -487,7 +491,7 @@
                     <form id="searchForm" action="/static/404.htm">
                         <input type="text" name="searchtext" id="searchtext">
                         <input type="button" class="button" name="searchbutton" id="searchbutton" value="Search">
-                        <input type="reset" class="button" name="clearbutton" id="clearbutton" value="Clear">
+                        <input type="button" class="button" name="clearbutton" id="clearbutton" value="Clear">
                     </form>
                 </td>
                 <td>
