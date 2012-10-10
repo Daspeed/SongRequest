@@ -27,7 +27,7 @@ namespace SongRequest
             player = new WindowsMediaPlayer();
             player.settings.volume = 10;
             _queue = new List<RequestedSong>();
-            _songLibrary = new SongLibrary(SongPlayerFactory.GetConfigFile().GetValue("library.path"));
+            _songLibrary = new SongLibrary();
             _songLibrary.StatusChanged += OnLibraryStatusChanged;
 
             _updateThread = new Thread(new ThreadStart(Update));
