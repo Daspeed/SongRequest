@@ -238,9 +238,16 @@ namespace SongRequest
 				if (_songs.Count == 0)
 					return null;
 
+                Song randomSong = _songs[random.Next(_songs.Count)];
+
+                //If song is > 10 minutes, pick another song... But don't try ferever...
+                if (randomSong.Duration != null &&
+                    randomSong.Duration > 600)
+                    randomSong = _songs[random.Next(_songs.Count)];
+
 				return new RequestedSong()
 				{
-					Song = _songs[random.Next(_songs.Count)],
+                    Song = randomSong,
 					RequesterName = "randomizer"
 				};
 			}
