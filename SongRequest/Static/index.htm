@@ -340,7 +340,7 @@
             }
 
             var getPlayList = function (filter, page) {
-                var message = '{ Filter: "' + filter.replace(/"/, '') + '", Page: ' + String(page) + '}';
+                var message = '{ Filter: "' + filter.replace(/"/g, '').replace(/\\/g, '\\\\') + '", Page: ' + String(page) + '}';
                 ajaxCall('/dynamic/playlist', 'POST', message, function (data) {
                     var currentPage = Math.max(data.CurrentPage, 1);
                     var totalPageCount = Math.max(data.TotalPageCount, 1);

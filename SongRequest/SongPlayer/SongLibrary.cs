@@ -220,14 +220,17 @@ namespace SongRequest
 			}
 		}
 
-		public IEnumerable<Song> GetSongs(string filter, int skip, int count)
+		public IEnumerable<Song> GetSongs(string filter)
 		{
-			lock (lockObject)
+            if (string.IsNullOrEmpty(filter))
+                return _songs;
+            
+            lock (lockObject)
 			{
-				return _songs.Where(s => (s.FileName ?? string.Empty).ToLower().Contains(filter.ToLower()) ||
-										 (s.Name ?? string.Empty).ToLower().Contains(filter.ToLower()) ||
-										 (s.Artist ?? string.Empty).ToLower().Contains(filter.ToLower())
-									).Skip(skip).Take(count);
+                return _songs.Where(s => (s.FileName ?? string.Empty).IndexOf(filter, StringComparison.OrdinalIgnoreCase) > -1 ||
+                                         (s.Name ?? string.Empty).IndexOf(filter, StringComparison.OrdinalIgnoreCase) > -1 ||
+										 (s.Artist ?? string.Empty).IndexOf(filter, StringComparison.OrdinalIgnoreCase) > -1 
+									).OrderBy(x => x.Artist);
 			}
 		}
 

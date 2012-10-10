@@ -59,7 +59,7 @@ namespace SongRequest.Handlers
                                 string posted = reader.ReadToEnd();
                                 var playlistRequest = JsonConvert.DeserializeAnonymousType(posted, new { Filter = string.Empty, Page = 0 });
 
-                                Song[] songs = songPlayer.GetPlayList(playlistRequest.Filter, 0, int.MaxValue).ToArray();
+                                Song[] songs = songPlayer.GetPlayList(playlistRequest.Filter).ToArray();
 
                                 response.ContentType = "application/json";
                                 WriteUtf8String(response.OutputStream, JsonConvert.SerializeObject(

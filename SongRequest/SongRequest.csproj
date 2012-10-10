@@ -74,7 +74,7 @@
     <Compile Include="Handlers\IndexHandler.cs" />
     <Compile Include="Handlers\KillHandler.cs" />
     <Compile Include="Handlers\PageNotFoundHandler.cs" />
-    <Compile Include="Interfaces\IHandler.cs" />
+    <Compile Include="Handlers\IHandler.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SongPlayer\FairQueue.cs" />
