@@ -286,6 +286,7 @@
             var queueTemplate = _.template($("#queueTemplate").html());
             var playlistTemplate = _.template($("#playlistTemplate").html());
             var statusTemplate = _.template($("#statusTemplate").html());
+            var titleTemplate = _.template('<%= status.RequestedSong.Song.Artist %> <% if(status.RequestedSong.Song.Artist && status.RequestedSong.Song.Name){ %> - <% } %><%= status.RequestedSong.Song.Name %> | SongRequest');
 
             var ajaxCall = function (url, type, data, fnSuccess) {
                 $.ajax({
@@ -309,6 +310,7 @@
                     $(".play").html(
                         statusTemplate({ status: data.PlayerStatus })
                     );
+                    document.title = titleTemplate({ status: data.PlayerStatus });
 
                     $("#volumeContainer").text(data.PlayerStatus.Volume);
 
