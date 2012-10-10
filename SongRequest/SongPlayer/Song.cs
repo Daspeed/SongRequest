@@ -2,22 +2,28 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Security.Cryptography;
 
 namespace SongRequest
 {
     [Serializable]
     public class Song
     {
-        private static long _count;
+        private string _id = null;
 
-        public Song()
+        public string TempId 
         {
-            _count++;
-            TempId = _count;
-            TagRead = false;
-        }
+            get
+            {
+                if (_id == null)
+                {
+                    SHA1CryptoServiceProvider sha1 = new SHA1CryptoServiceProvider();
+                    _id =  BitConverter.ToString(sha1.ComputeHash(Encoding.UTF8.GetBytes(FileName))).Replace("-", "");
+                }
 
-        public long TempId { get; private set; }
+                return _id;
+            }
+        }
         public string Artist { get; set; }
         public string Name { get; set; }
         public string FileName { get; set; }

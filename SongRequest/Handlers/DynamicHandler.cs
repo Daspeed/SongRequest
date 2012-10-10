@@ -21,7 +21,9 @@ namespace SongRequest.Handlers
             string action = actionPath[1];
             
 			ISongplayer songPlayer = SongPlayerFactory.GetSongPlayer();
-			
+
+            string requester = request.UserHostName;
+
             switch (action)
             {
                 case "queue":
@@ -39,15 +41,13 @@ namespace SongRequest.Handlers
                         case "POST":
                             using (var reader = new StreamReader(request.InputStream))
                             {
-                                long posted = long.Parse(reader.ReadToEnd());
-                                songPlayer.Enqueue(posted, request.UserHostName);
+                                songPlayer.Enqueue(reader.ReadToEnd(), requester);
                             }
                             break;
                         case "DELETE":
                             using (var reader = new StreamReader(request.InputStream))
                             {
-                                long posted = long.Parse(reader.ReadToEnd());
-                                songPlayer.Dequeue(posted);
+                                songPlayer.Dequeue(reader.ReadToEnd(), requester);
                             }
                             break;
                     }
@@ -77,7 +77,7 @@ namespace SongRequest.Handlers
                     }
                 case "next":
                     response.ContentType = "application/json";
-                    songPlayer.Next();
+                    songPlayer.Next(requester);
                     WriteUtf8String(response.OutputStream, JsonConvert.SerializeObject(songPlayer.PlayerStatus));
                     break;
                 case "volume":

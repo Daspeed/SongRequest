@@ -23,8 +23,10 @@ namespace SongRequest
             {
                 ConfigFile configFile = new ConfigFile("songrequest.config");
                 configFile.SetValue("server.port", "8765");
+                configFile.SetValue("server.clients", "all");
                 configFile.SetValue("library.path", "c:\\music");
                 configFile.SetValue("library.minutesbetweenscans", "1");
+                configFile.SetValue("library.extensions", "mp3");
                 configFile.Save();
             }
 

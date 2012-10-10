@@ -10,6 +10,7 @@ namespace SongRequest
 {
     public class SongPlayerWindowsMediaPlayer : ISongplayer, IDisposable
     {
+        private static object lockObject = new object();
         private SongLibrary _songLibrary;
         private WindowsMediaPlayer player;
 
@@ -25,7 +26,8 @@ namespace SongRequest
         public SongPlayerWindowsMediaPlayer()
         {
             player = new WindowsMediaPlayer();
-            player.settings.volume = 10;
+            player.settings.volume = 75;
+
             _queue = new List<RequestedSong>();
             _songLibrary = new SongLibrary();
             _songLibrary.StatusChanged += OnLibraryStatusChanged;
@@ -46,38 +48,51 @@ namespace SongRequest
             if (PlayerStatusChanged != null)
                 PlayerStatusChanged(status);
         }
-        
+
         public int Volume
         {
             get
             {
-                return player.settings.volume;
+                lock (lockObject)
+                {
+                    return player.settings.volume;
+                }
             }
             set
             {
-                player.settings.volume = Math.Max(Math.Min(value, 100), 0);
+                lock (lockObject)
+                {
+                    player.settings.volume = Math.Max(Math.Min(value, 100), 0);
+                }
             }
         }
 
-        public void Next()
+        public void Next(string requesterName)
         {
-			if (_queue.Count > 0)
-			{					
-				//Take next song from queue
-				_currentSong = _queue[0];
-						
-				_queue.Remove(_currentSong);    
-			} else
-			{
-				//Take random song
-				_currentSong = _songLibrary.GetRandomSong();
-			}
-					
-			_currentSongStart = DateTime.Now;
+            if (!ClientAllowed(requesterName))
+                return;
+
+            if (_queue.Count > 0)
+            {
+                //Take next song from queue
+                _currentSong = _queue[0];
+
+                _queue.Remove(_currentSong);
+            }
+            else
+            {
+                //Take random song
+                _currentSong = _songLibrary.GetRandomSong();
+            }
+
+            _currentSongStart = DateTime.Now;
 
             if (_currentSong != null)
             {
-                player.URL = _currentSong.Song.FileName;
+                lock (lockObject)
+                {
+                    player.URL = _currentSong.Song.FileName;
+                }
             }
         }
 
@@ -85,18 +100,25 @@ namespace SongRequest
         {
             while (_running)
             {
-                _songLibrary.ScanLibrary();
+                if (!_songLibrary.ScanLibrary())
+                    Thread.Sleep(400);
 
                 try
                 {
-                    if (player.playState == WMPPlayState.wmppsStopped ||
-                        player.playState == WMPPlayState.wmppsUndefined)
-                        Next();
+                    WMPPlayState playState;
+                    lock (lockObject)
+                    {
+                        playState = player.playState;
+                    }
+
+                    if (playState == WMPPlayState.wmppsStopped ||
+                        playState == WMPPlayState.wmppsUndefined)
+                        Next(null);
                 }
                 catch
                 {
                 }
-
+                
                 string status;
                 if (SongPlayerFactory.GetSongPlayer().PlayerStatus.RequestedSong != null)
                     status = string.Format("Currently playing: {0} sec - {1}", SongPlayerFactory.GetSongPlayer().PlayerStatus.Position, SongPlayerFactory.GetSongPlayer().PlayerStatus.RequestedSong.Song.Name);
@@ -105,7 +127,13 @@ namespace SongRequest
 
                 OnPlayerStatusChanged(status);
 
-                Thread.Sleep(100);
+                //Enqueue random song when the queue is empty and the current song is almost finished
+                if (_queue.Count == 0 &&  _currentSong != null && (int)(DateTime.Now - _currentSongStart).TotalSeconds + 20 > _currentSong.Song.Duration)
+                {
+                    RequestedSong requestedSong = _songLibrary.GetRandomSong();
+                    Enqueue(requestedSong.Song, requestedSong.RequesterName);
+                }
+
             }
         }
 
@@ -135,31 +163,54 @@ namespace SongRequest
             }
         }
 
-        public void Enqueue(long id, string requesterName)
-        {
-            Song song = _songLibrary.GetSongs(string.Empty, 0, int.MaxValue).FirstOrDefault(x => x.TempId == id);
-            
-            if(song != null)
-                Enqueue(song, requesterName);
-        }
-
-        public void Enqueue(Song song, string requesterName)
-        {
-            _queue.Add(new RequestedSong { Song = song, RequesterName = requesterName });
-        }
-
-        public void Dequeue(long id)
+        public void Enqueue(string id, string requesterName)
         {
             Song song = _songLibrary.GetSongs(string.Empty, 0, int.MaxValue).FirstOrDefault(x => x.TempId == id);
 
             if (song != null)
-                Dequeue(song);
+            {
+                Enqueue(song, requesterName);
+            }
         }
 
-        public void Dequeue(Song song)
+        private bool ClientAllowed(string requesterName)
         {
+            if (string.IsNullOrEmpty(requesterName))
+                return true;
+
+            string allowedClients = SongPlayerFactory.GetConfigFile().GetValue("server.clients");
+                
+            //Only allow clients from config file
+            return  string.IsNullOrEmpty(allowedClients) ||
+                    allowedClients.Equals("all", StringComparison.OrdinalIgnoreCase) ||
+                    SongPlayerFactory.GetConfigFile().GetValue("server.clients").ToLower().Contains(requesterName);
+        }
+
+        public void Enqueue(Song song, string requesterName)
+        {
+            if (!ClientAllowed(requesterName))
+                return;
+
+            SongLibrary.UpdateSingleTag(song);
+            _queue.Add(new RequestedSong { Song = song, RequesterName = requesterName });
+        }
+
+        public void Dequeue(string id, string requesterName)
+        {
+            Song song = _songLibrary.GetSongs(string.Empty, 0, int.MaxValue).FirstOrDefault(x => x.TempId == id);
+
+            if (song != null)
+                Dequeue(song, requesterName);
+        }
+
+        public void Dequeue(Song song, string requesterName)
+        {
+            if (!ClientAllowed(requesterName))
+                return;
+
             bool found = false;
-            _queue.RemoveAll(x => {
+            _queue.RemoveAll(x =>
+            {
                 if (x.Song == song && !found)
                 {
                     found = true;

@@ -56,15 +56,11 @@ namespace SongRequest
                     HttpListenerContext context = listener.GetContext();
                     Stopwatch watch = Stopwatch.StartNew();
 
-                    //Console.WriteLine("Accepted new request - {0}", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
-
-                    //Console.WriteLine("{0}\t{1}", context.Request.UserHostAddress, context.Request.RawUrl);
                     Program_LastRequestChanged(string.Format("{0} - {1}\t{2}", DateTime.Now.ToString("HH:mm:ss"), context.Request.UserHostAddress, context.Request.RawUrl));
 
                     try
                     {
                         Dispatcher.ProcessRequest(context);
-                        //Console.WriteLine("Request ended - {0}ms", watch.ElapsedMilliseconds);
 
                         watch.Stop();
                     }
@@ -77,8 +73,6 @@ namespace SongRequest
                     }
                 }
             }
-
-            //Console.WriteLine("No longer listening");
         }
 
         static object consoleLock = new object();

@@ -16,13 +16,13 @@ namespace SongRequest
 
         IEnumerable<RequestedSong> PlayQueue { get; }
 
-        void Next();
+        void Next(string requesterName);
 
-        void Enqueue(long id, string requesterName);
+        void Enqueue(string id, string requesterName);
         void Enqueue(Song song, string requesterName);
 
-        void Dequeue(long id);
-		void Dequeue(Song song);
+        void Dequeue(string id, string requesterName);
+        void Dequeue(Song song, string requesterName);
 
         int Volume { get; set; }
 	}
