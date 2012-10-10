@@ -20,6 +20,10 @@ namespace SongRequest
 
         public void Add(RequestedSong requestedSong)
         {
+            //Do not allow adding same song twice...
+            if (_requestedSongs.Any(r => r.Song == requestedSong.Song))
+                return;
+
             _requestedSongs.Add(requestedSong);
         }
 
