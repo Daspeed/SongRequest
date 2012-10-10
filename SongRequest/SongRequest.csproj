@@ -68,6 +68,7 @@
     <Compile Include="Config\ConfigFile.cs" />
     <Compile Include="Dispatcher.cs" />
     <Compile Include="Handlers\BaseHandler.cs" />
+    <Compile Include="Handlers\FaviconHandler.cs" />
     <Compile Include="Handlers\DynamicHandler.cs" />
     <Compile Include="Handlers\StaticHandler.cs" />
     <Compile Include="Handlers\IndexHandler.cs" />
@@ -122,7 +123,9 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="Static\favicon.ico" />
+  </ItemGroup>
   <ItemGroup>
     <COMReference Include="WMPLib">
       <Guid>{6BF52A50-394A-11D3-B153-00C04F79FAA6}</Guid>

@@ -15,6 +15,7 @@ namespace SongRequest
             {string.Empty, new IndexHandler()},
             {"static", new StaticHandler()},
             {"dynamic", new DynamicHandler()},
+            {"favicon.ico", new FaviconHandler()},
             {"kill", new KillHandler()},
         };
 
