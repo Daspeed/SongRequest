@@ -100,13 +100,21 @@ namespace SongRequest.Handlers
 
         private static string GetRequester(HttpListenerRequest request)
         {
-            string requester;
-
             if (request.RemoteEndPoint != null)
-                requester = Dns.GetHostEntry(request.RemoteEndPoint.Address).HostName;
+            {
+                try
+                {
+                    return Dns.GetHostEntry(request.RemoteEndPoint.Address).HostName;
+                }
+                catch (Exception)
+                {
+                    return request.RemoteEndPoint.Address.ToString();
+                }
+            }
             else
-                requester = "unknown";
-            return requester;
+            {
+                return "unknown";
+            }
         }
     }
 }
