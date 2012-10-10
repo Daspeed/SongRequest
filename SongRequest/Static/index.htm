@@ -75,6 +75,8 @@
         
         .info
         {
+        	background-color: #70B0FF;
+        	
         	float:left;
         	width:60px;
             height:40px;
@@ -269,6 +271,13 @@
             font-weight:bold;
             padding-left:3px;
         }
+        
+        a.songlink
+        {
+        	text-decoration:none;
+        	color:black;
+        	cursor:default;
+        }
     </style>
     <script type="text/javascript" src="/static/underscore-min.js"></script>
     <script type="text/javascript" src="/static/jquery-1.8.2.min.js"></script>
@@ -290,7 +299,7 @@
 
             var ajaxCall = function (url, type, data, fnSuccess) {
                 $.ajax({
-                    'url': url,
+                    'url': url + '/RND' + String(Math.random()),
                     'type': type,
                     'data': data,
                     'success': fnSuccess
@@ -439,7 +448,7 @@
     <% _.each(songs, function(song, index) { %>
     <tr class="<%- index%2===0?'odd':'even' %>row">
         <td class="smallcolumn"><input type="button" class="button" data="<%= song.TempId %>" value="+"></td>
-        <td><%- song.Name %></td>
+        <td><a class="songlink" href="<%- song.FileName %>" title="<%- song.FileName %>"><%- song.Name%></a></td>
         <td><%- song.Artist %></td>
         <td><%- window.SongRequest.convertNumberToTime(song.Duration) %></td>
     </tr>
