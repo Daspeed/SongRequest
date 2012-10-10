@@ -32,6 +32,7 @@ namespace SongRequest
         private static void Run()
         {
             Console.Clear();
+            DrawArt();
 
             using (HttpListener listener = new HttpListener())
             {
@@ -107,6 +108,25 @@ namespace SongRequest
                 Console.Write(new string(' ', Console.WindowWidth));
                 Console.SetCursorPosition(0, 6);
                 Console.Write(status.Substring(0, Math.Min(status.Length, Console.WindowWidth)));
+            }
+        }
+
+        static void DrawArt()
+        {
+            lock (consoleLock)
+            {
+                string white = new string(' ', Console.WindowWidth - 36);
+                Console.SetCursorPosition(0, Console.WindowHeight-10);
+                Console.WriteLine(white + @"    ,");
+                Console.WriteLine(white + @"    |\        __");
+                Console.WriteLine(white + @"    | |      |--|             __");
+                Console.WriteLine(white + @"    |/       |  |            |~'");
+                Console.WriteLine(white + @"   /|_      () ()            |");
+                Console.WriteLine(white + @"  //| \             |\      ()");
+                Console.WriteLine(white + @" | \|_ |            | \ ");
+                Console.WriteLine(white + @"  \_|_/            ()  |");
+                Console.WriteLine(white + @"    |                  |");
+                Console.WriteLine(white + @"   @'                 ()");
             }
         }
     }
