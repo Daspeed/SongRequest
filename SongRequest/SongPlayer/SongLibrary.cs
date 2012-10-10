@@ -223,7 +223,7 @@ namespace SongRequest
 		public IEnumerable<Song> GetSongs(string filter)
 		{
             if (string.IsNullOrEmpty(filter))
-                return _songs;
+                return _songs.OrderBy(x => x.Artist);
             
             lock (lockObject)
 			{
