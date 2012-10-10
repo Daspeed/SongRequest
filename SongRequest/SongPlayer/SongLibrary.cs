@@ -32,12 +32,23 @@ namespace SongRequest
 
 		public void ScanLibrary()
 		{
+			int tagChanges = UpdateTags();
+			if (tagChanges > 0)
+			{
+				int songCount = _songs.Count();
+				int noTagCount = _songs.Count(s => !s.TagRead);
+				OnStatusChanged(string.Format("Library updated: {0} songs. Tags read: {1}/{0}", songCount, noTagCount));
+				Serialize();
+				OnStatusChanged(string.Format("Library updated: {0} songs. Tags read: {1}/{0} (saved)", songCount, noTagCount));
+			}
+
+
 			//No need to scan...
 			if (_nextFullUpdate > DateTime.Now)
 				return;
 
 			int fileChanges = ScanSongs();
-			int tagChanges = UpdateTags();
+			
 			if (fileChanges > 0 || tagChanges > 0)
 			{
 				int songCount = _songs.Count();
@@ -46,16 +57,14 @@ namespace SongRequest
 				Serialize();
 				OnStatusChanged(string.Format("Library updated: {0} songs. Tags read: {1}/{0} (saved)", songCount, noTagCount));
 			}
-			else
-			{
-				int minutesBetweenScans;
 
-				if (!int.TryParse(SongPlayerFactory.GetConfigFile().GetValue("library.minutesbetweenscans"), out minutesBetweenScans))
-					minutesBetweenScans = 2;
+			int minutesBetweenScans;
 
-				_nextFullUpdate = DateTime.Now + TimeSpan.FromMinutes(minutesBetweenScans);
-				OnStatusChanged("Library update completed (" + _songs.Count() + " songs). Next scan: " + _nextFullUpdate.ToShortTimeString());
-			}
+			if (!int.TryParse(SongPlayerFactory.GetConfigFile().GetValue("library.minutesbetweenscans"), out minutesBetweenScans))
+				minutesBetweenScans = 2;
+
+			_nextFullUpdate = DateTime.Now + TimeSpan.FromMinutes(minutesBetweenScans);
+			OnStatusChanged("Library update completed (" + _songs.Count() + " songs). Next scan: " + _nextFullUpdate.ToShortTimeString());
 		}
 
 		private void Serialize()
