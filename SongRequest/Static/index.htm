@@ -311,7 +311,7 @@
                     $("#queue").off('dblclick', '.qitem');
 
                     $("#queue").html(
-                        queueTemplate({ requestedSongs: data.Queue })
+                        queueTemplate({ requestedSongs: data.Queue, status: data.PlayerStatus })
                     );
 
                     $(".play").off('dblclick', '.playinfo');
@@ -421,7 +421,12 @@
     Queue (<%- requestedSongs.length %> song<%- requestedSongs.length!=1?'s':'' %>,
     <%- window.SongRequest.convertNumberToTime(_.chain(requestedSongs).map(function(requestedSong){ return requestedSong.Song.Duration; }).reduce(function(state, value){ return state+value;}, 0).value()) %>)
 </div>
-<% _.each(requestedSongs, function(requestedSong, index) { %>
+<% 
+var acc = Math.max(0, (status.RequestedSong.Song.Duration - status.Position));
+_.each(requestedSongs, function(requestedSong, index) {
+    requestedSong.ETA=acc;
+    acc+=requestedSong.Song.Duration;
+%>
 <div class="qitem <%- index%2===0?'even':'odd' %>queueitemcontainer" data="<%= requestedSong.Song.TempId %>">
     <div class="queueitem">
         <strong>
@@ -432,7 +437,7 @@
         <%- requestedSong.Song.Name %>
         (<%- window.SongRequest.convertNumberToTime(requestedSong.Song.Duration) %>)
         </strong>
-        <div>Requested by: <%- requestedSong.RequesterName %></div>
+        <div>Requested by: <%- requestedSong.RequesterName %> (ETA: <%- window.SongRequest.convertNumberToTime(requestedSong.ETA) %>)</div>
     </div>
 </div>
 <% }); %>
