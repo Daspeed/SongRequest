@@ -22,8 +22,6 @@ namespace SongRequest.Handlers
             
 			ISongplayer songPlayer = SongPlayerFactory.GetSongPlayer();
 
-            string requester = request.UserHostName;
-
             switch (action)
             {
                 case "queue":
@@ -41,13 +39,13 @@ namespace SongRequest.Handlers
                         case "POST":
                             using (var reader = new StreamReader(request.InputStream))
                             {
-                                songPlayer.Enqueue(reader.ReadToEnd(), requester);
+                                songPlayer.Enqueue(reader.ReadToEnd(), GetRequester(request));
                             }
                             break;
                         case "DELETE":
                             using (var reader = new StreamReader(request.InputStream))
                             {
-                                songPlayer.Dequeue(reader.ReadToEnd(), requester);
+                                songPlayer.Dequeue(reader.ReadToEnd(), GetRequester(request));
                             }
                             break;
                     }
@@ -77,7 +75,7 @@ namespace SongRequest.Handlers
                     }
                 case "next":
                     response.ContentType = "application/json";
-                    songPlayer.Next(requester);
+                    songPlayer.Next(GetRequester(request));
                     WriteUtf8String(response.OutputStream, JsonConvert.SerializeObject(songPlayer.PlayerStatus));
                     break;
                 case "volume":
@@ -98,6 +96,17 @@ namespace SongRequest.Handlers
                     WriteUtf8String(response.OutputStream, request.RawUrl);
                     break;
             }
+        }
+
+        private static string GetRequester(HttpListenerRequest request)
+        {
+            string requester;
+
+            if (request.RemoteEndPoint != null)
+                requester = Dns.GetHostEntry(request.RemoteEndPoint.Address).HostName;
+            else
+                requester = "unknown";
+            return requester;
         }
     }
 }
