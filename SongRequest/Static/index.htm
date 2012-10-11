@@ -437,7 +437,13 @@ _.each(requestedSongs, function(requestedSong, index) {
         <%- requestedSong.Song.Name %>
         (<%- window.SongRequest.convertNumberToTime(requestedSong.Song.Duration) %>)
         </strong>
-        <div>Requested by: <%- requestedSong.RequesterName %> (ETA: <%- window.SongRequest.convertNumberToTime(requestedSong.ETA) %>)</div>
+        <div>Requested by: <%- requestedSong.RequesterName %> (ETA:
+        <%- (function(baseDate){
+                var fixer = function(num){ return (num < 10 ? '0':'') + String(num); };
+                
+                baseDate.setSeconds(baseDate.getSeconds()+requestedSong.ETA);
+                return fixer(baseDate.getHours()) + ':' + fixer(baseDate.getMinutes());  })(new Date()) %>)
+        </div>
     </div>
 </div>
 <% }); %>
