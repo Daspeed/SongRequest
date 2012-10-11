@@ -223,14 +223,14 @@ namespace SongRequest
 		public IEnumerable<Song> GetSongs(string filter)
 		{
             if (string.IsNullOrEmpty(filter))
-                return _songs.OrderBy(x => x.Artist);
+                return _songs.OrderBy(x => x.Artist).ThenBy(x => x.Name);
             
             lock (lockObject)
 			{
                 return _songs.Where(s => (s.FileName ?? string.Empty).IndexOf(filter, StringComparison.OrdinalIgnoreCase) > -1 ||
                                          (s.Name ?? string.Empty).IndexOf(filter, StringComparison.OrdinalIgnoreCase) > -1 ||
-										 (s.Artist ?? string.Empty).IndexOf(filter, StringComparison.OrdinalIgnoreCase) > -1 
-									).OrderBy(x => x.Artist);
+										 (s.Artist ?? string.Empty).IndexOf(filter, StringComparison.OrdinalIgnoreCase) > -1
+                                    ).OrderBy(x => x.Artist).ThenBy(x => x.Name); ;
 			}
 		}
 
