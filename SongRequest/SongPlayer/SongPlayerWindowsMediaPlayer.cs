@@ -128,7 +128,9 @@ namespace SongRequest
                 OnPlayerStatusChanged(status);
 
                 //Enqueue random song when the queue is empty and the current song is almost finished
-                if (_queue.Count == 0 &&  _currentSong != null && (int)(DateTime.Now - _currentSongStart).TotalSeconds + 20 > _currentSong.Song.Duration)
+                if (_queue.Count == 0 &&  
+                    _currentSong != null && 
+                    (int)(DateTime.Now - _currentSongStart).TotalSeconds + 20 > _currentSong.Song.Duration)
                 {
                     RequestedSong requestedSong = _songLibrary.GetRandomSong();
                     Enqueue(requestedSong.Song, requestedSong.RequesterName);

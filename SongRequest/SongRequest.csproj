@@ -68,6 +68,7 @@
     <Compile Include="Config\ConfigFile.cs" />
     <Compile Include="Dispatcher.cs" />
     <Compile Include="Handlers\BaseHandler.cs" />
+    <Compile Include="Handlers\ImageHandler.cs" />
     <Compile Include="Handlers\FaviconHandler.cs" />
     <Compile Include="Handlers\DynamicHandler.cs" />
     <Compile Include="Handlers\StaticHandler.cs" />
@@ -136,5 +137,20 @@
       <Isolated>False</Isolated>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Static\add.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Static\remove.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Static\clean.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Static\next.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Static\search.png" />
   </ItemGroup>
 </Project>

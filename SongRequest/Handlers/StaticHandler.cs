@@ -17,16 +17,27 @@ namespace SongRequest.Handlers
 
             string resource = match.Groups[1].Value.Replace("/", ".");
 
-            string text = Get(resource);
+            if (resource.EndsWith("png", StringComparison.OrdinalIgnoreCase))
+            {
+                using (var stream = GetStream(resource))
+                {
+                    stream.CopyTo(response.OutputStream);
+                }
+                return;
+            }
+            else
+            {
+                string text = Get(resource);
 
-            response.ContentType = "text/html";
+                response.ContentType = "text/html";
 
-            WriteUtf8String(response.OutputStream, text);
+                WriteUtf8String(response.OutputStream, text);
+            }
         }
 
         protected string Get(string name)
         {
-            using (var stream = typeof(StaticHandler).Assembly.GetManifestResourceStream("SongRequest.Static." + name))
+            using (var stream = GetStream(name))
             {
                 if (stream == null)
                 {
@@ -36,6 +47,11 @@ namespace SongRequest.Handlers
                 using (var streamReader = new StreamReader(stream))
                     return streamReader.ReadToEnd();
             }
+        }
+
+        protected Stream GetStream(string name)
+        {
+            return typeof(StaticHandler).Assembly.GetManifestResourceStream("SongRequest.Static." + name);
         }
     }
 }
