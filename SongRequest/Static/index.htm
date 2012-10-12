@@ -292,6 +292,14 @@
                 }
             };
 
+            var digitize = function (arg) {
+                var allDigits = String(arg).replace(/\D/g, '');
+                if (allDigits && allDigits.length > 0)
+                    return parseInt(allDigits, 10);
+                else
+                    return 0;
+            };
+
             var queueTemplate = _.template($("#queueTemplate").html());
             var playlistTemplate = _.template($("#playlistTemplate").html());
             var statusTemplate = _.template($("#statusTemplate").html());
@@ -351,7 +359,7 @@
                         playlistTemplate({ songs: data.SongsForCurrentPage })
                     );
 
-                    $("#currentPage").text(String(currentPage));
+                    $("#currentPage").val(String(currentPage));
                     $("#pageCount").text(String(totalPageCount));
 
                     if (currentPage > 1)
@@ -400,12 +408,16 @@
                 getPlayList($("#searchtext").val(), 1);
                 return false;
             });
+            $("#pageForm").on('submit change', function () {
+                getPlayList($("#searchtext").val(), digitize($("#currentPage").val()));
+                return false;
+            });
 
             $("#previousbutton").click(function () {
-                getPlayList($("#searchtext").val(), Math.max(1, parseInt($("#currentPage").text(), 10) - 1));
+                getPlayList($("#searchtext").val(), Math.max(1, digitize($("#currentPage").val()) - 1));
             });
             $("#nextbutton").click(function () {
-                getPlayList($("#searchtext").val(), Math.max(1, parseInt($("#currentPage").text(), 10) + 1));
+                getPlayList($("#searchtext").val(), Math.max(1, digitize($("#currentPage").val()) + 1));
             });
 
             refreshQueue();
@@ -517,7 +529,9 @@ _.each(requestedSongs, function(requestedSong, index) {
                     </form>
                 </td>
                 <td>
-                    <span id="currentPage">1</span> of <span id="pageCount">1</span>
+                    <form id="pageForm" action="/static/404.htm">
+                        <input type="text" id="currentPage" value="1"> of <span id="pageCount">1</span>
+                    </form>
                 </td>
                 <td class="controls" style="text-align:right;">
                     <input type="button" class="button" name="previousbutton" disabled="disabled" id="previousbutton" value="Previous">
