@@ -62,7 +62,7 @@
             -moz-border-radius:6px; 
             */
             
-            min-width:500px;
+            min-width:750px;
             height:40px;
             margin-left:10px;
         }
@@ -278,6 +278,11 @@
         	color:black;
         	cursor:default;
         }
+        
+        .remove, .add, #next
+        {
+        	cursor:pointer;
+        }
     </style>
     <script type="text/javascript" src="/static/underscore-min.js"></script>
     <script type="text/javascript" src="/static/jquery-1.8.2.min.js"></script>
@@ -316,13 +321,13 @@
 
             var refreshQueue = function () {
                 ajaxCall('/dynamic/queue', 'GET', null, function (data) {
-                    $("#queue").off('dblclick', '.qitem');
+                    $("#queue").off('click', '.remove');
 
                     $("#queue").html(
                         queueTemplate({ requestedSongs: data.Queue, status: data.PlayerStatus })
                     );
 
-                    $(".play").off('dblclick', '.playinfo');
+                    $(".play").off('click', '#next');
 
                     $(".play").html(
                         statusTemplate({ status: data.PlayerStatus })
@@ -331,13 +336,13 @@
 
                     $("#volumeContainer").text(data.PlayerStatus.Volume);
 
-                    $(".play").on('dblclick', '.playinfo', function (event) {
+                    $(".play").on('click', '#next', function (event) {
                         ajaxCall('/dynamic/next', 'GET', null, function (data) {
                             refreshQueue();
                         });
                     });
 
-                    $("#queue").on('dblclick', '.qitem', function (event) {
+                    $("#queue").on('click', '.remove', function (event) {
                         var songId = $(this).attr('data');
 
                         ajaxCall('/dynamic/queue', 'DELETE', songId, function (data) {
@@ -353,7 +358,7 @@
                     var currentPage = Math.max(data.CurrentPage, 1);
                     var totalPageCount = Math.max(data.TotalPageCount, 1);
 
-                    $(".playlist").off("click", ".button");
+                    $(".playlist").off("click", ".add");
 
                     $("#playlistContainer").html(
                         playlistTemplate({ songs: data.SongsForCurrentPage })
@@ -372,7 +377,7 @@
                     else
                         $("#nextbutton").attr('disabled', 'disabled');
 
-                    $(".playlist").on("click", ".button", function (event) {
+                    $(".playlist").on("click", ".add", function (event) {
                         var songId = $(this).attr('data');
                         ajaxCall('/dynamic/queue', 'POST', songId, function (data) {
                             refreshQueue();
@@ -439,7 +444,7 @@ _.each(requestedSongs, function(requestedSong, index) {
     requestedSong.ETA=acc;
     acc+=requestedSong.Song.Duration;
 %>
-<div class="qitem <%- index%2===0?'even':'odd' %>queueitemcontainer" data="<%= requestedSong.Song.TempId %>">
+<div class="qitem <%- index%2===0?'even':'odd' %>queueitemcontainer">
     <div class="queueitem">
         <strong>
         <%- requestedSong.Song.Artist %>
@@ -455,6 +460,7 @@ _.each(requestedSongs, function(requestedSong, index) {
                 
                 baseDate.setSeconds(baseDate.getSeconds()+requestedSong.ETA);
                 return fixer(baseDate.getHours()) + ':' + fixer(baseDate.getMinutes());  })(new Date()) %>)
+                <img class="remove" src="/static/remove.png" data="<%= requestedSong.Song.TempId %>" style="float:right;">
         </div>
     </div>
 </div>
@@ -470,7 +476,7 @@ _.each(requestedSongs, function(requestedSong, index) {
     </tr>
     <% _.each(songs, function(song, index) { %>
     <tr class="<%- index%2===0?'odd':'even' %>row">
-        <td class="smallcolumn"><input type="button" class="button" data="<%= song.TempId %>" value="+"></td>
+        <td class="smallcolumn"><img class="add" src="/static/add.png" data="<%= song.TempId %>"></td>
         <td><a class="songlink" href="<%- song.FileName %>" title="<%- song.FileName %>"><%- song.Name%></a></td>
         <td><%- song.Artist %></td>
         <td><%- window.SongRequest.convertNumberToTime(song.Duration) %></td>
@@ -479,16 +485,19 @@ _.each(requestedSongs, function(requestedSong, index) {
 </table>
 </script>
 <script id="statusTemplate" type="text/template">
-<div class="playinfo">  
-    <strong>
-        <%- status.RequestedSong.Song.Artist %>
-        <% if(status.RequestedSong.Song.Artist && status.RequestedSong.Song.Name){ %>
-        -
-        <% } %>
-        <%- status.RequestedSong.Song.Name %>
-        <%- window.SongRequest.convertNumberToTime(status.Position) %> / <%- window.SongRequest.convertNumberToTime(status.RequestedSong.Song.Duration)%>
-    </strong><br>
-    <div>Requested by: <%- status.RequestedSong.RequesterName %></div>
+<div class="playinfo"> 
+    <div style="float:left;">
+        <strong>
+            <%- status.RequestedSong.Song.Artist %>
+            <% if(status.RequestedSong.Song.Artist && status.RequestedSong.Song.Name){ %>
+            -
+            <% } %>
+            <%- status.RequestedSong.Song.Name %>
+            <%- window.SongRequest.convertNumberToTime(status.Position) %> / <%- window.SongRequest.convertNumberToTime(status.RequestedSong.Song.Duration)%>
+        </strong>
+    </div>
+    <img id="next" alt="Next" title="Next" style="float:right;margin-left:10px;" src="/static/next.png">
+    <div style="clear:both;">Requested by: <%- status.RequestedSong.RequesterName %></div>
 </div>
 </script>
 
