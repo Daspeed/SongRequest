@@ -50,9 +50,10 @@ namespace SongRequest.Test
 
             Assert.AreEqual(queue.Count, 3);
             Assert.IsNotNull(queue.Current.First());
-            Assert.AreEqual("B.mp3", queue.Current.First().Song.FileName);
-            Assert.AreEqual("C.mp3", queue.Current.ElementAt(1).Song.FileName);
-            Assert.AreEqual("D.mp3", queue.Current.ElementAt(2).Song.FileName);   
+            Assert.AreEqual("C.mp3", queue.Current.ElementAt(0).Song.FileName);
+            Assert.AreEqual("D.mp3", queue.Current.ElementAt(1).Song.FileName);
+            Assert.AreEqual("B.mp3", queue.Current.ElementAt(2).Song.FileName);
+ 
         }
 
         [TestMethod]
