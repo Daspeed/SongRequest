@@ -224,17 +224,38 @@ namespace SongRequest
 			}
 		}
 
-		public IEnumerable<Song> GetSongs(string filter)
+        public IEnumerable<Song> GetSongs(string filter, string sortBy, bool ascending)
 		{
 			lock (lockObject)
 			{
-				if (string.IsNullOrEmpty(filter))
-                return _songs.OrderBy(x => x.Artist).ThenBy(x => x.Name);
-            
-                return _songs.Where(s => (s.FileName ?? string.Empty).IndexOf(filter, StringComparison.OrdinalIgnoreCase) > -1 ||
-                                         (s.Name ?? string.Empty).IndexOf(filter, StringComparison.OrdinalIgnoreCase) > -1 ||
-										 (s.Artist ?? string.Empty).IndexOf(filter, StringComparison.OrdinalIgnoreCase) > -1
-                                    ).OrderBy(x => x.Artist).ThenBy(x => x.Name); ;
+                IEnumerable<Song> songs = null;
+                if (string.IsNullOrEmpty(filter))
+                {
+                    songs = _songs;
+                }
+                else
+                {
+                    songs = _songs.Where(s => (s.FileName ?? string.Empty).IndexOf(filter, StringComparison.OrdinalIgnoreCase) > -1 ||
+                                        (s.Name ?? string.Empty).IndexOf(filter, StringComparison.OrdinalIgnoreCase) > -1 ||
+                                        (s.Artist ?? string.Empty).IndexOf(filter, StringComparison.OrdinalIgnoreCase) > -1
+                                   );
+                }
+
+                bool sortbyArtist = sortBy == "artist";
+
+                Func<IEnumerable<Song>, Func<Song, IComparable<string>>, IOrderedEnumerable<Song>> firstSorter = Enumerable.OrderBy;
+                if(!ascending)
+                    firstSorter = Enumerable.OrderByDescending;
+
+                Func<IOrderedEnumerable<Song>, Func<Song, IComparable<string>>, IOrderedEnumerable<Song>> secondSorter = Enumerable.ThenBy;
+                if (!ascending)
+                    secondSorter = Enumerable.ThenByDescending;
+
+                return
+                    secondSorter(
+                        firstSorter(songs, x => { return sortbyArtist ? x.Artist : x.Name; }),
+                        x => { return sortbyArtist ? x.Name : x.Artist; }
+                    );
 			}
 		}
 

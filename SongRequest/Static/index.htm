@@ -283,6 +283,20 @@
         {
         	cursor:pointer;
         }
+        
+        .Asc
+        {
+        	text-decoration:overline;
+        }
+        
+        .Desc
+        {
+        	text-decoration:underline;
+        }
+        .header
+        {
+        	cursor:pointer;
+        }
     </style>
     <script type="text/javascript" src="/static/underscore-min.js"></script>
     <script type="text/javascript" src="/static/jquery-1.8.2.min.js"></script>
@@ -294,7 +308,9 @@
                     var seconds = parseInt(num % 60, 10);
 
                     return String(minutes) + ((seconds < 10) ? ':0' : ':') + String(seconds);
-                }
+                },
+                sortBy: 'artist',
+                ascending: true
             };
 
             var digitize = function (arg) {
@@ -352,16 +368,21 @@
                 });
             }
 
-            var getPlayList = function (filter, page) {
-                var message = '{ Filter: "' + filter.replace(/"/g, '').replace(/\\/g, '\\\\') + '", Page: ' + String(page) + '}';
+            var getPlayList = function (filter, page, sortby, ascending) {
+                var message = '{ Filter: "' + filter.replace(/"/g, '').replace(/\\/g, '\\\\') + '", Page: ' + String(page) + ', SortBy: "' + sortby + '", Ascending: ' + ascending + ' ' + '}';
+
                 ajaxCall('/dynamic/playlist', 'POST', message, function (data) {
                     var currentPage = Math.max(data.CurrentPage, 1);
                     var totalPageCount = Math.max(data.TotalPageCount, 1);
 
+                    SongRequest.sortBy = data.SortBy,
+                    SongRequest.ascending = data.Ascending;
+
                     $(".playlist").off("click", ".add");
+                    $(".playlist").off("click", ".header");
 
                     $("#playlistContainer").html(
-                        playlistTemplate({ songs: data.SongsForCurrentPage })
+                        playlistTemplate({ 'data': data })
                     );
 
                     $("#currentPage").val(String(currentPage));
@@ -383,6 +404,16 @@
                             refreshQueue();
                         });
                     });
+
+                    $(".playlist").on("click", ".header", function (event) {
+                        var headerId = $(this).attr('id');
+                        var newSortBy = headerId.replace(/Header$/g, '');
+
+                        SongRequest.ascending = (newSortBy==SongRequest.sortBy)?(!SongRequest.ascending):SongRequest.ascending;
+                        SongRequest.sortBy = newSortBy;
+
+                        getPlayList($("#searchtext").val(), digitize($("#currentPage").val()), SongRequest.sortBy, SongRequest.ascending);
+                    });
                 });
             }
 
@@ -403,32 +434,32 @@
             });
 
             $("#searchbutton").click(function () {
-                getPlayList($("#searchtext").val(), 1);
+                getPlayList($("#searchtext").val(), 1, SongRequest.sortBy, SongRequest.ascending);
             });
             $("#clearbutton").click(function () {
                 $("#searchtext").val('');
-                getPlayList('', 1);
+                getPlayList('', 1, SongRequest.sortBy, SongRequest.ascending);
             });
             $("#searchForm").on('submit', function () {
-                getPlayList($("#searchtext").val(), 1);
+                getPlayList($("#searchtext").val(), 1, SongRequest.sortBy, SongRequest.ascending);
                 return false;
             });
             $("#pageForm").on('submit change', function () {
-                getPlayList($("#searchtext").val(), digitize($("#currentPage").val()));
+                getPlayList($("#searchtext").val(), digitize($("#currentPage").val()), SongRequest.sortBy, SongRequest.ascending);
                 return false;
             });
 
             $("#previousbutton").click(function () {
-                getPlayList($("#searchtext").val(), Math.max(1, digitize($("#currentPage").val()) - 1));
+                getPlayList($("#searchtext").val(), Math.max(1, digitize($("#currentPage").val()) - 1), SongRequest.sortBy, SongRequest.ascending);
             });
             $("#nextbutton").click(function () {
-                getPlayList($("#searchtext").val(), Math.max(1, digitize($("#currentPage").val()) + 1));
+                getPlayList($("#searchtext").val(), Math.max(1, digitize($("#currentPage").val()) + 1), SongRequest.sortBy, SongRequest.ascending);
             });
 
             refreshQueue();
             setInterval(refreshQueue, 1000);
 
-            getPlayList('', 0);
+            getPlayList($("#searchtext").val(), 0, SongRequest.sortBy, SongRequest.ascending);
         });
     </script>
 </head>
@@ -470,11 +501,11 @@ _.each(requestedSongs, function(requestedSong, index) {
 <table class="playlist">
     <tr class="playlistheader">
         <th class="smallcolumn">Action</th>
-        <th>Name</th>
-        <th>Artist</th>
+        <th id="nameHeader" class="header <%=data.SortBy==='name'?('sorted'+(data.Ascending?' Asc':' Desc')):''%>">Name</th>
+        <th id="artistHeader" class="header <%=data.SortBy==='artist'?('sorted'+(data.Ascending?' Asc':' Desc')):''%>">Artist</th>
         <th>Length</th>
     </tr>
-    <% _.each(songs, function(song, index) { %>
+    <% _.each(data.SongsForCurrentPage, function(song, index) { %>
     <tr class="<%- index%2===0?'odd':'even' %>row">
         <td class="smallcolumn"><img class="add" src="/static/add.png" data="<%= song.TempId %>"></td>
         <td><a class="songlink" href="<%- song.FileName %>" title="<%- song.FileName %>"><%- song.Name%></a></td>

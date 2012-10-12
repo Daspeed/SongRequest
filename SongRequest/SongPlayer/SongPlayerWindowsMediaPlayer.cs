@@ -152,9 +152,9 @@ namespace SongRequest
             }
         }
 
-        public IEnumerable<Song> GetPlayList(string filter)
+        public IEnumerable<Song> GetPlayList(string filter, string sortBy, bool ascending)
         {
-            return _songLibrary.GetSongs(filter);
+            return _songLibrary.GetSongs(filter, sortBy, ascending);
         }
 
         public IEnumerable<RequestedSong> PlayQueue
@@ -167,7 +167,7 @@ namespace SongRequest
 
         public void Enqueue(string id, string requesterName)
         {
-            Song song = _songLibrary.GetSongs(string.Empty).FirstOrDefault(x => x.TempId == id);
+            Song song = _songLibrary.GetSongs(string.Empty, null, true).FirstOrDefault(x => x.TempId == id);
 
             if (song != null)
             {
@@ -199,7 +199,7 @@ namespace SongRequest
 
         public void Dequeue(string id, string requesterName)
         {
-            Song song = _songLibrary.GetSongs(string.Empty).FirstOrDefault(x => x.TempId == id);
+            Song song = _songLibrary.GetSongs(string.Empty, null, true).FirstOrDefault(x => x.TempId == id);
 
             if (song != null)
                 Dequeue(song, requesterName);

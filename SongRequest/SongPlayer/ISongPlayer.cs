@@ -12,7 +12,7 @@ namespace SongRequest
 
 		PlayerStatus PlayerStatus {get;}
 		
-        IEnumerable<Song> GetPlayList(string filter);
+        IEnumerable<Song> GetPlayList(string filter, string sortBy, bool ascending);
 
         IEnumerable<RequestedSong> PlayQueue { get; }
 
