@@ -14,7 +14,8 @@ namespace SongRequest
         private static Dictionary<string, IHandler> _mappings = new Dictionary<string,IHandler>{
             {string.Empty, new IndexHandler()},
             {"static", new StaticHandler()},
-            {"dynamic", new DynamicHandler()},
+            {"image", new ImageHandler()},
+            {"dynamic", new DynamicHandler()},            
             {"favicon.ico", new FaviconHandler()},
             {"kill", new KillHandler()},
         };
