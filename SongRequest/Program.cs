@@ -68,8 +68,6 @@ namespace SongRequest
                         using (var writer = new StreamWriter(context.Response.OutputStream))
                             writer.Write(ex.ToString());
                     }
-
-                    DrawProgramStatus();
                 }
             }
         }
@@ -79,7 +77,11 @@ namespace SongRequest
         static void Program_LibraryStatusChanged(string status)
         {
             lock (consoleLock)
-            {
+
+                Console.SetCursorPosition(0, 2);
+                Console.Write(new string(' ', Console.WindowWidth));            {
+                Console.SetCursorPosition(0, 2);
+                Console.Write("Library: {0}", SongPlayerFactory.GetConfigFile().GetValue("library.path"));
                 Console.SetCursorPosition(0, 3);
                 Console.Write(new string(' ', Console.WindowWidth));
                 Console.SetCursorPosition(0, 3);
@@ -115,8 +117,6 @@ namespace SongRequest
             {
                 Console.SetCursorPosition(0, 1);
                 Console.Write("Listening on port: {0}", port);
-                Console.SetCursorPosition(0, 2);
-                Console.Write("Library: {0}", SongPlayerFactory.GetConfigFile().GetValue("library.path"));
             }
         }
 

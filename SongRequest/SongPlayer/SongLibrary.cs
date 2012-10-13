@@ -161,7 +161,8 @@ namespace SongRequest
 
 				Song song = new Song();
 				song.FileName = fileName;
-				song.Name = Regex.Replace(new FileInfo(fileName).Name, @"\.mp3$", string.Empty, RegexOptions.IgnoreCase);
+                FileInfo fileInfo= new FileInfo(fileName);
+                song.Name = Regex.Replace(fileInfo.Name, @"\" + fileInfo.Extension + "$", string.Empty, RegexOptions.IgnoreCase);
 
 				AddSong(song);
 

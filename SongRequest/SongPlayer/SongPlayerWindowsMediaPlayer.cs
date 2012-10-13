@@ -133,7 +133,8 @@ namespace SongRequest
                     (int)(DateTime.Now - _currentSongStart).TotalSeconds + 20 > _currentSong.Song.Duration)
                 {
                     RequestedSong requestedSong = _songLibrary.GetRandomSong();
-                    Enqueue(requestedSong.Song, requestedSong.RequesterName);
+                    if (requestedSong != null)
+                        Enqueue(requestedSong.Song, requestedSong.RequesterName);
                 }
 
             }
