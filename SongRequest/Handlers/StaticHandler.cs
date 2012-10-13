@@ -17,22 +17,11 @@ namespace SongRequest.Handlers
 
             string resource = match.Groups[1].Value.Replace("/", ".");
 
-            if (resource.EndsWith("png", StringComparison.OrdinalIgnoreCase))
-            {
-                using (var stream = GetStream(resource))
-                {
-                    stream.CopyTo(response.OutputStream);
-                }
-                return;
-            }
-            else
-            {
-                string text = Get(resource);
+            string text = Get(resource);
 
-                response.ContentType = "text/html";
+            response.ContentType = "text/html";
 
-                WriteUtf8String(response.OutputStream, text);
-            }
+            WriteUtf8String(response.OutputStream, text);
         }
 
         protected string Get(string name)

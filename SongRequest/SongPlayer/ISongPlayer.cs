@@ -24,6 +24,10 @@ namespace SongRequest
         void Dequeue(string id, string requesterName);
         void Dequeue(Song song, string requesterName);
 
+        void Pause(string requesterName);
+
+        void Rescan(string requesterName);
+
         int Volume { get; set; }
 	}
 }

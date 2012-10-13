@@ -153,4 +153,8 @@
   <ItemGroup>
     <EmbeddedResource Include="Static\search.png" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Static\pause.png" />
+    <EmbeddedResource Include="Static\rescan.png" />
+  </ItemGroup>
 </Project>

@@ -15,7 +15,8 @@ namespace SongRequest
     class Program
     {
         internal volatile static bool _running = true;
-        
+        private static int port;
+
         static void Main(string[] args)
         {
             try
@@ -36,15 +37,10 @@ namespace SongRequest
 
             using (HttpListener listener = new HttpListener())
             {
-                int port;
-
                 if (!int.TryParse(SongPlayerFactory.GetConfigFile().GetValue("server.port"), out port))
                     port = 8765;
 
-                Console.SetCursorPosition(0, 1);
-                Console.Write("Listening on port: {0}", port);
-                Console.SetCursorPosition(0, 2);
-                Console.Write("Library: {0}", SongPlayerFactory.GetConfigFile().GetValue("library.path"));
+                DrawProgramStatus();
 
                 SongPlayerFactory.GetSongPlayer().LibraryStatusChanged += new StatusChangedEventHandler(Program_LibraryStatusChanged);
                 SongPlayerFactory.GetSongPlayer().PlayerStatusChanged += new StatusChangedEventHandler(Program_PlayerStatusChanged);
@@ -81,7 +77,11 @@ namespace SongRequest
         static void Program_LibraryStatusChanged(string status)
         {
             lock (consoleLock)
-            {
+
+                Console.SetCursorPosition(0, 2);
+                Console.Write(new string(' ', Console.WindowWidth));            {
+                Console.SetCursorPosition(0, 2);
+                Console.Write("Library: {0}", SongPlayerFactory.GetConfigFile().GetValue("library.path"));
                 Console.SetCursorPosition(0, 3);
                 Console.Write(new string(' ', Console.WindowWidth));
                 Console.SetCursorPosition(0, 3);
@@ -108,6 +108,15 @@ namespace SongRequest
                 Console.Write(new string(' ', Console.WindowWidth));
                 Console.SetCursorPosition(0, 6);
                 Console.Write(status.Substring(0, Math.Min(status.Length, Console.WindowWidth)));
+            }
+        }
+
+        static void DrawProgramStatus()
+        {
+            lock (consoleLock)
+            {
+                Console.SetCursorPosition(0, 1);
+                Console.Write("Listening on port: {0}", port);
             }
         }
 

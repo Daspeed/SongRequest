@@ -27,6 +27,8 @@ namespace SongRequest
                 configFile.SetValue("library.path", "c:\\music");
                 configFile.SetValue("library.minutesbetweenscans", "1");
                 configFile.SetValue("library.extensions", "mp3");
+                configFile.SetValue("player.minimalsonginqueue", "0");
+                configFile.SetValue("player.maximalsonginqueue", "500");
                 configFile.Save();
             }
 

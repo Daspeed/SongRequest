@@ -84,6 +84,14 @@ namespace SongRequest.Handlers
                     songPlayer.Next(GetRequester(request));
                     WriteUtf8String(response.OutputStream, JsonConvert.SerializeObject(songPlayer.PlayerStatus));
                     break;
+                case "rescan":
+                    response.ContentType = "application/json";
+                    songPlayer.Rescan(GetRequester(request));
+                    break;
+                case "pause":
+                    response.ContentType = "application/json";
+                    songPlayer.Pause(GetRequester(request));
+                    break;
                 case "volume":
                     response.ContentType = "application/json";
                     if (request.HttpMethod == "POST")
