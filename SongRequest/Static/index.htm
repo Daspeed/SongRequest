@@ -279,7 +279,7 @@
         	cursor:default;
         }
         
-        .remove, .add, #next
+        .remove, .add, #next, #rescan, #pause
         {
         	cursor:pointer;
         }
@@ -344,6 +344,8 @@
                     );
 
                     $(".play").off('click', '#next');
+                    $(".play").off('click', '#pause');
+                    $(".play").off('click', '#rescan');
 
                     $(".play").html(
                         statusTemplate({ status: data.PlayerStatus })
@@ -355,6 +357,18 @@
                     $(".play").on('click', '#next', function (event) {
                         ajaxCall('/dynamic/next', 'GET', null, function (data) {
                             refreshQueue();
+                        });
+                    });
+                    
+                    $(".play").on('click', '#pause', function (event) {
+                        ajaxCall('/dynamic/pause', 'GET', null, function (data) {
+                            
+                        });
+                    });
+
+                    $(".play").on('click', '#rescan', function (event) {
+                        ajaxCall('/dynamic/rescan', 'GET', null, function (data) {
+                            
                         });
                     });
 
@@ -491,7 +505,7 @@ _.each(requestedSongs, function(requestedSong, index) {
                 
                 baseDate.setSeconds(baseDate.getSeconds()+requestedSong.ETA);
                 return fixer(baseDate.getHours()) + ':' + fixer(baseDate.getMinutes());  })(new Date()) %>)
-                <img class="remove" src="/static/remove.png" data="<%= requestedSong.Song.TempId %>" style="float:right;">
+                <img class="remove" src="/image/remove.png" data="<%= requestedSong.Song.TempId %>" style="float:right;">
         </div>
     </div>
 </div>
@@ -507,7 +521,7 @@ _.each(requestedSongs, function(requestedSong, index) {
     </tr>
     <% _.each(data.SongsForCurrentPage, function(song, index) { %>
     <tr class="<%- index%2===0?'odd':'even' %>row">
-        <td class="smallcolumn"><img class="add" src="/static/add.png" data="<%= song.TempId %>"></td>
+        <td class="smallcolumn"><img class="add" src="/image/add.png" data="<%= song.TempId %>"></td>
         <td><a class="songlink" href="<%- song.FileName %>" title="<%- song.FileName %>"><%- song.Name%></a></td>
         <td><%- song.Artist %></td>
         <td><%- window.SongRequest.convertNumberToTime(song.Duration) %></td>
@@ -527,8 +541,10 @@ _.each(requestedSongs, function(requestedSong, index) {
             <%- window.SongRequest.convertNumberToTime(status.Position) %> / <%- window.SongRequest.convertNumberToTime(status.RequestedSong.Song.Duration)%>
         </strong>
     </div>
-    <img id="next" alt="Next" title="Next" style="float:right;margin-left:10px;" src="/static/next.png">
-    <div style="clear:both;">Requested by: <%- status.RequestedSong.RequesterName %></div>
+  <img id="next" alt="Next" title="Next" style="float:right;margin-left:5px;" src="/image/next.png">
+  <img id="pause" alt="Pause" title="Pause" style="float:right;margin-left:5px;" src="/image/pause.png">
+  <img id="rescan" alt="Rescan" title="Rescan" style="float:right;margin-left:5px;" src="/image/rescan.png">
+  <div style="clear:both;">Requested by: <%- status.RequestedSong.RequesterName %></div>
 </div>
 </script>
 

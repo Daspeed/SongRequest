@@ -127,10 +127,14 @@ namespace SongRequest
 
                 OnPlayerStatusChanged(status);
 
+                int minimalsonginqueue;
+
+                if (!int.TryParse(SongPlayerFactory.GetConfigFile().GetValue("player.minimalsonginqueue"), out minimalsonginqueue))
+                    minimalsonginqueue = 0;
+
                 //Enqueue random song when the queue is empty and the current song is almost finished
-                if (_queue.Count == 0 &&  
-                    _currentSong != null && 
-                    (int)(DateTime.Now - _currentSongStart).TotalSeconds + 20 > _currentSong.Song.Duration)
+                if (_queue.Count < minimalsonginqueue + ((int)(DateTime.Now - _currentSongStart).TotalSeconds + 20 > _currentSong.Song.Duration ? 1 : 0) &&  
+                    _currentSong != null)                    
                 {
                     RequestedSong requestedSong = _songLibrary.GetRandomSong();
                     if (requestedSong != null)
@@ -146,8 +150,19 @@ namespace SongRequest
             {
                 PlayerStatus playerStatus = new PlayerStatus();
                 playerStatus.RequestedSong = _currentSong;
-                playerStatus.Position = (int)(DateTime.Now - _currentSongStart).TotalSeconds;
                 playerStatus.Volume = this.Volume;
+
+                lock(lockObject)
+                {
+                    try
+                    {
+                        playerStatus.Position = (int)player.controls.currentPosition;
+                    }
+                    catch
+                    {
+                        playerStatus.Position = (int)(DateTime.Now - _currentSongStart).TotalSeconds;
+                    }
+                }
 
                 return playerStatus;
             }
@@ -194,6 +209,14 @@ namespace SongRequest
             if (!ClientAllowed(requesterName))
                 return;
 
+            int maximalsonginqueue;
+
+            if (!int.TryParse(SongPlayerFactory.GetConfigFile().GetValue("player.maximalsonginqueue"), out maximalsonginqueue))
+                maximalsonginqueue = int.MaxValue;
+
+            if (_queue.Count >= maximalsonginqueue)
+                return;
+
             SongLibrary.UpdateSingleTag(song);
             _queue.Add(new RequestedSong { Song = song, RequesterName = requesterName, RequestedDate = DateTime.Now });
         }
@@ -212,6 +235,28 @@ namespace SongRequest
                 return;
 
             _queue.Remove(song.TempId);
+        }
+
+        public void Pause(string requesterName)
+        {
+            if (!ClientAllowed(requesterName))
+                return;
+
+            lock (lockObject)
+            {
+                if (player.playState == WMPPlayState.wmppsPaused)
+                    player.controls.play();
+                else
+                    player.controls.pause();
+            }
+        }
+
+        public void Rescan(string requesterName)
+        {
+            if (!ClientAllowed(requesterName))
+                return;
+
+            _songLibrary.Rescan();
         }
 
         public void Dispose()

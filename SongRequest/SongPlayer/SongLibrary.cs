@@ -19,7 +19,7 @@ namespace SongRequest
 		public SongLibrary()
 		{
 			_songs = new List<Song>();
-            _lastFullUpdate = DateTime.Now - TimeSpan.FromDays(100);
+            _lastFullUpdate = DateTime.Now - TimeSpan.FromDays(1000);
 
 			OnStatusChanged("Library created...");
 			Deserialize();
@@ -266,6 +266,18 @@ namespace SongRequest
                     );
 			}
 		}
+
+        public void Rescan()
+        {
+            lock (_songs)
+            {
+                foreach (var song in _songs)
+                {
+                    _lastFullUpdate = DateTime.Now - TimeSpan.FromDays(1000);
+                    song.TagRead = false;
+                }
+            }
+        }
 
 		public RequestedSong GetRandomSong()
 		{
