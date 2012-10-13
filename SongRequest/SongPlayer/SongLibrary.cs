@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text.RegularExpressions;
+using System.Threading;
 
 namespace SongRequest
 {
@@ -60,7 +61,7 @@ namespace SongRequest
 			if (fileChanges > 0 || tagChanges > 0)
 			{
 				int songCount = _songs.Count();
-				int noTagCount = _songs.Count(s => !s.TagRead);
+				int noTagCount = _songs.Count(s => s.TagRead);
                 OnStatusChanged(string.Format("Library updated: {0} songs. Tags read: {1}/{0}. Next scan: {2}.", songCount, noTagCount, (_lastFullUpdate + TimeSpan.FromMinutes(minutesBetweenScans)).ToShortTimeString()));
 				Serialize();
                 OnStatusChanged(string.Format("Library updated: {0} songs. Tags read: {1}/{0}. Next scan: {2}. (saved)", songCount, noTagCount, (_lastFullUpdate + TimeSpan.FromMinutes(minutesBetweenScans)).ToShortTimeString()));
@@ -198,22 +199,28 @@ namespace SongRequest
             try
             {
 
-                TagLib.File taglibFile = TagLib.File.Create(song.FileName);
-
-                if (taglibFile.Tag != null)
+                using (TagLib.File taglibFile = TagLib.File.Create(song.FileName))
                 {
-                    if (!string.IsNullOrEmpty(taglibFile.Tag.Title))
-                        song.Name = taglibFile.Tag.Title;
-                    
-                    song.Artist = taglibFile.Tag.JoinedPerformers;
-                    song.Duration = (int)taglibFile.Properties.Duration.TotalSeconds;
-                }
-            }
-            catch
-            {
-            }
+                    if (taglibFile.Tag != null)
+                    {
+                        if (!string.IsNullOrEmpty(taglibFile.Tag.Title))
+                            song.Name = taglibFile.Tag.Title;
 
-            song.TagRead = true;
+                        song.Artist = taglibFile.Tag.JoinedPerformers;
+                        song.Duration = (int)taglibFile.Properties.Duration.TotalSeconds;
+                    }
+                }
+                song.TagRead = true;
+            }
+            catch(System.IO.IOException)
+            {
+                song.TagRead = false;
+                Thread.Sleep(100);
+            }
+            catch (Exception)
+            {
+                song.TagRead = true;
+            }                        
         }
 
 		public void AddSong(Song song)
