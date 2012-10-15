@@ -201,7 +201,7 @@ namespace SongRequest
             //Only allow clients from config file
             return  string.IsNullOrEmpty(allowedClients) ||
                     allowedClients.Equals("all", StringComparison.OrdinalIgnoreCase) ||
-                    SongPlayerFactory.GetConfigFile().GetValue("server.clients").ToLower().Contains(requesterName);
+                    SongPlayerFactory.GetConfigFile().GetValue("server.clients").ToLower().Contains(requesterName.ToLower());
         }
 
         public void Enqueue(Song song, string requesterName)
