@@ -207,7 +207,7 @@
             border:solid 0px #aaaaaa;
             border-bottom-width:1px;
         }
-        .evenqueueitemcontainer
+        .selfqueueitemcontainer
         {
             background-color: #70B0FF;
 
@@ -224,9 +224,39 @@
             /* Opera 11.10+ */
             background: -o-linear-gradient(#70B0FF, #ADCEFF);
         }
+        .evenqueueitemcontainer
+        {
+            background-color: #CCCCCC;
+
+            /* Firefox 3.6+ */
+            background: -moz-linear-gradient(100% 100% 90deg, #CCCCCC, #EEEEEE);
+
+            /* Safari 4-5, Chrome 1-9 */
+            /* -webkit-gradient(<type>, <point> [, <radius>]?, <point> [, <radius>]? [, <stop>]*) */
+            background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#CCCCCC), to(#EEEEEE));
+
+            /* Safari 5.1+, Chrome 10+ */
+            background: -webkit-linear-gradient(#CCCCCC, #EEEEEE);
+
+            /* Opera 11.10+ */
+            background: -o-linear-gradient(#CCCCCC, #EEEEEE);
+        }
         .oddqueueitemcontainer
         {
-            background-color: #F9F9F9;
+            background-color: #EEEEEE;
+
+            /* Firefox 3.6+ */
+            background: -moz-linear-gradient(100% 100% 90deg, #EEEEEE, #CCCCCC);
+
+            /* Safari 4-5, Chrome 1-9 */
+            /* -webkit-gradient(<type>, <point> [, <radius>]?, <point> [, <radius>]? [, <stop>]*) */
+            background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#EEEEEE), to(#CCCCCC));
+
+            /* Safari 5.1+, Chrome 10+ */
+            background: -webkit-linear-gradient(#EEEEEE, #CCCCCC);
+
+            /* Opera 11.10+ */
+            background: -o-linear-gradient(#EEEEEE, #CCCCCC);
         }
         
         .queueitem
@@ -340,7 +370,11 @@
                     $("#queue").off('click', '.remove');
 
                     $("#queue").html(
-                        queueTemplate({ requestedSongs: data.Queue, status: data.PlayerStatus })
+                        queueTemplate({
+                            requestedSongs: data.Queue,
+                            status: data.PlayerStatus,
+                            self: data.Self
+                        })
                     );
 
                     $(".play").off('click', '#next');
@@ -489,7 +523,7 @@ _.each(requestedSongs, function(requestedSong, index) {
     requestedSong.ETA=acc;
     acc+=requestedSong.Song.Duration;
 %>
-<div class="qitem <%- index%2===0?'even':'odd' %>queueitemcontainer">
+<div class="qitem <%- requestedSong.RequesterName===self?'self':(index%2===0?'even':'odd') %>queueitemcontainer">
     <div class="queueitem">
         <strong>
         <%- requestedSong.Song.Artist %>

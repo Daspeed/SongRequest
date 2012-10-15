@@ -32,7 +32,8 @@ namespace SongRequest.Handlers
                             WriteUtf8String(response.OutputStream, JsonConvert.SerializeObject(
                                 new {
                                     Queue = songPlayer.PlayQueue.ToList(),
-                                    PlayerStatus = songPlayer.PlayerStatus
+                                    PlayerStatus = songPlayer.PlayerStatus,
+                                    Self = GetRequester(request)
                                 }
                             ));
                             break;
