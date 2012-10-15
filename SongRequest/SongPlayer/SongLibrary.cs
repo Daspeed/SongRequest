@@ -243,9 +243,9 @@ namespace SongRequest
                 }
                 else
                 {
-                    songs = _songs.Where(s => (s.FileName ?? string.Empty).IndexOf(filter, StringComparison.OrdinalIgnoreCase) > -1 ||
-                                        (s.Name ?? string.Empty).IndexOf(filter, StringComparison.OrdinalIgnoreCase) > -1 ||
-                                        (s.Artist ?? string.Empty).IndexOf(filter, StringComparison.OrdinalIgnoreCase) > -1
+                    songs = _songs.Where(s => (s.FileName ?? string.Empty).ContainsOrdinalIgnoreCase(filter) ||
+                                        (s.Name ?? string.Empty).ContainsOrdinalIgnoreCase(filter) ||
+                                        (s.Artist ?? string.Empty).ContainsOrdinalIgnoreCase(filter)
                                    );
                 }
 

@@ -429,7 +429,7 @@
                     SongRequest.sortBy = data.SortBy,
                     SongRequest.ascending = data.Ascending;
 
-                    $(".playlist").off("click", ".add");
+                    $(".playlist").off("click", ".addbutton");
                     $(".playlist").off("click", ".header");
 
                     $("#playlistContainer").html(
@@ -449,7 +449,7 @@
                     else
                         $("#nextbutton").attr('disabled', 'disabled');
 
-                    $(".playlist").on("click", ".add", function (event) {
+                    $(".playlist").on("click", ".addbutton", function (event) {
                         var songId = $(this).attr('data');
                         ajaxCall('/dynamic/queue', 'POST', songId, function (data) {
                             refreshQueue();
@@ -561,7 +561,7 @@ _.each(requestedSongs, function(requestedSong, index) {
     </tr>
     <% _.each(data.SongsForCurrentPage, function(song, index) { %>
     <tr class="<%- index%2===0?'odd':'even' %>row">
-        <td class="smallcolumn"><img class="add" src="/image/add.png" data="<%= song.TempId %>"></td>
+        <td class="smallcolumn"><input type="button" class="button addbutton" data="<%= song.TempId %>" value="+"></td>
         <td><a class="songlink" href="<%- song.FileName %>" title="<%- song.FileName %>"><%- song.Name%></a></td>
         <td><%- song.Artist %></td>
         <td><%- window.SongRequest.convertNumberToTime(song.Duration) %></td>
