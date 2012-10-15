@@ -35,6 +35,7 @@
           border:solid 0px #111111;
           border-bottom-width:2px;
           padding-top:10px;
+          min-width:1000px;
         }
         
         .play
@@ -351,7 +352,7 @@
             };
 
             var setPlaylistWidth = function () {
-                $('.right').width($(window).width()-$('#queue').width()-30);
+                $('.right').width(Math.max(670, $(window).width()-$('#queue').width()-50));
             }
 
             var queueTemplate = _.template($("#queueTemplate").html());
@@ -619,7 +620,7 @@ _.each(requestedSongs, function(requestedSong, index) {
             <tr class="evenrow">
                 <td>
                     <form id="searchForm" action="/static/404.htm">
-                        <input type="text" name="searchtext" id="searchtext">
+                        <input type="text" name="searchtext" id="searchtext" style="width:200px;">
                         <input type="button" class="button" name="searchbutton" id="searchbutton" value="Search">
                         <input type="button" class="button" name="clearbutton" id="clearbutton" value="Clear">
                     </form>
