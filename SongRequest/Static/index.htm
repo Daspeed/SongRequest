@@ -118,8 +118,7 @@
         .right
         {
             background-color: #DBE0E5;
-            width:65%;
-            min-width:755px;
+            width:600px;
             
         	min-height: 700px;
             
@@ -351,6 +350,10 @@
                     return 0;
             };
 
+            var setPlaylistWidth = function () {
+                $('.right').width($(window).width()-$('#queue').width()-30);
+            }
+
             var queueTemplate = _.template($("#queueTemplate").html());
             var playlistTemplate = _.template($("#playlistTemplate").html());
             var statusTemplate = _.template($("#statusTemplate").html());
@@ -393,16 +396,16 @@
                             refreshQueue();
                         });
                     });
-                    
+
                     $(".play").on('click', '#pause', function (event) {
                         ajaxCall('/dynamic/pause', 'GET', null, function (data) {
-                            
+
                         });
                     });
 
                     $(".play").on('click', '#rescan', function (event) {
                         ajaxCall('/dynamic/rescan', 'GET', null, function (data) {
-                            
+
                         });
                     });
 
@@ -457,7 +460,7 @@
                         var headerId = $(this).attr('id');
                         var newSortBy = headerId.replace(/Header$/g, '');
 
-                        SongRequest.ascending = (newSortBy==SongRequest.sortBy)?(!SongRequest.ascending):SongRequest.ascending;
+                        SongRequest.ascending = (newSortBy === SongRequest.sortBy) ? (!SongRequest.ascending) : SongRequest.ascending;
                         SongRequest.sortBy = newSortBy;
 
                         getPlayList($("#searchtext").val(), digitize($("#currentPage").val()), SongRequest.sortBy, SongRequest.ascending);
@@ -504,10 +507,13 @@
                 getPlayList($("#searchtext").val(), Math.max(1, digitize($("#currentPage").val()) + 1), SongRequest.sortBy, SongRequest.ascending);
             });
 
+            $(window).on('resize', setPlaylistWidth)
+
             refreshQueue();
             setInterval(refreshQueue, 1000);
 
             getPlayList($("#searchtext").val(), 0, SongRequest.sortBy, SongRequest.ascending);
+            setPlaylistWidth();
         });
     </script>
 </head>
@@ -620,7 +626,7 @@ _.each(requestedSongs, function(requestedSong, index) {
                 </td>
                 <td>
                     <form id="pageForm" action="/static/404.htm">
-                        <input type="text" id="currentPage" value="1"> of <span id="pageCount">1</span>
+                        <input type="text" id="currentPage" value="1" style="width:60px;"> of <span id="pageCount">1</span>
                     </form>
                 </td>
                 <td class="controls" style="text-align:right;">
