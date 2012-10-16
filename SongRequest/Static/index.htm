@@ -352,7 +352,7 @@
             };
 
             var setPlaylistWidth = function () {
-                $('.right').width(Math.max(670, $(window).width()-$('#queue').width()-50));
+                $('.right').width(Math.max(670, $(window).width() - $('#queue').width() - 50));
             }
 
             var queueTemplate = _.template($("#queueTemplate").html());
@@ -371,6 +371,8 @@
 
             var refreshQueue = function () {
                 ajaxCall('/dynamic/queue', 'GET', null, function (data) {
+                    var maxHeight;
+
                     $("#queue").off('click', '.remove');
 
                     $("#queue").html(
@@ -380,6 +382,13 @@
                             self: data.Self
                         })
                     );
+
+                    maxHeight = Math.max(40, _.max($("#queue .queueitem").map(function () {
+                        return $(this).height();
+                        })
+                    ));
+
+                    $("#queue .queueitem").each(function () { $(this).height(maxHeight); });
 
                     $(".play").off('click', '#next');
                     $(".play").off('click', '#pause');
