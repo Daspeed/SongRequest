@@ -31,7 +31,7 @@
           /* Opera 11.10+ */
           background: -o-linear-gradient(#555555, #222222);
           
-          height:60px;
+          height:70px;
           border:solid 0px #111111;
           border-bottom-width:2px;
           padding-top:10px;
@@ -310,7 +310,7 @@
         	cursor:default;
         }
         
-        .remove, .add, #next, #rescan, #pause
+        #next, #rescan, #pause
         {
         	cursor:pointer;
         }
@@ -391,34 +391,12 @@
 
                     $("#queue .queueitem").each(function () { $(this).height(maxHeight); });
 
-                    $(".play").off('click', '#next');
-                    $(".play").off('click', '#pause');
-                    $(".play").off('click', '#rescan');
-
                     $(".play").html(
                         statusTemplate({ status: data.PlayerStatus })
                     );
                     document.title = titleTemplate({ status: data.PlayerStatus });
 
                     $("#volumeContainer").text(data.PlayerStatus.Volume);
-
-                    $(".play").on('click', '#next', function (event) {
-                        ajaxCall('/dynamic/next', 'GET', null, function (data) {
-                            refreshQueue();
-                        });
-                    });
-
-                    $(".play").on('click', '#pause', function (event) {
-                        ajaxCall('/dynamic/pause', 'GET', null, function (data) {
-
-                        });
-                    });
-
-                    $(".play").on('click', '#rescan', function (event) {
-                        ajaxCall('/dynamic/rescan', 'GET', null, function (data) {
-
-                        });
-                    });
 
                     $("#queue").on('click', '.removebutton', function (event) {
                         var songId = $(this).attr('data');
@@ -493,6 +471,24 @@
                         $("#volumeContainer").text(volume);
                     });
                 }
+            });
+
+            $("#next").click(function () {
+                ajaxCall('/dynamic/next', 'GET', null, function (data) {
+                    refreshQueue();
+                });
+            });
+
+            $("#pause").click(function () {
+                ajaxCall('/dynamic/pause', 'GET', null, function (data) {
+
+                });
+            });
+
+            $("#rescan").click(function () {
+                ajaxCall('/dynamic/rescan', 'GET', null, function (data) {
+
+                });
             });
 
             $("#searchbutton").click(function () {
@@ -592,9 +588,6 @@ _.each(requestedSongs, function(requestedSong, index) {
             <%- window.SongRequest.convertNumberToTime(status.Position) %> / <%- window.SongRequest.convertNumberToTime(status.RequestedSong.Song.Duration)%>
         </strong>
     </div>
-  <img id="next" alt="Next" title="Next" style="float:right;margin-left:5px;" src="/image/next.png">
-  <img id="pause" alt="Pause" title="Pause" style="float:right;margin-left:5px;" src="/image/pause.png">
-  <img id="rescan" alt="Rescan" title="Rescan" style="float:right;margin-left:5px;" src="/image/rescan.png">
   <div style="clear:both;">Requested by: <%- status.RequestedSong.RequesterName %></div>
 </div>
 </script>
@@ -613,6 +606,11 @@ _.each(requestedSongs, function(requestedSong, index) {
         </div>
     </div>
     <div style="clear:left;"></div>
+    <div style="margin:5px;margin-left:320px;">
+        <input id="next" type="button" class="button" value="Next" style="width:145px">
+        <input id="pause" type="button" class="button" value="Pauze" style="width:145px">
+        <input id="rescan" type="button" class="button" value="Rescan" style="width:145px">
+    </div>
 </div>
 <div class="content">
     <div id="queue">
