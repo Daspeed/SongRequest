@@ -373,7 +373,7 @@
                 ajaxCall('/dynamic/queue', 'GET', null, function (data) {
                     var maxHeight;
 
-                    $("#queue").off('click', '.remove');
+                    $("#queue").off('click', '.removebutton');
 
                     $("#queue").html(
                         queueTemplate({
@@ -419,7 +419,7 @@
                         });
                     });
 
-                    $("#queue").on('click', '.remove', function (event) {
+                    $("#queue").on('click', '.removebutton', function (event) {
                         var songId = $(this).attr('data');
 
                         ajaxCall('/dynamic/queue', 'DELETE', songId, function (data) {
@@ -541,6 +541,7 @@ _.each(requestedSongs, function(requestedSong, index) {
 %>
 <div class="qitem <%- requestedSong.RequesterName===self?'self':(index%2===0?'even':'odd') %>queueitemcontainer">
     <div class="queueitem">
+        <input type="button" class="button removebutton" data="<%= requestedSong.Song.TempId %>" value="-">
         <strong>
         <%- requestedSong.Song.Artist %>
         <% if(requestedSong.Song.Artist && requestedSong.Song.Name){ %>
@@ -555,7 +556,6 @@ _.each(requestedSongs, function(requestedSong, index) {
                 
                 baseDate.setSeconds(baseDate.getSeconds()+requestedSong.ETA);
                 return fixer(baseDate.getHours()) + ':' + fixer(baseDate.getMinutes());  })(new Date()) %>)
-                <img class="remove" src="/image/remove.png" data="<%= requestedSong.Song.TempId %>" style="float:right;">
         </div>
     </div>
 </div>
