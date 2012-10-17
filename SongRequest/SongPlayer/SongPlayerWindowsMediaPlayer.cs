@@ -153,8 +153,7 @@ namespace SongRequest
                     minimalsonginqueue = 0;
 
                 //Enqueue random song when the queue is empty and the current song is almost finished
-                if (_queue.Count < minimalsonginqueue + ((int)(DateTime.Now - _currentSongStart).TotalSeconds + 20 > _currentSong.Song.Duration ? 1 : 0) &&
-                    _currentSong != null)
+                if (_currentSong!= null && _queue.Count < minimalsonginqueue + ((int)(DateTime.Now - _currentSongStart).TotalSeconds + 20 > _currentSong.Song.Duration ? 1 : 0))
                 {
                     RequestedSong requestedSong = _songLibrary.GetRandomSong();
                     if (requestedSong != null)
