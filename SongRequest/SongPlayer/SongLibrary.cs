@@ -251,18 +251,19 @@ namespace SongRequest
 
                 bool sortbyArtist = sortBy == "artist";
 
-                Func<IEnumerable<Song>, Func<Song, IComparable<string>>, IOrderedEnumerable<Song>> firstSorter = Enumerable.OrderBy;
+                Func<IEnumerable<Song>, Func<Song, string>, IComparer<string>, IOrderedEnumerable<Song>> firstSorter = Enumerable.OrderBy;
                 if(!ascending)
                     firstSorter = Enumerable.OrderByDescending;
 
-                Func<IOrderedEnumerable<Song>, Func<Song, IComparable<string>>, IOrderedEnumerable<Song>> secondSorter = Enumerable.ThenBy;
+                Func<IOrderedEnumerable<Song>, Func<Song, string>, IComparer<string>, IOrderedEnumerable<Song>> secondSorter = Enumerable.ThenBy;
                 if (!ascending)
                     secondSorter = Enumerable.ThenByDescending;
 
                 return
                     secondSorter(
-                        firstSorter(songs, x => { return sortbyArtist ? x.Artist : x.Name; }),
-                        x => { return sortbyArtist ? x.Name : x.Artist; }
+                        firstSorter(songs, x => { return sortbyArtist ? x.Artist : x.Name; }, StringComparer.OrdinalIgnoreCase),
+                        x => { return sortbyArtist ? x.Name : x.Artist; },
+                        StringComparer.OrdinalIgnoreCase
                     );
 			}
 		}
