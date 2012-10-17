@@ -72,12 +72,16 @@ namespace SongRequest
             if (!ClientAllowed(requesterName))
                 return;
 
+
             if (_queue.Count > 0)
             {
-                //Take next song from queue
-                _currentSong = _queue.Current.First();
+                lock (lockObject)
+                {
+                    //Take next song from queue
+                    _currentSong = _queue.Current.First();
 
-                _queue.Remove(_currentSong);
+                    _queue.Remove(_currentSong);
+                }
             }
             else
             {
@@ -91,7 +95,23 @@ namespace SongRequest
             {
                 lock (lockObject)
                 {
-                    player.URL = _currentSong.Song.FileName;
+                    try
+                    {
+                        player.URL = _currentSong.Song.FileName;
+                    }
+                    catch
+                    {
+                        try
+                        {
+                            Thread.Sleep(50);
+                            player.controls.stop();
+                            //Try to stop the player... if this fails, just ignore...
+                        }
+                        catch
+                        {
+                            //ignore this
+                        }
+                    }
                 }
             }
         }
@@ -118,7 +138,7 @@ namespace SongRequest
                 catch
                 {
                 }
-                
+
                 string status;
                 if (SongPlayerFactory.GetSongPlayer().PlayerStatus.RequestedSong != null)
                     status = string.Format("Currently playing: {0} sec - {1}", SongPlayerFactory.GetSongPlayer().PlayerStatus.Position, SongPlayerFactory.GetSongPlayer().PlayerStatus.RequestedSong.Song.Name);
@@ -133,8 +153,8 @@ namespace SongRequest
                     minimalsonginqueue = 0;
 
                 //Enqueue random song when the queue is empty and the current song is almost finished
-                if (_queue.Count < minimalsonginqueue + ((int)(DateTime.Now - _currentSongStart).TotalSeconds + 20 > _currentSong.Song.Duration ? 1 : 0) &&  
-                    _currentSong != null)                    
+                if (_queue.Count < minimalsonginqueue + ((int)(DateTime.Now - _currentSongStart).TotalSeconds + 20 > _currentSong.Song.Duration ? 1 : 0) &&
+                    _currentSong != null)
                 {
                     RequestedSong requestedSong = _songLibrary.GetRandomSong();
                     if (requestedSong != null)
@@ -152,7 +172,7 @@ namespace SongRequest
                 playerStatus.RequestedSong = _currentSong;
                 playerStatus.Volume = this.Volume;
 
-                lock(lockObject)
+                lock (lockObject)
                 {
                     try
                     {
@@ -187,7 +207,7 @@ namespace SongRequest
 
             if (song != null)
             {
-				Enqueue(song, requesterName);
+                Enqueue(song, requesterName);
             }
         }
 
@@ -197,7 +217,7 @@ namespace SongRequest
                 return true;
 
             string allowedClients = SongPlayerFactory.GetConfigFile().GetValue("server.clients");
-                
+
             //Only allow clients from config file
             return string.IsNullOrEmpty(allowedClients) ||
                     allowedClients.Equals("all", StringComparison.OrdinalIgnoreCase) ||
