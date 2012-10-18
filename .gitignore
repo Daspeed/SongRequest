@@ -23,6 +23,7 @@ Thumbs.db
 [Dd]ebug*/
 *.lib
 *.sbr
+*.ncrunch*
 obj/
 [Rr]elease*/
 _ReSharper*/
