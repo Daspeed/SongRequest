@@ -77,9 +77,9 @@ namespace SongRequest
         static void Program_LibraryStatusChanged(string status)
         {
             lock (consoleLock)
-
+            {
                 Console.SetCursorPosition(0, 2);
-                Console.Write(new string(' ', Console.WindowWidth));            {
+                Console.Write(new string(' ', Console.WindowWidth));            
                 Console.SetCursorPosition(0, 2);
                 Console.Write("Library: {0}", SongPlayerFactory.GetConfigFile().GetValue("library.path"));
                 Console.SetCursorPosition(0, 3);
