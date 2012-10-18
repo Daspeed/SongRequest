@@ -53,17 +53,31 @@ namespace SongRequest
         {
             get
             {
-                lock (lockObject)
+                try
                 {
-                    return player.settings.volume;
+                    lock (lockObject)
+                    {
+                        return player.settings.volume;
+                    }
+                }
+                catch
+                {
+                    return 0;
                 }
             }
             set
             {
-                lock (lockObject)
+                try
                 {
-                    player.settings.volume = Math.Max(Math.Min(value, 100), 0);
+                    lock (lockObject)
+                    {
+                        player.settings.volume = Math.Max(Math.Min(value, 100), 0);
+                    }
                 }
+                catch
+                {
+                }
+
             }
         }
 
@@ -153,7 +167,7 @@ namespace SongRequest
                     minimalsonginqueue = 0;
 
                 //Enqueue random song when the queue is empty and the current song is almost finished
-                if (_currentSong!= null && _queue.Count < minimalsonginqueue + ((int)(DateTime.Now - _currentSongStart).TotalSeconds + 20 > _currentSong.Song.Duration ? 1 : 0))
+                if (_currentSong != null && _queue.Count < minimalsonginqueue + ((int)(DateTime.Now - _currentSongStart).TotalSeconds + 20 > _currentSong.Song.Duration ? 1 : 0))
                 {
                     RequestedSong requestedSong = _songLibrary.GetRandomSong();
                     if (requestedSong != null)
