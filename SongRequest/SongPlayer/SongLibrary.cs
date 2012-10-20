@@ -14,12 +14,17 @@ namespace SongRequest
 		private Random random = new Random(Environment.TickCount);
 		private List<Song> _songs;
 		private DateTime _lastFullUpdate;
-		public event StatusChangedEventHandler StatusChanged;
+        private DateTime _lastFixErrors;
+        private DateTime _lastSerialize;
+        private bool _unsavedChanges;
+        public event StatusChangedEventHandler StatusChanged;
 
 		public SongLibrary()
 		{
 			_songs = new List<Song>();
             _lastFullUpdate = DateTime.Now - TimeSpan.FromDays(1000);
+            _lastFixErrors = DateTime.Now - TimeSpan.FromDays(1000);
+            _lastSerialize = DateTime.Now;
 
 			OnStatusChanged("Library created...");
 			Deserialize();
@@ -44,13 +49,17 @@ namespace SongRequest
                 int songCount = _songs.Count();
                 int noTagCount = _songs.Count(s => s.TagRead);
                 OnStatusChanged(string.Format("Library updated: {0} songs. Tags read: {1}/{0}. Next scan: {2}.", songCount, noTagCount, (_lastFullUpdate + TimeSpan.FromMinutes(minutesBetweenScans)).ToShortTimeString()));
-                Serialize();
-                OnStatusChanged(string.Format("Library updated: {0} songs. Tags read: {1}/{0}. Next scan: {2}. (saved)", songCount, noTagCount, (_lastFullUpdate + TimeSpan.FromMinutes(minutesBetweenScans)).ToShortTimeString()));
             }
             else
             {
                 OnStatusChanged("Library update completed (" + _songs.Count() + " songs). Next scan: " + (_lastFullUpdate + TimeSpan.FromMinutes(minutesBetweenScans)).ToShortTimeString());
             }
+
+            _unsavedChanges = _unsavedChanges || tagChanges > 0;
+
+            //Save, but no more than once every 2 minutes
+            if (_unsavedChanges && _lastSerialize + TimeSpan.FromMinutes(2) < DateTime.Now)
+                Serialize();
 
 			//No need to scan...
             if (_lastFullUpdate + TimeSpan.FromMinutes(minutesBetweenScans) > DateTime.Now)
@@ -63,16 +72,14 @@ namespace SongRequest
 				int songCount = _songs.Count();
 				int noTagCount = _songs.Count(s => s.TagRead);
                 OnStatusChanged(string.Format("Library updated: {0} songs. Tags read: {1}/{0}. Next scan: {2}.", songCount, noTagCount, (_lastFullUpdate + TimeSpan.FromMinutes(minutesBetweenScans)).ToShortTimeString()));
-				Serialize();
-                OnStatusChanged(string.Format("Library updated: {0} songs. Tags read: {1}/{0}. Next scan: {2}. (saved)", songCount, noTagCount, (_lastFullUpdate + TimeSpan.FromMinutes(minutesBetweenScans)).ToShortTimeString()));
 			}
-
-
 
             _lastFullUpdate = DateTime.Now;
 
             if (fileChanges == 0 || tagChanges == 0)
                 OnStatusChanged("Library update completed (" + _songs.Count() + " songs). Next scan: " + (_lastFullUpdate + TimeSpan.FromMinutes(minutesBetweenScans)).ToShortTimeString());
+
+            _unsavedChanges = _unsavedChanges || fileChanges > 0 || tagChanges > 0;
 
             return fileChanges > 0 || tagChanges > 0;
 		}
@@ -87,7 +94,9 @@ namespace SongRequest
 					{
 						BinaryFormatter bin = new BinaryFormatter();
 						bin.Serialize(stream, _songs);
+                        OnStatusChanged("Saved library to file");
 					}
+                    _unsavedChanges = false;
 				}
 			}
 			catch (IOException)
@@ -120,13 +129,16 @@ namespace SongRequest
 			{
 				OnStatusChanged("Error loading library...");
 			}
+
+            _unsavedChanges = false;
 		}
 
 		private int ScanSongs()
 		{
 			int changesMade = 0;
-			string[] directories = SongPlayerFactory.GetConfigFile().GetValue("library.path").Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
-            string[] extensions = SongPlayerFactory.GetConfigFile().GetValue("library.extensions").Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+            Config.ConfigFile config = SongPlayerFactory.GetConfigFile();
+            string[] directories = config.GetValue("library.path").Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+            string[] extensions = config.GetValue("library.extensions").Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
 
             if (extensions.Length == 0)
                 extensions = new string[] { "mp3" };
@@ -177,18 +189,27 @@ namespace SongRequest
 			Song song;
 			int songsTagged = 0;
 
+            bool fixErrors = DateTime.Now > _lastFixErrors + TimeSpan.FromMinutes(2);
+
 			do
 			{
 				//Lock collection as short as possible
 				lock (lockObject)
 				{
-					song = _songs.FirstOrDefault(s => s.TagRead == false);
+					if (fixErrors)
+                        song = _songs.FirstOrDefault(s => s.TagRead == false);
+                    else
+                        song = _songs.FirstOrDefault(s => s.TagRead == false && s.ErrorReadingTag == false);
 				}
 
 				if (song != null)
 				{
+                    if (song.ErrorReadingTag)
+                        _lastFixErrors = DateTime.Now;
+
                     UpdateSingleTag(song);
 					songsTagged++;
+
 				}
 			} while (song != null && songsTagged < 200);
 
@@ -212,11 +233,12 @@ namespace SongRequest
                     }
                 }
                 song.TagRead = true;
+                song.ErrorReadingTag = false;
             }
             catch(System.IO.IOException)
             {
                 song.TagRead = false;
-                Thread.Sleep(100);
+                song.ErrorReadingTag = true;
             }
             catch (Exception)
             {
