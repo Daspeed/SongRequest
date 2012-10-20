@@ -28,6 +28,7 @@ namespace SongRequest
         public string Name { get; set; }
         public string FileName { get; set; }
         public int? Duration { get; set; }
+        public bool ErrorReadingTag { get; set; }
         public bool TagRead { get; set; }
     }
 }
