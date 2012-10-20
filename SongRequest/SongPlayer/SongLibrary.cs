@@ -265,10 +265,29 @@ namespace SongRequest
                 }
                 else
                 {
-                    songs = _songs.Where(s => (s.FileName ?? string.Empty).ContainsOrdinalIgnoreCase(filter) ||
-                                        (s.Name ?? string.Empty).ContainsOrdinalIgnoreCase(filter) ||
-                                        (s.Artist ?? string.Empty).ContainsOrdinalIgnoreCase(filter)
-                                   );
+                    Match match = Regex.Match(filter, @"^(f|r|rf|fr):(.+)$");
+
+                    bool includeFileNameInSearch = match.Success && match.Groups[1].Value.Contains("f");
+
+                    Func<string, bool> searchFunc = (source) => StringExtensions.ContainsOrdinalIgnoreCase(source, includeFileNameInSearch ? match.Groups[2].Value : filter);
+
+                    if (match.Success && match.Groups[1].Value.Contains("r"))
+                    {
+                        Regex regex = new Func<Regex>(() =>
+                        {
+                            try { return new Regex(match.Groups[2].Value, RegexOptions.IgnoreCase); }
+                            catch (Exception) { return null; }
+                        })();
+
+                        if(regex != null)
+                            searchFunc = regex.IsMatch;
+                    }
+                                        
+                    songs = _songs.Where(s =>
+                        searchFunc(s.Name ?? string.Empty) ||
+                        searchFunc(s.Artist ?? string.Empty) ||
+                        includeFileNameInSearch ? searchFunc(s.FileName ?? string.Empty) : false
+                    );
                 }
 
                 bool sortbyArtist = sortBy == "artist";
