@@ -286,7 +286,7 @@ namespace SongRequest
                     songs = _songs.Where(s =>
                         searchFunc(s.Name ?? string.Empty) ||
                         searchFunc(s.Artist ?? string.Empty) ||
-                        includeFileNameInSearch ? searchFunc(s.FileName ?? string.Empty) : false
+                        (includeFileNameInSearch ? searchFunc(s.FileName ?? string.Empty) : false)
                     );
                 }
 
