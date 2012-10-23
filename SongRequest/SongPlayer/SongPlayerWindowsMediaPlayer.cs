@@ -155,7 +155,7 @@ namespace SongRequest
 
                 string status;
                 if (SongPlayerFactory.GetSongPlayer().PlayerStatus.RequestedSong != null)
-                    status = string.Format("Currently playing: {0} sec - {1}", SongPlayerFactory.GetSongPlayer().PlayerStatus.Position, SongPlayerFactory.GetSongPlayer().PlayerStatus.RequestedSong.Song.Name);
+                    status = string.Format("Currently playing: {0} sec -> {1}", SongPlayerFactory.GetSongPlayer().PlayerStatus.Position, SongPlayerFactory.GetSongPlayer().PlayerStatus.RequestedSong.Song.GetArtistAndTitle());
                 else
                     status = "No song playing...";
 

@@ -30,5 +30,17 @@ namespace SongRequest
         public int? Duration { get; set; }
         public bool ErrorReadingTag { get; set; }
         public bool TagRead { get; set; }
+
+
+		public string GetArtistAndTitle()
+		{
+			if (!string.IsNullOrEmpty(Artist) && !string.IsNullOrEmpty(Name))
+				return Artist + " - " + Name;
+
+			if (!string.IsNullOrEmpty(Name))
+				return Name;
+
+			return FileName;
+		}
     }
 }
