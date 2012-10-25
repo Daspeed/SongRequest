@@ -230,6 +230,9 @@ namespace SongRequest
 
                         song.Artist = taglibFile.Tag.JoinedPerformers;
                         song.Duration = (int)taglibFile.Properties.Duration.TotalSeconds;
+
+                        FileInfo fileInfo = new FileInfo(song.FileName);
+                        song.DateCreated = fileInfo.CreationTime.ToString("yyyy-MM-dd HH:mm");
                     }
                 }
                 song.TagRead = true;
@@ -290,7 +293,20 @@ namespace SongRequest
                     );
                 }
 
-                bool sortbyArtist = sortBy == "artist";
+                SortBy importantSort;
+                switch (sortBy)
+                {
+                    case "date":
+                        importantSort = SortBy.Date;
+                        break;
+                    case "name":
+                        importantSort = SortBy.Name;
+                        break;
+                    case "artist":
+                    default:
+                        importantSort = SortBy.Artist;
+                        break;
+                }
 
                 Func<IEnumerable<Song>, Func<Song, string>, IComparer<string>, IOrderedEnumerable<Song>> firstSorter = Enumerable.OrderBy;
                 if (!ascending)
@@ -300,13 +316,26 @@ namespace SongRequest
                 if (!ascending)
                     secondSorter = Enumerable.ThenByDescending;
 
+                Func<IOrderedEnumerable<Song>, Func<Song, string>, IComparer<string>, IOrderedEnumerable<Song>> thirdSorter = Enumerable.ThenByDescending;
+                if (!ascending)
+                    thirdSorter = Enumerable.ThenBy;
+
                 return
+                    thirdSorter(
                         secondSorter(
-                        firstSorter(songs, x => { return sortbyArtist ? x.Artist : x.Name; }, StringComparer.OrdinalIgnoreCase),
-                        x => { return sortbyArtist ? x.Name : x.Artist; },
-                        StringComparer.OrdinalIgnoreCase
+                            firstSorter(songs,
+                                x => { return ((importantSort == SortBy.Artist) ? x.Artist : (importantSort == SortBy.Name ? x.Name : x.DateCreated)); }, StringComparer.OrdinalIgnoreCase),
+                                x => { return ((importantSort == SortBy.Artist) ? x.Name : (importantSort == SortBy.Name ? x.Artist : x.Artist)); }, StringComparer.OrdinalIgnoreCase),
+                                x => { return ((importantSort == SortBy.Artist) ? x.TempId : (importantSort == SortBy.Name ? x.TempId : x.Name)); }, StringComparer.OrdinalIgnoreCase
                                 );
             }
+        }
+
+        private enum SortBy
+        {
+            Artist,
+            Name,
+            Date
         }
 
         public void Rescan()

@@ -560,6 +560,7 @@ _.each(requestedSongs, function(requestedSong, index) {
         <th id="nameHeader" class="header <%=data.SortBy==='name'?('sorted'+(data.Ascending?' Asc':' Desc')):''%>">Name</th>
         <th id="artistHeader" class="header <%=data.SortBy==='artist'?('sorted'+(data.Ascending?' Asc':' Desc')):''%>">Artist</th>
         <th>Length</th>
+        <th id="dateHeader" class="header <%=data.SortBy==='date'?('sorted'+(data.Ascending?' Asc':' Desc')):''%>">Date created</th>
     </tr>
     <% _.each(data.SongsForCurrentPage, function(song, index) { %>
     <tr class="<%- index%2===0?'odd':'even' %>row">
@@ -567,6 +568,7 @@ _.each(requestedSongs, function(requestedSong, index) {
         <td><a class="songlink" href="<%- song.FileName %>" title="<%- song.FileName %>"><%- song.Name%></a></td>
         <td><%- song.Artist %></td>
         <td><%- window.SongRequest.convertNumberToTime(song.Duration) %></td>
+        <td><%- song.DateCreated %></td>
     </tr>
     <% }); %>
 </table>
