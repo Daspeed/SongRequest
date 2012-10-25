@@ -17,11 +17,33 @@ namespace SongRequest
         internal volatile static bool _running = true;
         private static int port;
 
+        static string prefix = "http://*:9669/";
+
+
         static void Main(string[] args)
         {
             try
             {
                 Run();
+            }
+            catch (HttpListenerException ex)
+            {
+                if (ex.ErrorCode == 5)
+                {
+                    string username = Environment.GetEnvironmentVariable("USERNAME");
+                    string userdomain = Environment.GetEnvironmentVariable("USERDOMAIN");
+
+                    Console.SetCursorPosition(0, Console.WindowHeight - 10);
+                    Console.WriteLine("You need to run the following command (as admin):");
+                    Console.WriteLine("  netsh http add urlacl url={0} user={1}\\{2} listen=yes",
+                        prefix, userdomain, username);
+                    Console.SetCursorPosition(0, 0);
+                }
+                else
+                {
+                    Console.WriteLine(ex);
+                    Console.ReadLine();
+                }
             }
             catch (Exception ex)
             {
@@ -40,12 +62,15 @@ namespace SongRequest
                 if (!int.TryParse(SongPlayerFactory.GetConfigFile().GetValue("server.port"), out port))
                     port = 8765;
 
+                prefix = string.Format("http://*:{0}/", port);
+
                 DrawProgramStatus();
 
                 SongPlayerFactory.GetSongPlayer().LibraryStatusChanged += new StatusChangedEventHandler(Program_LibraryStatusChanged);
                 SongPlayerFactory.GetSongPlayer().PlayerStatusChanged += new StatusChangedEventHandler(Program_PlayerStatusChanged);
 
-                listener.Prefixes.Add(string.Format("http://*:{0}/", port));
+                listener.Prefixes.Add(prefix);
+
                 listener.Start();
 
                 while (_running)
@@ -79,7 +104,7 @@ namespace SongRequest
             lock (consoleLock)
             {
                 Console.SetCursorPosition(0, 2);
-                Console.Write(new string(' ', Console.WindowWidth));            
+                Console.Write(new string(' ', Console.WindowWidth));
                 Console.SetCursorPosition(0, 2);
                 Console.Write("Library: {0}", SongPlayerFactory.GetConfigFile().GetValue("library.path"));
                 Console.SetCursorPosition(0, 3);
