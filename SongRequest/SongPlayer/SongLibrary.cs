@@ -8,42 +8,42 @@ using System.Threading;
 
 namespace SongRequest
 {
-	public class SongLibrary
-	{
-		private static object lockObject = new object();
-		private Random random = new Random(Environment.TickCount);
-		private List<Song> _songs;
-		private DateTime _lastFullUpdate;
+    public class SongLibrary
+    {
+        private static object lockObject = new object();
+        private Random random = new Random(Environment.TickCount);
+        private List<Song> _songs;
+        private DateTime _lastFullUpdate;
         private DateTime _lastFixErrors;
         private DateTime _lastSerialize;
         private bool _unsavedChanges;
         public event StatusChangedEventHandler StatusChanged;
 
-		public SongLibrary()
-		{
-			_songs = new List<Song>();
+        public SongLibrary()
+        {
+            _songs = new List<Song>();
             _lastFullUpdate = DateTime.Now - TimeSpan.FromDays(1000);
             _lastFixErrors = DateTime.Now - TimeSpan.FromDays(1000);
             _lastSerialize = DateTime.Now;
 
-			OnStatusChanged("Library created...");
-			Deserialize();
-		}
+            OnStatusChanged("Library created...");
+            Deserialize();
+        }
 
-		protected virtual void OnStatusChanged(string status)
-		{
-			if (StatusChanged != null)
-				StatusChanged(status);
-		}
+        protected virtual void OnStatusChanged(string status)
+        {
+            if (StatusChanged != null)
+                StatusChanged(status);
+        }
 
-		public bool ScanLibrary()
-		{
+        public bool ScanLibrary()
+        {
             int minutesBetweenScans;
 
             if (!int.TryParse(SongPlayerFactory.GetConfigFile().GetValue("library.minutesbetweenscans"), out minutesBetweenScans))
                 minutesBetweenScans = 2;
 
-			int tagChanges = UpdateTags();
+            int tagChanges = UpdateTags();
             if (tagChanges > 0)
             {
                 int songCount = _songs.Count();
@@ -61,18 +61,18 @@ namespace SongRequest
             if (_unsavedChanges && _lastSerialize + TimeSpan.FromMinutes(2) < DateTime.Now)
                 Serialize();
 
-			//No need to scan...
+            //No need to scan...
             if (_lastFullUpdate + TimeSpan.FromMinutes(minutesBetweenScans) > DateTime.Now)
                 return tagChanges > 0;
 
-			int fileChanges = ScanSongs();
-			
-			if (fileChanges > 0 || tagChanges > 0)
-			{
-				int songCount = _songs.Count();
-				int noTagCount = _songs.Count(s => s.TagRead);
+            int fileChanges = ScanSongs();
+
+            if (fileChanges > 0 || tagChanges > 0)
+            {
+                int songCount = _songs.Count();
+                int noTagCount = _songs.Count(s => s.TagRead);
                 OnStatusChanged(string.Format("Library updated: {0} songs. Tags read: {1}/{0}. Next scan: {2}.", songCount, noTagCount, (_lastFullUpdate + TimeSpan.FromMinutes(minutesBetweenScans)).ToShortTimeString()));
-			}
+            }
 
             _lastFullUpdate = DateTime.Now;
 
@@ -82,60 +82,60 @@ namespace SongRequest
             _unsavedChanges = _unsavedChanges || fileChanges > 0 || tagChanges > 0;
 
             return fileChanges > 0 || tagChanges > 0;
-		}
+        }
 
-		private void Serialize()
-		{
-			try
-			{
-				lock (lockObject)
-				{
-					using (Stream stream = File.Open("library.bin", FileMode.Create))
-					{
-						BinaryFormatter bin = new BinaryFormatter();
-						bin.Serialize(stream, _songs);
+        private void Serialize()
+        {
+            try
+            {
+                lock (lockObject)
+                {
+                    using (Stream stream = File.Open("library.bin", FileMode.Create))
+                    {
+                        BinaryFormatter bin = new BinaryFormatter();
+                        bin.Serialize(stream, _songs);
                         OnStatusChanged("Saved library to file");
-					}
+                    }
                     _unsavedChanges = false;
-				}
-			}
-			catch (IOException)
-			{
-			}
-		}
+                }
+            }
+            catch (IOException)
+            {
+            }
+        }
 
-		private void Deserialize()
-		{
-			try
-			{
-				lock (lockObject)
-				{
-					if (File.Exists("library.bin"))
-					{
-						using (Stream stream = File.Open("library.bin", FileMode.Open))
-						{
-							if (stream.Length > 0)
-							{
-								BinaryFormatter bin = new BinaryFormatter();
-								_songs = (List<Song>)bin.Deserialize(stream);
-							}
-						}
-					}
-				}
+        private void Deserialize()
+        {
+            try
+            {
+                lock (lockObject)
+                {
+                    if (File.Exists("library.bin"))
+                    {
+                        using (Stream stream = File.Open("library.bin", FileMode.Open))
+                        {
+                            if (stream.Length > 0)
+                            {
+                                BinaryFormatter bin = new BinaryFormatter();
+                                _songs = (List<Song>)bin.Deserialize(stream);
+                            }
+                        }
+                    }
+                }
 
-				OnStatusChanged("Loaded library containing " + _songs.Count() + " songs");
-			}
-			catch (IOException)
-			{
-				OnStatusChanged("Error loading library...");
-			}
+                OnStatusChanged("Loaded library containing " + _songs.Count() + " songs");
+            }
+            catch (IOException)
+            {
+                OnStatusChanged("Error loading library...");
+            }
 
             _unsavedChanges = false;
-		}
+        }
 
-		private int ScanSongs()
-		{
-			int changesMade = 0;
+        private int ScanSongs()
+        {
+            int changesMade = 0;
             Config.ConfigFile config = SongPlayerFactory.GetConfigFile();
             string[] directories = config.GetValue("library.path").Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
             string[] extensions = config.GetValue("library.extensions").Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
@@ -143,78 +143,78 @@ namespace SongRequest
             if (extensions.Length == 0)
                 extensions = new string[] { "mp3" };
 
-			List<string> files = new List<string>();
-			foreach (string directory in directories)
-			{
-				if (Directory.Exists(directory))
-				{
+            List<string> files = new List<string>();
+            foreach (string directory in directories)
+            {
+                if (Directory.Exists(directory))
+                {
                     foreach (string extension in extensions)
                     {
                         files.AddRange(Directory.GetFiles(directory, "*." + extension, SearchOption.AllDirectories).AsEnumerable<string>());
                     }
-				}
-			}
+                }
+            }
 
-			//Find removed songs
-			lock (lockObject)
-			{
-				if (_songs.RemoveAll(s => !files.Any(f => f == s.FileName)) > 0)
-					changesMade++;
-			}
+            //Find removed songs
+            lock (lockObject)
+            {
+                if (_songs.RemoveAll(s => !files.Any(f => f == s.FileName)) > 0)
+                    changesMade++;
+            }
 
-			//Find added songs
-			foreach (string fileName in files)
-			{
-				lock (lockObject)
-				{
-					if (_songs.Any(s => s.FileName == fileName))
-						continue;
-				}
+            //Find added songs
+            foreach (string fileName in files)
+            {
+                lock (lockObject)
+                {
+                    if (_songs.Any(s => s.FileName == fileName))
+                        continue;
+                }
 
-				Song song = new Song();
-				song.FileName = fileName;
-                FileInfo fileInfo= new FileInfo(fileName);
+                Song song = new Song();
+                song.FileName = fileName;
+                FileInfo fileInfo = new FileInfo(fileName);
                 song.Name = Regex.Replace(fileInfo.Name, @"\" + fileInfo.Extension + "$", string.Empty, RegexOptions.IgnoreCase);
 
-				AddSong(song);
+                AddSong(song);
 
-				changesMade++;
-			}
+                changesMade++;
+            }
 
-			return changesMade;
-		}
+            return changesMade;
+        }
 
-		private int UpdateTags()
-		{
-			Song song;
-			int songsTagged = 0;
+        private int UpdateTags()
+        {
+            Song song;
+            int songsTagged = 0;
 
             bool fixErrors = DateTime.Now > _lastFixErrors + TimeSpan.FromMinutes(2);
 
-			do
-			{
-				//Lock collection as short as possible
-				lock (lockObject)
-				{
-					if (fixErrors)
+            do
+            {
+                //Lock collection as short as possible
+                lock (lockObject)
+                {
+                    if (fixErrors)
                         song = _songs.FirstOrDefault(s => s.TagRead == false);
                     else
                         song = _songs.FirstOrDefault(s => s.TagRead == false && s.ErrorReadingTag == false);
-				}
+                }
 
-				if (song != null)
-				{
+                if (song != null)
+                {
                     if (song.ErrorReadingTag)
                         _lastFixErrors = DateTime.Now;
 
                     UpdateSingleTag(song);
-					songsTagged++;
+                    songsTagged++;
 
-				}
-			} while (song != null && songsTagged < 200);
+                }
+            } while (song != null && songsTagged < 200);
 
-			return songsTagged;
-		}
+            return songsTagged;
+        }
 
         public static void UpdateSingleTag(Song song)
         {
@@ -235,7 +235,7 @@ namespace SongRequest
                 song.TagRead = true;
                 song.ErrorReadingTag = false;
             }
-            catch(System.IO.IOException)
+            catch (System.IO.IOException)
             {
                 song.TagRead = false;
                 song.ErrorReadingTag = true;
@@ -243,21 +243,21 @@ namespace SongRequest
             catch (Exception)
             {
                 song.TagRead = true;
-            }                        
+            }
         }
 
-		public void AddSong(Song song)
-		{
-			lock (lockObject)
-			{
-				_songs.Add(song);
-			}
-		}
+        public void AddSong(Song song)
+        {
+            lock (lockObject)
+            {
+                _songs.Add(song);
+            }
+        }
 
         public IEnumerable<Song> GetSongs(string filter, string sortBy, bool ascending)
-		{
-			lock (lockObject)
-			{
+        {
+            lock (lockObject)
+            {
                 IEnumerable<Song> songs = null;
                 if (string.IsNullOrEmpty(filter))
                 {
@@ -279,10 +279,10 @@ namespace SongRequest
                             catch (Exception) { return null; }
                         })();
 
-                        if(regex != null)
+                        if (regex != null)
                             searchFunc = regex.IsMatch;
                     }
-                                        
+
                     songs = _songs.Where(s =>
                         searchFunc(s.Name ?? string.Empty) ||
                         searchFunc(s.Artist ?? string.Empty) ||
@@ -293,7 +293,7 @@ namespace SongRequest
                 bool sortbyArtist = sortBy == "artist";
 
                 Func<IEnumerable<Song>, Func<Song, string>, IComparer<string>, IOrderedEnumerable<Song>> firstSorter = Enumerable.OrderBy;
-                if(!ascending)
+                if (!ascending)
                     firstSorter = Enumerable.OrderByDescending;
 
                 Func<IOrderedEnumerable<Song>, Func<Song, string>, IComparer<string>, IOrderedEnumerable<Song>> secondSorter = Enumerable.ThenBy;
@@ -301,13 +301,13 @@ namespace SongRequest
                     secondSorter = Enumerable.ThenByDescending;
 
                 return
-                    secondSorter(
+                        secondSorter(
                         firstSorter(songs, x => { return sortbyArtist ? x.Artist : x.Name; }, StringComparer.OrdinalIgnoreCase),
                         x => { return sortbyArtist ? x.Name : x.Artist; },
                         StringComparer.OrdinalIgnoreCase
-                    );
-			}
-		}
+                                );
+            }
+        }
 
         public void Rescan()
         {
@@ -321,12 +321,12 @@ namespace SongRequest
             }
         }
 
-		public RequestedSong GetRandomSong()
-		{
-			lock (lockObject)
-			{
-				if (_songs.Count == 0)
-					return null;
+        public RequestedSong GetRandomSong()
+        {
+            lock (lockObject)
+            {
+                if (_songs.Count == 0)
+                    return null;
 
                 Song randomSong = _songs[random.Next(_songs.Count)];
 
@@ -335,13 +335,13 @@ namespace SongRequest
                     randomSong.Duration > 600)
                     randomSong = _songs[random.Next(_songs.Count)];
 
-				return new RequestedSong()
-				{
+                return new RequestedSong()
+                {
                     Song = randomSong,
-					RequesterName = "randomizer"
-				};
-			}
-		}
-	}
+                    RequesterName = "randomizer"
+                };
+            }
+        }
+    }
 }
 

@@ -13,7 +13,7 @@ namespace SongRequest.Handlers
     {
         public override void Process(HttpListenerRequest request, HttpListenerResponse response)
         {
-            using (var stream = typeof(StaticHandler).Assembly.GetManifestResourceStream("SongRequest.Static.favicon.ico" ))
+            using (var stream = typeof(StaticHandler).Assembly.GetManifestResourceStream("SongRequest.Static.favicon.ico"))
             {
                 stream.CopyTo(response.OutputStream);
             }

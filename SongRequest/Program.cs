@@ -125,7 +125,7 @@ namespace SongRequest
             lock (consoleLock)
             {
                 string white = new string(' ', Console.WindowWidth - 36);
-                Console.SetCursorPosition(0, Console.WindowHeight-10);
+                Console.SetCursorPosition(0, Console.WindowHeight - 10);
                 Console.WriteLine(white + @"    ,");
                 Console.WriteLine(white + @"    |\        __");
                 Console.WriteLine(white + @"    | |      |--|             __");

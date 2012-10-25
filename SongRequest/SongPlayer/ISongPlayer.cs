@@ -1,17 +1,16 @@
-using System;
 using System.Collections.Generic;
 
 namespace SongRequest
 {
     public delegate void StatusChangedEventHandler(string status);
 
-	public interface ISongplayer
-	{
+    public interface ISongplayer
+    {
         event StatusChangedEventHandler LibraryStatusChanged;
         event StatusChangedEventHandler PlayerStatusChanged;
 
-		PlayerStatus PlayerStatus {get;}
-		
+        PlayerStatus PlayerStatus { get; }
+
         IEnumerable<Song> GetPlayList(string filter, string sortBy, bool ascending);
 
         IEnumerable<RequestedSong> PlayQueue { get; }
@@ -29,6 +28,6 @@ namespace SongRequest
         void Rescan(string requesterName);
 
         int Volume { get; set; }
-	}
+    }
 }
 

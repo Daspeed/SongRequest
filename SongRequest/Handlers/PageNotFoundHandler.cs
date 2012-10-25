@@ -14,9 +14,9 @@ namespace SongRequest.Handlers
             string text = Get("404.htm");
 
             response.ContentType = "text/html";
-            
+
             response.StatusCode = 404;
-            WriteUtf8String(response.OutputStream, text??string.Empty);
+            WriteUtf8String(response.OutputStream, text ?? string.Empty);
         }
     }
 }

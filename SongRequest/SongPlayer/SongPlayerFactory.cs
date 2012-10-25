@@ -3,19 +3,19 @@ using SongRequest.Config;
 
 namespace SongRequest
 {
-	public static class SongPlayerFactory
-	{
-		private static ISongplayer _songPlayer;
+    public static class SongPlayerFactory
+    {
+        private static ISongplayer _songPlayer;
 
-		public static ISongplayer GetSongPlayer()
-		{
+        public static ISongplayer GetSongPlayer()
+        {
             if (_songPlayer == null)
             {
                 _songPlayer = new SongPlayerWindowsMediaPlayer();
             }
-			
-			return _songPlayer;
-		}
+
+            return _songPlayer;
+        }
 
         public static ConfigFile GetConfigFile()
         {
@@ -34,6 +34,6 @@ namespace SongRequest
 
             return new ConfigFile("songrequest.config");
         }
-	}
+    }
 }
 

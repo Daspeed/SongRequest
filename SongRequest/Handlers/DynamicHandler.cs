@@ -16,11 +16,11 @@ namespace SongRequest.Handlers
 
         public override void Process(HttpListenerRequest request, HttpListenerResponse response)
         {
-            string[] actionPath = request.RawUrl.Split(new[]{'/'}, StringSplitOptions.RemoveEmptyEntries);
+            string[] actionPath = request.RawUrl.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
 
             string action = actionPath[1];
-            
-			ISongplayer songPlayer = SongPlayerFactory.GetSongPlayer();
+
+            ISongplayer songPlayer = SongPlayerFactory.GetSongPlayer();
 
             switch (action)
             {
@@ -30,7 +30,8 @@ namespace SongRequest.Handlers
                         case "GET":
                             response.ContentType = "application/json";
                             WriteUtf8String(response.OutputStream, JsonConvert.SerializeObject(
-                                new {
+                                new
+                                {
                                     Queue = songPlayer.PlayQueue.ToList(),
                                     PlayerStatus = songPlayer.PlayerStatus,
                                     Self = GetRequester(request)
@@ -58,7 +59,7 @@ namespace SongRequest.Handlers
                             using (var reader = new StreamReader(request.InputStream))
                             {
                                 string posted = reader.ReadToEnd();
-                                var playlistRequest = JsonConvert.DeserializeAnonymousType(posted, new { Filter = string.Empty, Page = 0, SortBy="artist", Ascending=true });
+                                var playlistRequest = JsonConvert.DeserializeAnonymousType(posted, new { Filter = string.Empty, Page = 0, SortBy = "artist", Ascending = true });
 
                                 Song[] songs = songPlayer.GetPlayList(
                                     playlistRequest.Filter,
@@ -68,10 +69,11 @@ namespace SongRequest.Handlers
 
                                 response.ContentType = "application/json";
                                 WriteUtf8String(response.OutputStream, JsonConvert.SerializeObject(
-                                    new{
-                                        TotalPageCount = (songs.Length + (_pageSize-1)) / _pageSize,
+                                    new
+                                    {
+                                        TotalPageCount = (songs.Length + (_pageSize - 1)) / _pageSize,
                                         CurrentPage = playlistRequest.Page,
-                                        SongsForCurrentPage = songs.Skip((playlistRequest.Page-1) * _pageSize).Take(_pageSize).ToArray(),
+                                        SongsForCurrentPage = songs.Skip((playlistRequest.Page - 1) * _pageSize).Take(_pageSize).ToArray(),
                                         SortBy = playlistRequest.SortBy,
                                         Ascending = playlistRequest.Ascending
                                     }
