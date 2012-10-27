@@ -272,7 +272,7 @@ namespace SongRequest
 
                     bool includeFileNameInSearch = match.Success && match.Groups[1].Value.Contains("f");
 
-                    Func<string, bool> searchFunc = (source) => StringExtensions.ContainsOrdinalIgnoreCase(source, includeFileNameInSearch ? match.Groups[2].Value : filter, true);
+                    Func<string, bool> searchFunc = (source) => StringExtensions.ContainsIgnoreCaseNonSpace(source, includeFileNameInSearch ? match.Groups[2].Value : filter);
 
                     if (match.Success && match.Groups[1].Value.Contains("r"))
                     {
