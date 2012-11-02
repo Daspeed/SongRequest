@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Text.RegularExpressions;
 using System.Globalization;
 using System.Threading;
 
@@ -15,7 +14,22 @@ namespace SongRequest
         public static bool ContainsIgnoreCaseNonSpace(this string source, string value)
         {
             return Thread.CurrentThread.CurrentCulture.CompareInfo
-                .IndexOf(source, value, CompareOptions.IgnoreCase | CompareOptions.IgnoreNonSpace) > -1;
+                .IndexOf(source.ReplaceUniqueCharacters(), value.ReplaceUniqueCharacters(), CompareOptions.IgnoreCase | CompareOptions.IgnoreNonSpace) > -1;
+        }
+
+        public static string ReplaceUniqueCharacters(this string source)
+        {
+            char[] bad = new char[] { '$', '¹', '²', '³' };
+            char[] good = new char[] { 's', '1', '2', '3' };
+
+            string value = source;
+
+            for (int i = 0; i < bad.Length; i++)
+            {
+                value = value.Replace(bad[i], good[i]);
+            }
+
+            return value;
         }
     }
 }
