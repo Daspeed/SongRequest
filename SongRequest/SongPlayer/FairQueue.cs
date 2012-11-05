@@ -70,16 +70,7 @@ namespace SongRequest
         {
             lock (lockObject)
             {
-                bool found = false;
-                _requestedSongs.RemoveAll(x =>
-                {
-                    if (x.Song.TempId == id && !found)
-                    {
-                        found = true;
-                        return true;
-                    }
-                    return false;
-                });
+                _requestedSongs.RemoveAll(x => x.Song.TempId == id);
             }
         }
 
