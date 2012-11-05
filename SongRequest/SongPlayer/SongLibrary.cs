@@ -165,24 +165,29 @@ namespace SongRequest
                     changesMade++;
             }
 
-            //Find added songs
-            foreach (string fileName in files)
+            //Find added songs. Here we can have thousands of files
+            Parallel.ForEach(files, fileName =>
             {
+                bool checkNext = false;
+
                 lock (lockObject)
                 {
                     if (_songs.Any(s => s.FileName == fileName))
-                        continue;
+                        checkNext = true;
                 }
 
-                Song song = new Song();
-                song.FileName = fileName;
-                FileInfo fileInfo = new FileInfo(fileName);
-                song.Name = Regex.Replace(fileInfo.Name, @"\" + fileInfo.Extension + "$", string.Empty, RegexOptions.IgnoreCase);
+                if (!checkNext)
+                {
+                    Song song = new Song();
+                    song.FileName = fileName;
+                    FileInfo fileInfo = new FileInfo(fileName);
+                    song.Name = Regex.Replace(fileInfo.Name, @"\" + fileInfo.Extension + "$", string.Empty, RegexOptions.IgnoreCase);
+                    
+                    AddSong(song);
 
-                AddSong(song);
-
-                changesMade++;
-            }
+                    changesMade++;
+                }
+            });
 
             return changesMade;
         }
