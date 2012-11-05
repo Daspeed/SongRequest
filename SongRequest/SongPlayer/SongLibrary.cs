@@ -294,7 +294,7 @@ namespace SongRequest
                             searchFunc = regex.IsMatch;
                     }
 
-                    songs = _songs.Where(s =>
+                    songs = _songs.AsParallel().Where(s =>
                         searchFunc(s.Name ?? string.Empty) ||
                         searchFunc(s.Artist ?? string.Empty) ||
                         (includeFileNameInSearch ? searchFunc(s.FileName ?? string.Empty) : false)
@@ -350,11 +350,11 @@ namespace SongRequest
         {
             lock (_songs)
             {
-                foreach (var song in _songs)
+                Parallel.ForEach(_songs, song =>
                 {
                     _lastFullUpdate = DateTime.Now - TimeSpan.FromDays(1000);
                     song.TagRead = false;
-                }
+                });
             }
         }
 
