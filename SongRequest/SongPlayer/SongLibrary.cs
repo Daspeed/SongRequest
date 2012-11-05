@@ -5,6 +5,7 @@ using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace SongRequest
 {
@@ -144,16 +145,18 @@ namespace SongRequest
                 extensions = new string[] { "mp3" };
 
             List<string> files = new List<string>();
-            foreach (string directory in directories)
+
+            //assuming we could have several dirs here, lets speed up the process
+            Parallel.ForEach(directories, directory =>
             {
                 if (Directory.Exists(directory))
                 {
-                    foreach (string extension in extensions)
+                    foreach (var extension in extensions)
                     {
                         files.AddRange(Directory.GetFiles(directory, "*." + extension, SearchOption.AllDirectories).AsEnumerable<string>());
                     }
                 }
-            }
+            });
 
             //Find removed songs
             lock (lockObject)
