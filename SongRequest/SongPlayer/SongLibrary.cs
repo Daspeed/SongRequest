@@ -5,6 +5,7 @@ using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace SongRequest
 {
@@ -144,16 +145,18 @@ namespace SongRequest
                 extensions = new string[] { "mp3" };
 
             List<string> files = new List<string>();
-            foreach (string directory in directories)
+
+            //assuming we could have several dirs here, lets speed up the process
+            Parallel.ForEach(directories, directory =>
             {
                 if (Directory.Exists(directory))
                 {
-                    foreach (string extension in extensions)
+                    foreach (var extension in extensions)
                     {
                         files.AddRange(Directory.GetFiles(directory, "*." + extension, SearchOption.AllDirectories).AsEnumerable<string>());
                     }
                 }
-            }
+            });
 
             //Find removed songs
             lock (lockObject)
@@ -162,24 +165,29 @@ namespace SongRequest
                     changesMade++;
             }
 
-            //Find added songs
-            foreach (string fileName in files)
+            //Find added songs. Here we can have thousands of files
+            Parallel.ForEach(files, fileName =>
             {
+                bool checkNext = false;
+
                 lock (lockObject)
                 {
                     if (_songs.Any(s => s.FileName == fileName))
-                        continue;
+                        checkNext = true;
                 }
 
-                Song song = new Song();
-                song.FileName = fileName;
-                FileInfo fileInfo = new FileInfo(fileName);
-                song.Name = Regex.Replace(fileInfo.Name, @"\" + fileInfo.Extension + "$", string.Empty, RegexOptions.IgnoreCase);
+                if (!checkNext)
+                {
+                    Song song = new Song();
+                    song.FileName = fileName;
+                    FileInfo fileInfo = new FileInfo(fileName);
+                    song.Name = Regex.Replace(fileInfo.Name, @"\" + fileInfo.Extension + "$", string.Empty, RegexOptions.IgnoreCase);
+                    
+                    AddSong(song);
 
-                AddSong(song);
-
-                changesMade++;
-            }
+                    changesMade++;
+                }
+            });
 
             return changesMade;
         }
@@ -286,7 +294,7 @@ namespace SongRequest
                             searchFunc = regex.IsMatch;
                     }
 
-                    songs = _songs.Where(s =>
+                    songs = _songs.AsParallel().Where(s =>
                         searchFunc(s.Name ?? string.Empty) ||
                         searchFunc(s.Artist ?? string.Empty) ||
                         (includeFileNameInSearch ? searchFunc(s.FileName ?? string.Empty) : false)
@@ -342,11 +350,11 @@ namespace SongRequest
         {
             lock (_songs)
             {
-                foreach (var song in _songs)
+                Parallel.ForEach(_songs, song =>
                 {
                     _lastFullUpdate = DateTime.Now - TimeSpan.FromDays(1000);
                     song.TagRead = false;
-                }
+                });
             }
         }
 
