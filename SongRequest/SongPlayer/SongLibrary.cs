@@ -1,10 +1,9 @@
 using System;
-using System.Linq;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text.RegularExpressions;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace SongRequest
@@ -98,6 +97,7 @@ namespace SongRequest
                         OnStatusChanged("Saved library to file");
                     }
                     _unsavedChanges = false;
+                    _lastSerialize = DateTime.Now;
                 }
             }
             catch (IOException)
