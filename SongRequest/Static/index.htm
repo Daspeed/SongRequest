@@ -14,22 +14,12 @@
             font-family:Verdana, Helvetica, Arial;
         }
         
-        .top {
-          /* fallback */
+        .top
+        {
           background-color: #555555;
           
-          /* Firefox 3.6+ */
-          background: -moz-linear-gradient(100% 100% 90deg, #222222, #555555);
-          
-          /* Safari 4-5, Chrome 1-9 */
-          /* -webkit-gradient(<type>, <point> [, <radius>]?, <point> [, <radius>]? [, <stop>]*) */
-          background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#555555), to(#222222));
-          
-          /* Safari 5.1+, Chrome 10+ */
+          background: linear-gradient(#555555, #222222);
           background: -webkit-linear-gradient(#555555, #222222);
-          
-          /* Opera 11.10+ */
-          background: -o-linear-gradient(#555555, #222222);
           
           height:70px;
           border:solid 0px #111111;
@@ -43,25 +33,10 @@
             float:left;
             
             background-color: #70B0FF;
-            
-            /* Firefox 3.6+ */
-            background: -moz-linear-gradient(100% 100% 90deg, #70B0FF, #ADCEFF);
-
-            /* Safari 4-5, Chrome 1-9 */
-            /* -webkit-gradient(<type>, <point> [, <radius>]?, <point> [, <radius>]? [, <stop>]*) */
-            background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#70B0FF), to(#ADCEFF));
-
-            /* Safari 5.1+, Chrome 10+ */
+            background: linear-gradient(#70B0FF, #ADCEFF);
             background: -webkit-linear-gradient(#70B0FF, #ADCEFF);
-
-            /* Opera 11.10+ */
-            background: -o-linear-gradient(#70B0FF, #ADCEFF);
             
             border:inset 1px #111111;
-            /*
-            border-radius:6px;
-            -moz-border-radius:6px; 
-            */
             
             min-width:750px;
             height:40px;
@@ -82,18 +57,8 @@
         	width:60px;
             height:40px;
             margin-left:10px;
-        	/* Firefox 3.6+ */
-            background: -moz-linear-gradient(100% 100% 90deg, #70CCB0, #ADCCCE);
-
-            /* Safari 4-5, Chrome 1-9 */
-            /* -webkit-gradient(<type>, <point> [, <radius>]?, <point> [, <radius>]? [, <stop>]*) */
-            background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#70CCB0), to(#ADCCCE));
-
-            /* Safari 5.1+, Chrome 10+ */
+            background: linear-gradient(#70CCB0, #ADCCCE);
             background: -webkit-linear-gradient(#70CCB0, #ADCCCE);
-
-            /* Opera 11.10+ */
-            background: -o-linear-gradient(#70CCB0, #ADCCCE);
         	border:inset 1px #111111;
         }
         
@@ -109,8 +74,6 @@
             width:300px;
         	min-height:700px;
             
-            -moz-box-shadow: 10px 10px 5px #888888; /* Firefox 3.6 and earlier */
-            -webkit-box-shadow: 10px 10px 5px #888888; /* Safari and Chrome */
             box-shadow: 5px 5px 5px #888888;
             
             float:left;
@@ -122,16 +85,12 @@
             width:600px;
             
         	min-height: 700px;
-            
-            -moz-box-shadow: 10px 10px 5px #888888; /* Firefox 3.6 and earlier */
-            -webkit-box-shadow: 10px 10px 5px #888888; /* Safari and Chrome */
             box-shadow: 5px 5px 5px #888888;
             
             float:left;
             margin-left:20px;
             
             border-bottom-right-radius:20px;
-            -moz-border-bottom-right-radius:20px; 
         }
         
         .list, .playlist
@@ -149,22 +108,10 @@
         .listheader, .playlistheader
         {
             background-color: #cccccc;
-            
-            /* Firefox 3.6+ */
-            background: -moz-linear-gradient(100% 100% 90deg, #cccccc, #eeeeee);
-
-            /* Safari 4-5, Chrome 1-9 */
-            /* -webkit-gradient(<type>, <point> [, <radius>]?, <point> [, <radius>]? [, <stop>]*) */
-            background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#cccccc), to(#eeeeee));
-
-            /* Safari 5.1+, Chrome 10+ */
+            background: linear-gradient(#cccccc, #eeeeee);
             background: -webkit-linear-gradient(#cccccc, #eeeeee);
-
-            /* Opera 11.10+ */
-            background: -o-linear-gradient(#cccccc, #eeeeee);
             
             height:20px;
-            
             
             border:solid 0px #aaaaaa;
             border-bottom-width:1px;
@@ -184,19 +131,8 @@
         .oddrow
         {
             background-color: #70B0FF;
-
-            /* Firefox 3.6+ */
-            background: -moz-linear-gradient(100% 100% 90deg, #70B0FF, #ADCEFF);
-
-            /* Safari 4-5, Chrome 1-9 */
-            /* -webkit-gradient(<type>, <point> [, <radius>]?, <point> [, <radius>]? [, <stop>]*) */
-            background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#70B0FF), to(#ADCEFF));
-
-            /* Safari 5.1+, Chrome 10+ */
+            background: linear-gradient(#70B0FF, #ADCEFF);
             background: -webkit-linear-gradient(#70B0FF, #ADCEFF);
-
-            /* Opera 11.10+ */
-            background: -o-linear-gradient(#70B0FF, #ADCEFF);
         }
         
         .evenqueueitemcontainer, .oddqueueitemcontainer
@@ -211,54 +147,21 @@
         .evenqueueitemcontainer, .selfevenqueueitemcontainer
         {
             background-color: #BBBBBB;
-
-            /* Firefox 3.6+ */
-            background: -moz-linear-gradient(100% 100% 90deg, #BBBBBB, #EEEEEE);
-
-            /* Safari 4-5, Chrome 1-9 */
-            /* -webkit-gradient(<type>, <point> [, <radius>]?, <point> [, <radius>]? [, <stop>]*) */
-            background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#BBBBBB), to(#EEEEEE));
-
-            /* Safari 5.1+, Chrome 10+ */
+            background: linear-gradient(#BBBBBB, #EEEEEE);
             background: -webkit-linear-gradient(#BBBBBB, #EEEEEE);
-
-            /* Opera 11.10+ */
-            background: -o-linear-gradient(#BBBBBB, #EEEEEE);
         }
         .oddqueueitemcontainer, .selfoddqueueitemcontainer
         {
             background-color: #EEEEEE;
-
-            /* Firefox 3.6+ */
-            background: -moz-linear-gradient(100% 100% 90deg, #EEEEEE, #BBBBBB);
-
-            /* Safari 4-5, Chrome 1-9 */
-            /* -webkit-gradient(<type>, <point> [, <radius>]?, <point> [, <radius>]? [, <stop>]*) */
-            background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#EEEEEE), to(#BBBBBB));
-
-            /* Safari 5.1+, Chrome 10+ */
+            background: linear-gradient(#EEEEEE, #BBBBBB);
             background: -webkit-linear-gradient(#EEEEEE, #BBBBBB);
-
-            /* Opera 11.10+ */
-            background: -o-linear-gradient(#EEEEEE, #BBBBBB);
         }
         
         .selfevenqueueitemcontainer .button, .selfoddqueueitemcontainer .button
         {
         	background-color: #70B0FF;
-
-            /* Firefox 3.6+ */
-            background: -moz-linear-gradient(100% 100% 90deg, #70B0FF, #ADCEFF);
-
-            /* Safari 4-5, Chrome 1-9 */
-            /* -webkit-gradient(<type>, <point> [, <radius>]?, <point> [, <radius>]? [, <stop>]*) */
-            background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#70B0FF), to(#ADCEFF));
-
-            /* Safari 5.1+, Chrome 10+ */
+            background: linear-gradient(#70B0FF, #ADCEFF);
             background: -webkit-linear-gradient(#70B0FF, #ADCEFF);
-
-            /* Opera 11.10+ */
-            background: -o-linear-gradient(#70B0FF, #ADCEFF);
         }
                 
         .queueitem
