@@ -17,8 +17,8 @@ namespace SongRequest
                 int port = 0;
                 if (int.TryParse(vlcPort, out port) && port > 0)
                     return port;
-                else
-                    return null;
+                
+                return null;
             }
         }
 
@@ -31,8 +31,8 @@ namespace SongRequest
                 int port = 0;
                 if (int.TryParse(tpPort, out port) && port > 0)
                     return port;
-                else
-                    return null;
+                
+                return null;
             }
         }
     }

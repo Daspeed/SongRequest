@@ -128,10 +128,8 @@ namespace SongRequest.Handlers
                     return request.RemoteEndPoint.Address.ToString();
                 }
             }
-            else
-            {
-                return "unknown";
-            }
+            
+            return "unknown";
         }
     }
 }
