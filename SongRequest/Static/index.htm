@@ -1,7 +1,7 @@
 ﻿<!DOCTYPE HTML>
-<html>
+<html ng-app ng-controller="SongRequestController">
 <head>
-    <title>SongRequest</title>
+    <title>{{getCurrentSongName()}} | SongRequest</title>
     <style type="text/css">
         body
         {
@@ -164,6 +164,8 @@
         .queueitem
         {
             padding:3px;
+            height:55px;
+            overflow:hidden;
         }
         
         .searchbox
@@ -226,296 +228,62 @@
     </style>
     <script type="text/javascript" src="/static/underscore-min.js"></script>
     <script type="text/javascript" src="/static/jquery-1.8.2.min.js"></script>
-    <script type="text/javascript">
-        $(function () {
-            window.SongRequest = {
-                convertNumberToTime: function (num) {
-                    var minutes = parseInt(num / 60, 10);
-                    var seconds = parseInt(num % 60, 10);
-
-                    return String(minutes) + ((seconds < 10) ? ':0' : ':') + String(seconds);
-                },
-                sortBy: 'artist',
-                ascending: true
-            };
-
-            var digitize = function (arg) {
-                var allDigits = String(arg).replace(/\D/g, '');
-                if (allDigits && allDigits.length > 0)
-                    return parseInt(allDigits, 10);
-                else
-                    return 0;
-            };
-
-            var setPlaylistWidth = function () {
-                $('.right').width(Math.max(670, $(window).width() - $('#queue').width() - 50));
-            }
-
-            var queueTemplate = _.template($("#queueTemplate").html());
-            var playlistTemplate = _.template($("#playlistTemplate").html());
-            var statusTemplate = _.template($("#statusTemplate").html());
-            var titleTemplate = _.template('<%= status.RequestedSong.Song.Artist %> <% if(status.RequestedSong.Song.Artist && status.RequestedSong.Song.Name){ %> - <% } %><%= status.RequestedSong.Song.Name %> | SongRequest');
-
-            var ajaxCall = function (url, type, data, fnSuccess) {
-                $.ajax({
-                    'url': url + '/RND' + String(Math.random()),
-                    'type': type,
-                    'data': data,
-                    'success': fnSuccess
-                });
-            };
-
-            var refreshQueue = function () {
-                ajaxCall('/dynamic/queue', 'GET', null, function (data) {
-                    var maxHeight;
-
-                    $("#queue").off('click', '.removebutton');
-
-                    $("#queue").html(
-                        queueTemplate({
-                            requestedSongs: data.Queue,
-                            status: data.PlayerStatus,
-                            self: data.Self
-                        })
-                    );
-
-                    maxHeight = Math.max(40, _.max($("#queue .queueitem").map(function () {
-                        return $(this).height();
-                        })
-                    ));
-
-                    $("#queue .queueitem").each(function () { $(this).height(maxHeight); });
-
-                    $(".play").html(
-                        statusTemplate({ status: data.PlayerStatus })
-                    );
-                    document.title = titleTemplate({ status: data.PlayerStatus });
-
-                    $("#volumeContainer").text(data.PlayerStatus.Volume);
-
-                    $("#queue").on('click', '.removebutton', function (event) {
-                        var songId = $(this).attr('data');
-
-                        ajaxCall('/dynamic/queue', 'DELETE', songId, function (data) {
-                            refreshQueue();
-                        });
-                    });
-                });
-            }
-
-            var getPlayList = function (filter, page, sortby, ascending) {
-                var message = '{ Filter: "' + filter.replace(/"/g, '').replace(/\\/g, '\\\\') + '", Page: ' + String(page) + ', SortBy: "' + sortby + '", Ascending: ' + ascending + ' ' + '}';
-
-                ajaxCall('/dynamic/playlist', 'POST', message, function (data) {
-                    var currentPage = Math.max(data.CurrentPage, 1);
-                    var totalPageCount = Math.max(data.TotalPageCount, 1);
-
-                    SongRequest.sortBy = data.SortBy,
-                    SongRequest.ascending = data.Ascending;
-
-                    $(".playlist").off("click", ".addbutton");
-                    $(".playlist").off("click", ".header");
-
-                    $("#playlistContainer").html(
-                        playlistTemplate({ 'data': data })
-                    );
-
-                    $("#currentPage").val(String(currentPage));
-                    $("#pageCount").text(String(totalPageCount));
-
-                    if (currentPage > 1)
-                        $("#previousbutton").removeAttr('disabled');
-                    else
-                        $("#previousbutton").attr('disabled', 'disabled');
-
-                    if (currentPage < totalPageCount)
-                        $("#nextbutton").removeAttr('disabled');
-                    else
-                        $("#nextbutton").attr('disabled', 'disabled');
-
-                    $(".playlist").on("click", ".addbutton", function (event) {
-                        var songId = $(this).attr('data');
-                        ajaxCall('/dynamic/queue', 'POST', songId, function (data) {
-                            refreshQueue();
-                        });
-                    });
-
-                    $(".playlist").on("click", ".header", function (event) {
-                        var headerId = $(this).attr('id');
-                        var newSortBy = headerId.replace(/Header$/g, '');
-
-                        SongRequest.ascending = (newSortBy === SongRequest.sortBy) ? (!SongRequest.ascending) : SongRequest.ascending;
-                        SongRequest.sortBy = newSortBy;
-
-                        getPlayList($("#searchtext").val(), digitize($("#currentPage").val()), SongRequest.sortBy, SongRequest.ascending);
-                    });
-                });
-            }
-
-            $(document).dblclick(function () {
-                if (window.getSelection)
-                    window.getSelection().removeAllRanges();
-                else if (document.selection)
-                    document.selection.empty();
-            });
-
-            $(".info").click(function () {
-                var newVolume = prompt('New volume', $("#volumeContainer").text());
-                if (newVolume) {
-                    ajaxCall('/dynamic/volume', 'POST', newVolume, function (volume) {
-                        $("#volumeContainer").text(volume);
-                    });
-                }
-            });
-
-            $("#next").click(function () {
-                ajaxCall('/dynamic/next', 'GET', null, function (data) {
-                    refreshQueue();
-                });
-            });
-
-            $("#pause").click(function () {
-                ajaxCall('/dynamic/pause', 'GET', null, function (data) {
-
-                });
-            });
-
-            $("#rescan").click(function () {
-                ajaxCall('/dynamic/rescan', 'GET', null, function (data) {
-
-                });
-            });
-
-            $("#searchbutton").click(function () {
-                getPlayList($("#searchtext").val(), 1, SongRequest.sortBy, SongRequest.ascending);
-            });
-            $("#clearbutton").click(function () {
-                $("#searchtext").val('');
-                getPlayList('', 1, SongRequest.sortBy, SongRequest.ascending);
-            });
-            $("#searchForm").on('submit', function () {
-                getPlayList($("#searchtext").val(), 1, SongRequest.sortBy, SongRequest.ascending);
-                return false;
-            });
-            $("#pageForm").on('submit change', function () {
-                getPlayList($("#searchtext").val(), digitize($("#currentPage").val()), SongRequest.sortBy, SongRequest.ascending);
-                return false;
-            });
-
-            $("#previousbutton").click(function () {
-                getPlayList($("#searchtext").val(), Math.max(1, digitize($("#currentPage").val()) - 1), SongRequest.sortBy, SongRequest.ascending);
-            });
-            $("#nextbutton").click(function () {
-                getPlayList($("#searchtext").val(), Math.max(1, digitize($("#currentPage").val()) + 1), SongRequest.sortBy, SongRequest.ascending);
-            });
-
-            $(window).on('resize', setPlaylistWidth)
-
-            refreshQueue();
-            setInterval(refreshQueue, 1000);
-
-            getPlayList($("#searchtext").val(), 0, SongRequest.sortBy, SongRequest.ascending);
-            setPlaylistWidth();
-        });
-    </script>
+    <script type="text/javascript" src="/static/angular.min.js"></script>
+    <script type="text/javascript" src="/static/SongRequest.js"></script>
 </head>
 <body>
-<script id="queueTemplate" type="text/template">
-<div class="listheader queueheader">
-    Queue (<%- requestedSongs.length %> song<%- requestedSongs.length!=1?'s':'' %>,
-    <%- window.SongRequest.convertNumberToTime(_.chain(requestedSongs).map(function(requestedSong){ return requestedSong.Song.Duration; }).reduce(function(state, value){ return state+value;}, 0).value()) %>)
-</div>
-<% 
-var acc = Math.max(0, (status.RequestedSong.Song.Duration - status.Position));
-_.each(requestedSongs, function(requestedSong, index) {
-    requestedSong.ETA=acc;
-    acc+=requestedSong.Song.Duration;
-%>
-<div class="qitem <%- (requestedSong.RequesterName===self?'self':'') + (index%2===0?'even':'odd') %>queueitemcontainer">
-    <div class="queueitem">
-        <input type="button" class="button removebutton" data="<%= requestedSong.Song.TempId %>" value="-">
-        <strong>
-        <%- requestedSong.Song.Artist %>
-        <% if(requestedSong.Song.Artist && requestedSong.Song.Name){ %>
-        -
-        <% } %>
-        <%- requestedSong.Song.Name %>
-        (<%- window.SongRequest.convertNumberToTime(requestedSong.Song.Duration) %>)
-        </strong>
-        <div>Requested by: <%- requestedSong.RequesterName %> (ETA:
-        <%- (function(baseDate){
-                var fixer = function(num){ return (num < 10 ? '0':'') + String(num); };
-                
-                baseDate.setSeconds(baseDate.getSeconds()+requestedSong.ETA);
-                return fixer(baseDate.getHours()) + ':' + fixer(baseDate.getMinutes());  })(new Date()) %>)
-        </div>
-    </div>
-</div>
-<% }); %>
-</script>
-<script id="playlistTemplate" type="text/template">
-<table class="playlist">
-    <tr class="playlistheader">
-        <th class="smallcolumn">Action</th>
-        <th id="nameHeader" class="header <%=data.SortBy==='name'?('sorted'+(data.Ascending?' Asc':' Desc')):''%>">Name</th>
-        <th id="artistHeader" class="header <%=data.SortBy==='artist'?('sorted'+(data.Ascending?' Asc':' Desc')):''%>">Artist</th>
-        <th>Length</th>
-        <th id="dateHeader" class="header <%=data.SortBy==='date'?('sorted'+(data.Ascending?' Asc':' Desc')):''%>">Date created</th>
-    </tr>
-    <% _.each(data.SongsForCurrentPage, function(song, index) { %>
-    <tr class="<%- index%2===0?'odd':'even' %>row">
-        <td class="smallcolumn"><input type="button" class="button addbutton" data="<%= song.TempId %>" value="+"></td>
-        <td><a class="songlink" href="<%- song.FileName %>" title="<%- song.FileName %>"><%- song.Name%></a></td>
-        <td><%- song.Artist %></td>
-        <td><%- window.SongRequest.convertNumberToTime(song.Duration) %></td>
-        <td><%- song.DateCreated %></td>
-    </tr>
-    <% }); %>
-</table>
-</script>
-<script id="statusTemplate" type="text/template">
-<div class="playinfo"> 
-    <div style="float:left;">
-        <strong>
-            <%- status.RequestedSong.Song.Artist %>
-            <% if(status.RequestedSong.Song.Artist && status.RequestedSong.Song.Name){ %>
-            -
-            <% } %>
-            <%- status.RequestedSong.Song.Name %>
-            <%- window.SongRequest.convertNumberToTime(status.Position) %> / <%- window.SongRequest.convertNumberToTime(status.RequestedSong.Song.Duration)%>
-        </strong>
-    </div>
-  <div style="clear:both;">Requested by: <%- status.RequestedSong.RequesterName %></div>
-</div>
-</script>
-
 <div class="top">
     <div class="play">
-        <div class="playinfo">  
-            <strong>UNKNOWN - 00:00</strong><br>
-            <div>Requested by: UKNOWN</div>
+        <div class="playinfo"> 
+            <div style="float:left;">
+                <strong>
+                    {{getCurrentSongName()}}
+                    {{getCurrentSongPosition()}} - {{getCurrentSongDuration()}}
+                </strong>
+            </div>
+            <div style="clear:both;">Requested by: {{getCurrentSongRequester()}}</div>
         </div>
     </div>
     <div class="info">
-        <div class="playinfo">  
+        <div class="playinfo" ng-click="changeVolume()">  
             <strong>Volume</strong><br>
-            <div id="volumeContainer"></div>
+            <div>{{getVolume()}}</div>
         </div>
     </div>
     <div style="clear:left;"></div>
     <div style="margin:5px;margin-left:320px;">
-        <input id="next" type="button" class="button" value="Next" style="width:145px">
-        <input id="pause" type="button" class="button" value="Pauze" style="width:145px">
-        <input id="rescan" type="button" class="button" value="Rescan" style="width:145px">
+        <input ng-click="next()" id="next" type="button" class="button" value="Next" style="width:145px">
+        <input ng-click="pause()" id="pause" type="button" class="button" value="Pause" style="width:145px">
+        <input ng-click="rescan()" id="rescan" type="button" class="button" value="Rescan" style="width:145px">
     </div>
 </div>
 <div class="content">
     <div id="queue">
+        
         <div class="listheader queueheader">
-        Queue
+            <span ng-pluralize count="queue.length" when="{'0': 'No songs in queue',
+                'one': '1 song',
+                'other': '{} songs'}">
+            </span>
+            <span ng-hide="queue.length == 0">
+                ({{getQueueDuration()}})
+            </span>
+       </div>
+
+        <div ng-repeat="item in queue">
+            <div class="{{getQueueItemClass(item, $index)}}">
+                <div class="queueitem">
+                    <input ng-click="removeFromQueue(item.Song)" type="button" class="button removebutton" value="-">
+                    <strong>
+                    {{getSongName(item.Song)}}
+                    ({{convertNumberToTime(item.Song.Duration)}})
+                    </strong>
+                    <div>Requested by: {{item.RequesterName}} (ETA: {{item.Till}})</div>
+                </div>
+            </div>
         </div>
     </div>
-    <div class="right">
+    <div class="right" ng-style="playlistStyle">
         <table class="list searchbox">
             <tr class="listheader">
                 <th>Search</th>
@@ -524,20 +292,20 @@ _.each(requestedSongs, function(requestedSong, index) {
             </tr>
             <tr class="evenrow">
                 <td>
-                    <form id="searchForm" action="/static/404.htm">
-                        <input type="text" name="searchtext" id="searchtext" style="width:200px;">
-                        <input type="button" class="button" name="searchbutton" id="searchbutton" value="Search">
-                        <input type="button" class="button" name="clearbutton" id="clearbutton" value="Clear">
+                    <form ng-submit="search()">
+                        <input type="text" name="searchtext" id="searchtext" ng-model="filter" value="{{filter}}" style="width:200px;">
+                        <input type="submit" class="button" name="searchbutton" id="searchbutton" value="Search">
+                        <input ng-click="clear()" type="button" class="button" name="clearbutton" id="clearbutton" value="Clear">
                     </form>
                 </td>
                 <td>
                     <form id="pageForm" action="/static/404.htm">
-                        <input type="text" id="currentPage" value="1" style="width:60px;"> of <span id="pageCount">1</span>
+                        <input type="text" id="currentPage" ng-model="currentPage" ng-change="search()" value="{{currentPage}}" style="width:60px;"> of <span id="pageCount">{{pageCount}}</span>
                     </form>
                 </td>
                 <td class="controls" style="text-align:right;">
-                    <input type="button" class="button" name="previousbutton" disabled="disabled" id="previousbutton" value="Previous">
-                    <input type="button" class="button" name="nextbutton" disabled="disabled" id="nextbutton" value="Next">
+                    <input ng-disabled="currentPage <= 1" ng-click="previousPage()" type="button" class="button" name="previousbutton" id="previousbutton" value="Previous">
+                    <input ng-disabled="currentPage >= pageCount" ng-click="nextPage()" type="button" class="button" name="nextbutton" id="nextbutton" value="Next">
                 </td>
             </tr>
         </table>
@@ -546,11 +314,19 @@ _.each(requestedSongs, function(requestedSong, index) {
             <table class="playlist">
                 <tr class="playlistheader">
                     <th class="smallcolumn">Action</th>
-                    <th>Name</th>
-                    <th>Artist</th>
+                    <th id="nameHeader" class="header">Name</th>
+                    <th id="artistHeader" class="header">Artist</th>
                     <th>Length</th>
+                    <th id="dateHeader" class="header">Date created</th>
                 </tr>
-           </table>
+                <tr ng-repeat="song in searchResult" ng-class-even="'evenrow'" ng-class-odd="'oddrow'">
+                    <td class="smallcolumn"><input type="button" class="button addbutton" value="+" ng-click="addToQueue(song)"></td>
+                    <td><a class="songlink" href="{{song.FileName}}" title="{{song.FileName}}">{{song.Name}}</a></td>
+                    <td>{{song.Artist}}</td>
+                    <td>{{convertNumberToTime(song.Duration)}}</td>
+                    <td>{{song.DateCreated}}</td>
+                </tr>
+            </table>
        </div>
        <br>
        <br/>

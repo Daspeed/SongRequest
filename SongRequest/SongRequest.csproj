@@ -140,7 +140,7 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
-  </ItemGroup>
-  <ItemGroup>
+    <EmbeddedResource Include="Static\angular.min.js" />
+    <EmbeddedResource Include="Static\SongRequest.js" />
   </ItemGroup>
 </Project>
