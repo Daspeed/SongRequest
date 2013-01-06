@@ -66,6 +66,12 @@ namespace SongRequest
 
                 DrawProgramStatus();
 
+                string stringVolume = SongPlayerFactory.GetConfigFile().GetValue("player.startupvolume");
+                int volume;
+                if (!int.TryParse(stringVolume, out volume))
+                    volume = 50;
+
+                SongPlayerFactory.GetSongPlayer().Volume = volume;
                 SongPlayerFactory.GetSongPlayer().LibraryStatusChanged += new StatusChangedEventHandler(Program_LibraryStatusChanged);
                 SongPlayerFactory.GetSongPlayer().PlayerStatusChanged += new StatusChangedEventHandler(Program_PlayerStatusChanged);
 

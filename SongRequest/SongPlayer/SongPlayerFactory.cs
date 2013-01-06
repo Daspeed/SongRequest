@@ -24,6 +24,7 @@ namespace SongRequest
                 configFile.SetValue("library.extensions", "mp3");
                 configFile.SetValue("player.minimalsonginqueue", "0");
                 configFile.SetValue("player.maximalsonginqueue", "500");
+                configFile.SetValue("player.startupvolume", "50");
                 configFile.Save();
             }
 
