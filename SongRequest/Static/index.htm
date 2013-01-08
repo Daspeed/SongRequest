@@ -261,9 +261,9 @@
     <div id="queue">
         
         <div class="listheader queueheader">
-            <span ng-pluralize count="queue.length" when="{'0': 'No songs in queue',
-                'one': '1 song',
-                'other': '{} songs'}">
+            <span ng-pluralize count="queue.length" when="{'0': 'Queue | No songs',
+                'one': 'Queue | 1 song',
+                'other': 'Queue | {} songs'}">
             </span>
             <span ng-hide="queue.length == 0">
                 ({{getQueueDuration()}})
