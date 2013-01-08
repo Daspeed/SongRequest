@@ -314,10 +314,10 @@
             <table class="playlist">
                 <tr class="playlistheader">
                     <th class="smallcolumn">Action</th>
-                    <th id="nameHeader" class="header">Name</th>
-                    <th id="artistHeader" class="header">Artist</th>
+                    <th ng-click="sort('name')" id="nameHeader" class="header {{getHeaderClass('name')}}">Name</th>
+                    <th ng-click="sort('artist')" id="artistHeader" class="header {{getHeaderClass('artist')}}">Artist</th>
                     <th>Length</th>
-                    <th id="dateHeader" class="header">Date created</th>
+                    <th ng-click="sort('date')" id="dateHeader" class="header {{getHeaderClass('date')}}">Date created</th>
                 </tr>
                 <tr ng-repeat="song in searchResult" ng-class-even="'evenrow'" ng-class-odd="'oddrow'">
                     <td class="smallcolumn"><input type="button" class="button addbutton" value="+" ng-click="addToQueue(song)"></td>

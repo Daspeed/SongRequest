@@ -195,6 +195,19 @@ function SongRequestController($scope, $http, $timeout) {
         $scope.search();
     };
 
+    $scope.getHeaderClass = function (headerName) {
+        if (headerName === $scope.sortBy)
+            return 'sorted' + ($scope.ascending ? ' Asc' : ' Desc');
+        return '';
+    };
+
+    $scope.sort = function (sortBy) {
+        $scope.ascending = !$scope.ascending;
+        $scope.sortBy = sortBy;
+
+        $scope.search();
+    };
+
     $scope.getPlaylistWidth = function () {
         return Math.max(670, $(window).width() - $('#queue').width() - 50);
     }
@@ -211,7 +224,6 @@ function SongRequestController($scope, $http, $timeout) {
     (function () {
         function poll() {
             refreshQueue();
-            var maxHeight = $scope.getMaxQueueItemHeight();
             $timeout(poll, 1000);
         };
         poll();
