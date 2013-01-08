@@ -140,22 +140,7 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Static\add.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Static\remove.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Static\clean.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Static\next.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Static\search.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Static\pause.png" />
-    <EmbeddedResource Include="Static\rescan.png" />
   </ItemGroup>
 </Project>
