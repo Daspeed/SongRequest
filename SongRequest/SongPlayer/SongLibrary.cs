@@ -153,7 +153,11 @@ namespace SongRequest
                 {
                     foreach (var extension in extensions)
                     {
-                        files.AddRange(Directory.GetFiles(directory, "*." + extension, SearchOption.AllDirectories).AsEnumerable<string>());
+                        // lock files object
+                        lock (lockObject)
+                        {
+                            files.AddRange(Directory.GetFiles(directory, "*." + extension, SearchOption.AllDirectories).AsEnumerable<string>());
+                        }
                     }
                 }
             });
@@ -178,12 +182,16 @@ namespace SongRequest
 
                 if (!checkNext)
                 {
+                    FileInfo fileInfo = new FileInfo(fileName);
                     Song song = new Song();
                     song.FileName = fileName;
-                    FileInfo fileInfo = new FileInfo(fileName);
                     song.Name = Regex.Replace(fileInfo.Name, @"\" + fileInfo.Extension + "$", string.Empty, RegexOptions.IgnoreCase);
+                    song.DateCreated = fileInfo.CreationTime.ToString("yyyy-MM-dd HH:mm");
 
-                    AddSong(song);
+                    lock (lockObject)
+                    {
+                        _songs.Add(song);
+                    }
 
                     changesMade++;
                 }
@@ -228,7 +236,6 @@ namespace SongRequest
         {
             try
             {
-
                 using (TagLib.File taglibFile = TagLib.File.Create(song.FileName))
                 {
                     if (taglibFile.Tag != null)
@@ -238,6 +245,9 @@ namespace SongRequest
 
                         song.Artist = taglibFile.Tag.JoinedPerformers;
                         song.Duration = (int)taglibFile.Properties.Duration.TotalSeconds;
+                        song.Genre = taglibFile.Tag.JoinedGenres;
+                        uint year = taglibFile.Tag.Year;
+                        song.Year = year > 0 ? year.ToString() : string.Empty;
 
                         FileInfo fileInfo = new FileInfo(song.FileName);
                         song.DateCreated = fileInfo.CreationTime.ToString("yyyy-MM-dd HH:mm");
@@ -254,14 +264,6 @@ namespace SongRequest
             catch (Exception)
             {
                 song.TagRead = true;
-            }
-        }
-
-        public void AddSong(Song song)
-        {
-            lock (lockObject)
-            {
-                _songs.Add(song);
             }
         }
 

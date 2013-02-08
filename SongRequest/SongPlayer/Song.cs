@@ -59,6 +59,16 @@ namespace SongRequest
         public string DateCreated { get; set; }
 
         /// <summary>
+        /// Genre of song
+        /// </summary>
+        public string Genre { get; set; }
+
+        /// <summary>
+        /// Year of song
+        /// </summary>
+        public string Year { get; set; }
+
+        /// <summary>
         /// Get artist & title combined
         /// </summary>
         public string GetArtistAndTitle()
