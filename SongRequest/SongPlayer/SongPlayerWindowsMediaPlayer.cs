@@ -73,9 +73,26 @@ namespace SongRequest
             {
                 try
                 {
+                    int minimumVolume;
+                    if (!int.TryParse(SongPlayerFactory.GetConfigFile().GetValue("player.minimumVolume"), out minimumVolume))
+                        minimumVolume = 0;
+                    if (minimumVolume > 100)
+                        minimumVolume = 100;
+                    if (minimumVolume < 1)
+                        minimumVolume = 1;
+
+                    // check maximum volume
+                    int maximumVolume;
+                    if (!int.TryParse(SongPlayerFactory.GetConfigFile().GetValue("player.maximumVolume"), out maximumVolume))
+                        maximumVolume = 100;
+                    if (maximumVolume > 100)
+                        maximumVolume = 100;
+                    if (maximumVolume < 1)
+                        maximumVolume = 1;
+
                     lock (lockObject)
                     {
-                        player.settings.volume = Math.Max(Math.Min(value, 100), 0);
+                        player.settings.volume = Math.Max(Math.Min(value, maximumVolume), minimumVolume);
                     }
                 }
                 catch
