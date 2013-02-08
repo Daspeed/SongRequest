@@ -74,7 +74,7 @@ namespace SongRequest
                 try
                 {
                     int minimumVolume;
-                    if (!int.TryParse(SongPlayerFactory.GetConfigFile().GetValue("player.minimumVolume"), out minimumVolume))
+                    if (!int.TryParse(SongPlayerFactory.GetConfigFile().GetValue("player.minimumvolume"), out minimumVolume))
                         minimumVolume = 0;
                     if (minimumVolume > 100)
                         minimumVolume = 100;
@@ -83,7 +83,7 @@ namespace SongRequest
 
                     // check maximum volume
                     int maximumVolume;
-                    if (!int.TryParse(SongPlayerFactory.GetConfigFile().GetValue("player.maximumVolume"), out maximumVolume))
+                    if (!int.TryParse(SongPlayerFactory.GetConfigFile().GetValue("player.maximumvolume"), out maximumVolume))
                         maximumVolume = 100;
                     if (maximumVolume > 100)
                         maximumVolume = 100;
@@ -98,7 +98,6 @@ namespace SongRequest
                 catch
                 {
                 }
-
             }
         }
 
