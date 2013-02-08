@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Configuration;
+﻿using System.Configuration;
 
 namespace SongRequest
 {
@@ -17,7 +13,7 @@ namespace SongRequest
                 int port = 0;
                 if (int.TryParse(vlcPort, out port) && port > 0)
                     return port;
-                
+
                 return null;
             }
         }
@@ -31,7 +27,7 @@ namespace SongRequest
                 int port = 0;
                 if (int.TryParse(tpPort, out port) && port > 0)
                     return port;
-                
+
                 return null;
             }
         }

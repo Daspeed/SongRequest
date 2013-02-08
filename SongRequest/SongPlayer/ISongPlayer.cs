@@ -2,31 +2,80 @@ using System.Collections.Generic;
 
 namespace SongRequest
 {
+    /// <summary>
+    /// Event handler
+    /// </summary>
+    /// <param name="status"></param>
     public delegate void StatusChangedEventHandler(string status);
 
+    /// <summary>
+    /// Songplayer event
+    /// </summary>
     public interface ISongplayer
     {
+        /// <summary>
+        /// Library status changed
+        /// </summary>
         event StatusChangedEventHandler LibraryStatusChanged;
+
+        /// <summary>
+        /// Player status changed
+        /// </summary>
         event StatusChangedEventHandler PlayerStatusChanged;
 
+        /// <summary>
+        /// Current player status
+        /// </summary>
         PlayerStatus PlayerStatus { get; }
 
+        /// <summary>
+        /// Get playlist
+        /// </summary>
         IEnumerable<Song> GetPlayList(string filter, string sortBy, bool ascending);
 
+        /// <summary>
+        /// Play queue
+        /// </summary>
         IEnumerable<RequestedSong> PlayQueue { get; }
 
-        void Next(string requesterName);
-
+        /// <summary>
+        /// Enqueue song
+        /// </summary>
         void Enqueue(string id, string requesterName);
+
+        /// <summary>
+        /// Enqueue song
+        /// </summary>
         void Enqueue(Song song, string requesterName);
 
-        void Dequeue(string id, string requesterName);
-        void Dequeue(Song song, string requesterName);
+        /// <summary>
+        /// Dequeue song
+        /// </summary>
+        void Dequeue(string id);
 
-        void Pause(string requesterName);
+        /// <summary>
+        /// Dequeue song
+        /// </summary>
+        void Dequeue(Song song);
 
-        void Rescan(string requesterName);
+        /// <summary>
+        /// Pause song playing
+        /// </summary>
+        void Pause();
 
+        /// <summary>
+        /// Plan next song
+        /// </summary>
+        void Next();
+
+        /// <summary>
+        /// Rescan complete library
+        /// </summary>
+        void Rescan();
+
+        /// <summary>
+        /// Volume of player
+        /// </summary>
         int Volume { get; set; }
     }
 }

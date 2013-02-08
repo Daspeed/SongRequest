@@ -1,14 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Net;
-using System.Threading;
-using SongRequest.Interfaces;
-using SongRequest.Handlers;
-using System.Security.Permissions;
-using System.IO;
 using System.Diagnostics;
+using System.IO;
+using System.Net;
 
 namespace SongRequest
 {

@@ -182,7 +182,7 @@ namespace SongRequest
                     song.FileName = fileName;
                     FileInfo fileInfo = new FileInfo(fileName);
                     song.Name = Regex.Replace(fileInfo.Name, @"\" + fileInfo.Extension + "$", string.Empty, RegexOptions.IgnoreCase);
-                    
+
                     AddSong(song);
 
                     changesMade++;

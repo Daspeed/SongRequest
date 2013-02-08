@@ -1,18 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using SongRequest.Interfaces;
-using System.Net;
+﻿using Newtonsoft.Json;
+using System;
 using System.IO;
-using System.Text.RegularExpressions;
-using Newtonsoft.Json;
+using System.Linq;
+using System.Net;
 
 namespace SongRequest.Handlers
 {
     public class DynamicHandler : BaseHandler
     {
         const int _pageSize = 50;
+
+        public bool ClientAllowed(string requesterName)
+        {
+            if (string.IsNullOrEmpty(requesterName))
+                return true;
+
+            string allowedClients = SongPlayerFactory.GetConfigFile().GetValue("server.clients");
+
+            //Only allow clients from config file
+            return string.IsNullOrEmpty(allowedClients) ||
+                    allowedClients.Equals("all", StringComparison.OrdinalIgnoreCase) ||
+                    SongPlayerFactory.GetConfigFile().GetValue("server.clients").ContainsOrdinalIgnoreCase(requesterName);
+        }
 
         public override void Process(HttpListenerRequest request, HttpListenerResponse response)
         {
@@ -21,6 +30,9 @@ namespace SongRequest.Handlers
             string action = actionPath[1];
 
             ISongplayer songPlayer = SongPlayerFactory.GetSongPlayer();
+            string requester = GetRequester(request);
+            if (!ClientAllowed(requester))
+                return;
 
             switch (action)
             {
@@ -34,20 +46,20 @@ namespace SongRequest.Handlers
                                 {
                                     Queue = songPlayer.PlayQueue.ToList(),
                                     PlayerStatus = songPlayer.PlayerStatus,
-                                    Self = GetRequester(request)
+                                    Self = requester
                                 }
                             ));
                             break;
                         case "POST":
                             using (var reader = new StreamReader(request.InputStream))
                             {
-                                songPlayer.Enqueue(reader.ReadToEnd(), GetRequester(request));
+                                songPlayer.Enqueue(reader.ReadToEnd(), requester);
                             }
                             break;
                         case "DELETE":
                             using (var reader = new StreamReader(request.InputStream))
                             {
-                                songPlayer.Dequeue(reader.ReadToEnd(), GetRequester(request));
+                                songPlayer.Dequeue(reader.ReadToEnd());
                             }
                             break;
                     }
@@ -84,16 +96,16 @@ namespace SongRequest.Handlers
                     }
                 case "next":
                     response.ContentType = "application/json";
-                    songPlayer.Next(GetRequester(request));
+                    songPlayer.Next();
                     WriteUtf8String(response.OutputStream, JsonConvert.SerializeObject(songPlayer.PlayerStatus));
                     break;
                 case "rescan":
                     response.ContentType = "application/json";
-                    songPlayer.Rescan(GetRequester(request));
+                    songPlayer.Rescan();
                     break;
                 case "pause":
                     response.ContentType = "application/json";
-                    songPlayer.Pause(GetRequester(request));
+                    songPlayer.Pause();
                     break;
                 case "volume":
                     response.ContentType = "application/json";
@@ -115,9 +127,14 @@ namespace SongRequest.Handlers
             }
         }
 
+        /// <summary>
+        /// Get requester
+        /// </summary>
+        /// <param name="request">Request</param>
+        /// <returns>Requester as string</returns>
         private static string GetRequester(HttpListenerRequest request)
         {
-            if (request.RemoteEndPoint != null)
+            if (request != null && request.RemoteEndPoint != null)
             {
                 try
                 {
@@ -128,7 +145,7 @@ namespace SongRequest.Handlers
                     return request.RemoteEndPoint.Address.ToString();
                 }
             }
-            
+
             return "unknown";
         }
     }
