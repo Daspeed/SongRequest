@@ -40,7 +40,7 @@ function SongRequestController($scope, $http, $timeout) {
 
         angular.forEach(queue, function (value) {
             value.ETA = acc;
-            acc += $scope.playerStatus.RequestedSong.Song.Duration;
+            acc += value.Song.Duration;
             value.Till = (function (baseDate) {
                 baseDate.setSeconds(baseDate.getSeconds() + value.ETA);
                 return fixer(baseDate.getHours()) + ':' + fixer(baseDate.getMinutes());
