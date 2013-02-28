@@ -34,6 +34,8 @@ namespace SongRequest.Handlers
             if (!ClientAllowed(requester))
                 return;
 
+            response.AppendHeader("Cache-Control", "no-cache");
+
             switch (action)
             {
                 case "queue":
