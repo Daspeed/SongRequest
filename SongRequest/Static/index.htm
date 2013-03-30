@@ -165,7 +165,7 @@
         .queueitem
         {
             padding:3px;
-            height:55px;
+            height:65px;
             overflow:hidden;
         }
         
@@ -209,6 +209,12 @@
         .mediumlargecolumn
         {
             width:180px;
+            min-width:0px !important;
+        }
+        
+        .othercolumn
+        {
+            width: 33%;
             min-width:0px !important;
         }
         
@@ -313,8 +319,8 @@
                     </form>
                 </td>
                 <td>
-                    <form id="pageForm" action="/static/404.htm">
-                        <input type="text" id="currentPage" ng-model="currentPage" ng-change="search()" value="{{currentPage}}" style="width:60px;"> of <span id="pageCount">{{pageCount}}</span>
+                    <form id="pageForm" ng-submit="getPlayList()">
+                        <input type="text" id="currentPage" ng-model="currentPage" value="{{currentPage}}" style="width:60px;"> of <span id="pageCount">{{pageCount}}</span>
                     </form>
                 </td>
                 <td class="controls" style="text-align:right;">
@@ -328,8 +334,8 @@
             <table class="playlist">
                 <tr class="playlistheader">
                     <th class="smallcolumn">Action</th>
-                    <th ng-click="sort('name')" id="nameHeader" class="header {{getHeaderClass('name')}}">Name</th>
-                    <th ng-click="sort('artist')" id="artistHeader" class="header {{getHeaderClass('artist')}}">Artist</th>
+                    <th ng-click="sort('name')" id="nameHeader" class="othercolumn header {{getHeaderClass('name')}}">Name</th>
+                    <th ng-click="sort('artist')" id="artistHeader" class="othercolumn header {{getHeaderClass('artist')}}">Artist</th>
                     <th class="smallcolumn">Length</th>
                     <th class="mediumlargecolumn">Genre</th>
                     <th class="smallcolumn">Year</th>
@@ -337,8 +343,8 @@
                 </tr>
                 <tr ng-repeat="song in searchResult" ng-class-even="'evenrow'" ng-class-odd="'oddrow'">
                     <td class="smallcolumn"><input type="button" class="button addbutton" value="+" ng-click="addToQueue(song)"></td>
-                    <td><a class="songlink" href="{{song.FileName}}" title="{{song.FileName}}">{{song.Name}}</a></td>
-                    <td>{{song.Artist}}</td>
+                    <td class="othercolumn"><a class="songlink" href="{{song.FileName}}" title="{{song.FileName}}">{{song.Name}}</a></td>
+                    <td class="othercolumn">{{song.Artist}}</td>
                     <td class="smallcolumn">{{convertNumberToTime(song.Duration)}}</td>
                     <td class="mediumlargecolumn">{{song.Genre}}</td>
                     <td class="smallcolumn">{{song.Year}}</td>

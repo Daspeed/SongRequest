@@ -58,7 +58,7 @@ function SongRequestController($scope, $http, $timeout) {
         });
     };
 
-    var getPlayList = function () {
+    $scope.getPlayList = function() {
         var message = {
             'Filter': $scope.filter,
             'Page': digitize($scope.currentPage) || 1,
@@ -68,7 +68,6 @@ function SongRequestController($scope, $http, $timeout) {
         $http({ method: 'POST', url: '/dynamic/playlist', data: message }).success(function (data) {
             var currentPage = Math.max(data.CurrentPage, 1);
             var totalPageCount = Math.max(data.TotalPageCount, 1);
-
             $scope.sortBy = data.SortBy,
             $scope.ascending = data.Ascending;
             $scope.searchResult = data.SongsForCurrentPage;
@@ -178,21 +177,25 @@ function SongRequestController($scope, $http, $timeout) {
         });
     };
 
-    $scope.search = getPlayList;
-    $scope.clear = function () {
+    $scope.search = function() {
+    	$scope.currentPage = 1;
+    	$scope.getPlayList();
+    };
+
+    $scope.clear = function() {
         $scope.filter = '';
         $scope.currentPage = 1;
-        $scope.search();
+        $scope.getPlayList();
     };
 
     $scope.previousPage = function () {
         $scope.currentPage--;
-        $scope.search();
+        $scope.getPlayList();
     };
 
     $scope.nextPage = function () {
         $scope.currentPage++;
-        $scope.search();
+        $scope.getPlayList();
     };
 
     $scope.getHeaderClass = function (headerName) {
@@ -204,8 +207,7 @@ function SongRequestController($scope, $http, $timeout) {
     $scope.sort = function (sortBy) {
         $scope.ascending = !$scope.ascending;
         $scope.sortBy = sortBy;
-
-        $scope.search();
+        $scope.getPlayList();
     };
 
     $scope.getPlaylistWidth = function () {
@@ -219,7 +221,7 @@ function SongRequestController($scope, $http, $timeout) {
     });
 
     refreshQueue();
-    getPlayList();
+    $scope.getPlayList();
 
     (function () {
         function poll() {
