@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SongRequest.Config;
+using System;
 using System.IO;
 using System.Net;
 using System.Text;
@@ -9,7 +10,14 @@ namespace SongRequest.Handlers
     {
         public override void Process(HttpListenerRequest request, HttpListenerResponse response)
         {
-            string text = GetIndex("index.htm");
+            ConfigFile config = SongPlayerFactory.GetConfigFile();
+            string text;
+
+            string ui = config.GetValue("server.ui");
+            if (ui.Equals("mobile", StringComparison.OrdinalIgnoreCase))
+                text = GetIndex("index_mobile.htm");
+            else
+                text = GetIndex("index.htm");
 
             response.ContentType = "text/html";
 
