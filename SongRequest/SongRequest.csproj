@@ -68,7 +68,6 @@
     <Compile Include="Config\ConfigFile.cs" />
     <Compile Include="Dispatcher.cs" />
     <Compile Include="Handlers\BaseHandler.cs" />
-    <Compile Include="Handlers\ImageHandler.cs" />
     <Compile Include="Handlers\FaviconHandler.cs" />
     <Compile Include="Handlers\DynamicHandler.cs" />
     <Compile Include="Handlers\StaticHandler.cs" />

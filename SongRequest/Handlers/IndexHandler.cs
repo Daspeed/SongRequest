@@ -15,23 +15,13 @@ namespace SongRequest.Handlers
 
             string ui = config.GetValue("server.ui");
             if (ui.Equals("mobile", StringComparison.OrdinalIgnoreCase))
-                text = GetIndex("index_mobile.htm");
+                text = Get("index_mobile.htm");
             else
-                text = GetIndex("index.htm");
+                text = Get("index.htm");
 
             response.ContentType = "text/html";
 
             WriteUtf8String(response.OutputStream, text);
-        }
-
-        public string GetIndex(string name)
-        {
-#if DEBUG
-            string content = File.ReadAllText(Path.GetFullPath(Environment.CurrentDirectory + @"\..\..\Static\" + name), Encoding.UTF8);
-            return content;
-#else
-            return Get(name);
-#endif
         }
     }
 }
