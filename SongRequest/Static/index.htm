@@ -1,7 +1,7 @@
 ﻿<!DOCTYPE HTML>
-<html ng-app ng-controller="SongRequestController">
+<html ng-app="SongRequest">
 <head>
-    <title>{{getCurrentSongName()}} | SongRequest</title>
+    <title ng-controller="SongRequestController">{{getCurrentSongName()}} | SongRequest</title>
     <style type="text/css">
         body
         {
@@ -251,7 +251,7 @@
     <script type="text/javascript" src="/static/angular.min.js"></script>
     <script type="text/javascript" src="/static/SongRequest.js"></script>
 </head>
-<body>
+<body ng-controller="SongRequestController">
 <div class="top">
     <div class="play">
         <div class="playinfo"> 
@@ -343,7 +343,7 @@
                 </tr>
                 <tr ng-repeat="song in searchResult" ng-class-even="'evenrow'" ng-class-odd="'oddrow'">
                     <td class="smallcolumn"><input type="button" class="button addbutton" value="+" ng-click="addToQueue(song)"></td>
-                    <td class="othercolumn"><a class="songlink" href="{{song.FileName}}" title="{{song.FileName}}">{{song.Name}}</a></td>
+                    <td class="othercolumn"><a class="songlink" href="file://{{song.FileName}}" title="{{song.FileName}}">{{song.Name}}</a></td>
                     <td class="othercolumn">{{song.Artist}}</td>
                     <td class="smallcolumn">{{convertNumberToTime(song.Duration)}}</td>
                     <td class="mediumlargecolumn">{{song.Genre}}</td>
