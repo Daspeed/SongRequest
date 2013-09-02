@@ -143,6 +143,6 @@
     <EmbeddedResource Include="Static\SongRequest.js" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Static\index_mobile.htm" />
+    <EmbeddedResource Include="Static\index.htm" />
   </ItemGroup>
 </Project>
