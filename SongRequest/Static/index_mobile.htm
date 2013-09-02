@@ -1,8 +1,470 @@
 ﻿<!DOCTYPE HTML>
-<html>
+<html ng-app ng-controller="SongRequestController">
 <head>
-    <title>SongRequest mobile</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>SongRequest mobile</title>
+	<style>
+		body {
+			font-size: 0.7em;
+			font-family: Tahoma, Geneva, sans-serif;
+			background-color: gray;
+			margin: 0;
+			padding: 0;
+		}
+
+		h1 {
+			font-size: 1.4em;
+			display: inline;
+		}
+
+		h2 {
+			font-size: 1.2em;
+			padding: 0;
+			margin: 0;
+		}
+
+		div {
+			background-color: white;
+			padding: 0.5em;
+			margin: 0;
+			vertical-align: top;
+			text-align: left;
+		}
+
+		.divheader {
+			background: rgb(30,87,153); /* Old browsers */
+			background: -moz-linear-gradient(top, rgba(30,87,153,1) 0%, rgba(41,137,216,1) 50%, rgba(32,124,202,1) 51%, rgba(125,185,232,1) 100%); /* FF3.6+ */
+			background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(30,87,153,1)), color-stop(50%,rgba(41,137,216,1)), color-stop(51%,rgba(32,124,202,1)), color-stop(100%,rgba(125,185,232,1))); /* Chrome,Safari4+ */
+			background: -webkit-linear-gradient(top, rgba(30,87,153,1) 0%,rgba(41,137,216,1) 50%,rgba(32,124,202,1) 51%,rgba(125,185,232,1) 100%); /* Chrome10+,Safari5.1+ */
+			background: -o-linear-gradient(top, rgba(30,87,153,1) 0%,rgba(41,137,216,1) 50%,rgba(32,124,202,1) 51%,rgba(125,185,232,1) 100%); /* Opera 11.10+ */
+			background: -ms-linear-gradient(top, rgba(30,87,153,1) 0%,rgba(41,137,216,1) 50%,rgba(32,124,202,1) 51%,rgba(125,185,232,1) 100%); /* IE10+ */
+			background: linear-gradient(to bottom, rgba(30,87,153,1) 0%,rgba(41,137,216,1) 50%,rgba(32,124,202,1) 51%,rgba(125,185,232,1) 100%); /* W3C */
+			filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#1e5799', endColorstr='#7db9e8',GradientType=0 ); /* IE6-9 */
+		}
+
+		#currentStatusDiv {
+			border: 1px solid black;
+		}
+
+		#controlsDiv {
+			border: 1px solid black;
+			border-top: 0px;
+		}
+
+		#outerCombineDiv {
+			background: none;
+			background-color: transparent;
+			padding: 0;
+		}
+
+		#queueDiv {
+			padding: 0;
+			border: 1px solid black;
+			border-top: 0px;
+			background-color: lightgray;
+		}
+
+		p {
+			margin: 0;
+			padding: 0.1em;
+			vertical-align: top;
+			text-align: left;
+		}
+
+		#queueHeaderDiv {
+		}
+
+		#queueListDiv {
+			padding: 0;
+		}
+
+		.queueItem {
+			padding: 0;
+			border-top: 1px solid black;
+		}
+
+		.selfevenqueueitemcontainer {
+			background-color: #CCE2FF;
+		}
+
+		.selfoddqueueitemcontainer {
+			background-color: #CCE2FF;
+		}
+
+		.evenqueueitemcontainer {
+			background-color: white;
+		}
+
+		.oddqueueitemcontainer {
+			background-color: white;
+		}
+
+		.statusArtistTitle {
+		}
+
+		.statusTime {
+			color: gray;
+		}
+
+		.statusRequester {
+			color: gray;
+		}
+
+		.queueArtist {
+		}
+
+		.queueTitle {
+		}
+
+		.queueTime {
+			color: gray;
+		}
+
+		.queueRequester {
+			color: gray;
+		}
+
+		.skipButton {
+			float: right;
+			width: 3.5em;
+			height: 3.5em;
+			text-align: center;
+			vertical-align: central;
+		}
+
+		.addButton {
+			width: 3.5em;
+			height: 3.5em;
+			text-align: center;
+			vertical-align: central;
+		}
+
+		#combineDiv {
+			padding: 0;
+			background: none;
+			background-color: transparent;
+		}
+
+		#songsOuterDiv {
+			padding: 0;
+			border: 1px solid black;
+			border-top: 0px;
+		}
+
+		#songsHeaderDiv {
+			border-bottom: 1px solid black;
+		}
+
+		#songsSearchDiv {
+			border-bottom: 1px solid black;
+			border-top: 0px;
+			margin: 0;
+		}
+
+		#searchBox {
+			width: 50%;
+		}
+
+		#songsDiv {
+			padding: 0;
+			margin: 0;
+		}
+
+		.songsTable {
+		}
+
+		table {
+			border: 0;
+			border-collapse: collapse;
+			border-spacing: 0 !important;
+			width: 100%;
+			table-layout: fixed;
+			overflow: hidden;
+			-ms-text-overflow: ellipsis;
+			-o-text-overflow: ellipsis;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+		}
+
+		tr {
+			padding: 0;
+			margin: 0;
+		}
+
+		th {
+			font-weight: normal;
+			font-size: 1em;
+			padding: 0.1em;
+		}
+
+		td {
+			padding: 0.1em;
+		}
+
+		.headerrow {
+			border-bottom: 1px solid gray;
+		}
+
+		.evenrow {
+			border-left: 1px solid lightgray;
+			border-right: 1px solid lightgray;
+		}
+
+		.oddrow {
+			background-color: lightgray;
+			border-left: 1px solid lightgray;
+			border-right: 1px solid lightgray;
+		}
+
+		.actionColumn {
+			text-align: center;
+			vertical-align: top;
+			width: 4.25em;
+		}
+
+		.songNameColumn {
+			overflow: hidden;
+			-ms-text-overflow: ellipsis;
+			-o-text-overflow: ellipsis;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+		}
+
+		.songArtistColumn {
+			overflow: hidden;
+			-ms-text-overflow: ellipsis;
+			-o-text-overflow: ellipsis;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+			width: 25%;
+		}
+
+		.songDurationColumn {
+			overflow: hidden;
+			-ms-text-overflow: ellipsis;
+			-o-text-overflow: ellipsis;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+			width: 3em;
+		}
+
+		.songGenreColumn {
+			overflow: hidden;
+			-ms-text-overflow: ellipsis;
+			-o-text-overflow: ellipsis;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+			width: 8em;
+			display: none;
+		}
+
+		.songYearColumn {
+			overflow: hidden;
+			-ms-text-overflow: ellipsis;
+			-o-text-overflow: ellipsis;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+			width: 3em;
+		}
+
+		.songDateCreatedColumn {
+			overflow: hidden;
+			-ms-text-overflow: ellipsis;
+			-o-text-overflow: ellipsis;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+			width: 8em;
+			display: none;
+		}
+
+		@media screen and (min-width: 590px) {
+
+			.songDateCreatedColumn {
+				display: table-cell;
+			}
+		}
+
+		@media screen and (min-width: 768px) {
+
+			#outerCombineDiv {
+				width: 100%;
+				overflow: hidden;
+				display: table;
+				padding: 0;
+			}
+
+			#queueDiv {
+				width: 25em;
+				display: table-cell;
+			}
+
+			#queueHeaderDiv {
+				border-bottom: 1px solid black;
+			}
+
+			.queueItem {
+				border-top: 0px;
+				border-bottom: 1px solid black;
+			}
+
+			.queueArtist {
+				white-space: nowrap;
+				-ms-text-overflow: ellipsis;
+				-o-text-overflow: ellipsis;
+				text-overflow: ellipsis;
+				overflow: hidden;
+				display: inline-block;
+				width: 20em;
+			}
+
+			.queueTitle {
+				white-space: nowrap;
+				-ms-text-overflow: ellipsis;
+				-o-text-overflow: ellipsis;
+				text-overflow: ellipsis;
+				overflow: hidden;
+				display: inline-block;
+				width: 20em;
+			}
+
+			.queueTime {
+				text-align: right;
+				float: right;
+				display: inline-block;
+			}
+
+			#combineDiv {
+				overflow: hidden;
+				display: table-cell;
+			}
+
+			#songsSearchDiv {
+				border-left: 0px;
+			}
+
+			#songsOuterDiv {
+				border-left: 0px;
+			}
+
+			.skipButton {
+				width: 1.75em;
+				height: 1.75em;
+			}
+
+			.addButton {
+				width: 1.75em;
+				height: 1.75em;
+			}
+
+			.actionColumn {
+				width: 3em;
+			}
+
+			.songNameColumn {
+				display: table-cell;
+			}
+
+			.songArtistColumn {
+				display: table-cell;
+			}
+
+			.songDurationColumn {
+				display: table-cell;
+			}
+
+			.songGenreColumn {
+				display: table-cell;
+			}
+
+			.songYearColumn {
+				display: table-cell;
+			}
+
+			.songDateCreatedColumn {
+				display: table-cell;
+			}
+		}
+
+		@media screen and (min-width: 1024px) {
+		}
+	</style>
+	<script type="text/javascript" src="/static/underscore-min.js"></script>
+	<script type="text/javascript" src="/static/jquery-1.8.2.js"></script>
+	<script type="text/javascript" src="/static/angular.min.js"></script>
+	<script type="text/javascript" src="/static/SongRequest.js"></script>
 </head>
 <body>
+	<div id="currentStatusDiv" class="divheader">
+		<h1>SongRequest</h1>
+	</div>
+	<div id="controlsDiv">
+		<p>
+			<span class="statusArtistTitle">{{getCurrentSongName()}}</span>&nbsp;<span class="statusTime">({{getCurrentSongPosition()}}/{{getCurrentSongDuration()}})</span>
+		</p>
+		<p>
+			<span class="statusRequester">Requested by: {{getCurrentSongRequester()}}</span>
+		</p>
+	</div>
+	<div id="outerCombineDiv">
+		<div id="queueDiv">
+			<div id="queueHeaderDiv" class="divheader">
+				<h2 ng-pluralize count="queue.length" when="{'0': 'Queue | No songs',
+				'one': 'Queue | 1 song',
+				'other': 'Queue | {} songs ({{getQueueDuration()}})'}"></h2>
+			</div>
+			<div id="queueListDiv" ng-repeat="item in queue">
+				<div class="queueItem">
+					<div class="{{getQueueItemClass(item, $index)}}">
+						<input class="skipButton" ng-click="removeFromQueue(item.Song)" type="button" value="-" title="Remove song from queue" />
+						<p><span class="queueRequester">ETA: {{item.Till}}, requested by: {{item.RequesterName}}</span></p>
+						<p>
+							<span class="queueArtist">{{getSongArtist(item.Song)}}</span>
+						</p>
+						<p>
+							<span class="queueTitle">{{getSongName(item.Song)}}</span>&nbsp;<span class="queueTime">({{convertNumberToTime(item.Song.Duration)}})</span>
+						</p>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div id="combineDiv">
+			<div id="songsOuterDiv">
+				<div id="songsHeaderDiv" class="divheader">
+					<h2>Songs</h2>
+				</div>
+				<div id="songsSearchDiv">
+					<input id="searchBox" type="text" />
+					<input id="searchButton" type="button" value="Search" />
+				</div>
+				<div id="songsDiv">
+
+					<table class="songsTable">
+						<tr class="headerrow">
+							<th class="actionColumn">Action</th>
+							<th ng-click="sort('name')" id="nameHeader" class="songNameColumn {{getHeaderClass('name')}}">Name</th>
+							<th ng-click="sort('artist')" id="artistHeader" class="songArtistColumn {{getHeaderClass('artist')}}">Artist</th>
+							<th class="songDurationColumn">Length</th>
+							<th class="songGenreColumn">Genre</th>
+							<th class="songYearColumn">Year</th>
+							<th ng-click="sort('date')" id="dateHeader" class="songDateCreatedColumn {{getHeaderClass('date')}}">Date created</th>
+						</tr>
+						<tr class="songRow" ng-repeat="song in searchResult" ng-class-even="'evenrow'" ng-class-odd="'oddrow'">
+							<td class="actionColumn">
+								<input type="button" class="addButton" value="+" ng-click="addToQueue(song)" title="Add song to queue" />
+							</td>
+							<td class="songNameColumn"><a class="songlink" href="{{song.FileName}}" title="{{song.FileName}}">{{song.Name}}</a></td>
+							<td class="songArtistColumn">{{song.Artist}}</td>
+							<td class="songDurationColumn">{{convertNumberToTime(song.Duration)}}</td>
+							<td class="songGenreColumn">{{song.Genre}}</td>
+							<td class="songYearColumn">{{song.Year}}</td>
+							<td class="songDateCreatedColumn">{{song.DateCreated}}</td>
+						</tr>
+					</table>
+
+				</div>
+			</div>
+		</div>
+	</div>
 </body>
 </html>
