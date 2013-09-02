@@ -14,8 +14,8 @@ namespace SongRequest.Handlers
             string text;
 
             string ui = config.GetValue("server.ui");
-            if (ui.Equals("mobile", StringComparison.OrdinalIgnoreCase))
-                text = Get("index_mobile.htm");
+            if (ui.Equals("old", StringComparison.OrdinalIgnoreCase))
+                text = Get("index_old.htm");
             else
                 text = Get("index.htm");
 

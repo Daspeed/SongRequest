@@ -91,7 +91,7 @@
     <EmbeddedResource Include="Static\404.htm" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Static\index.htm" />
+    <EmbeddedResource Include="Static\index_old.htm" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
