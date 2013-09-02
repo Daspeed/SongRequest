@@ -1,9 +1,9 @@
 ﻿<!DOCTYPE HTML>
-<html ng-app ng-controller="SongRequestController">
+<html ng-app>
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>SongRequest mobile</title>
+	<title ng-controller="SongRequestController">SongRequest mobile</title>
 	<style>
 		body {
 			font-size: 0.7em;
@@ -394,7 +394,7 @@
 	<script type="text/javascript" src="/static/angular.min.js"></script>
 	<script type="text/javascript" src="/static/SongRequest.js"></script>
 </head>
-<body>
+<body ng-controller="SongRequestController">
 	<div id="currentStatusDiv" class="divheader">
 		<h1>SongRequest</h1>
 	</div>
@@ -453,7 +453,7 @@
 							<td class="actionColumn">
 								<input type="button" class="addButton" value="+" ng-click="addToQueue(song)" title="Add song to queue" />
 							</td>
-							<td class="songNameColumn"><a class="songlink" href="{{song.FileName}}" title="{{song.FileName}}">{{song.Name}}</a></td>
+							<td class="songNameColumn"><a class="songlink" href="file://{{song.FileName}}" title="{{song.FileName}}">{{song.Name}}</a></td>
 							<td class="songArtistColumn">{{song.Artist}}</td>
 							<td class="songDurationColumn">{{convertNumberToTime(song.Duration)}}</td>
 							<td class="songGenreColumn">{{song.Genre}}</td>
