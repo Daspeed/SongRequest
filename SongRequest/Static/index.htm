@@ -209,7 +209,58 @@
                 text-align: center;
             }
 
-        .searchButton {
+
+        .searchControlsDiv {
+            vertical-align: middle;
+        }
+
+        .searchtext {
+            width: 50%;
+            margin: 0;
+            padding: 0.15em;
+            height: 1.5em;
+            vertical-align: middle;
+            border: 1px solid gray;
+        }
+
+        .searchbutton {
+            width: 5em;
+            height: 2em;
+            vertical-align: middle;
+        }
+
+        .clearbutton {
+            width: 5em;
+            height: 2em;
+            vertical-align: middle;
+        }
+
+        form {
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        .pagetext {
+            margin: 0;
+            padding: 0.15em;
+            height: 1.5em;
+            vertical-align: top;
+            border: 1px solid gray;
+            vertical-align: middle;
+            width: 3em;
+            display: inline-block;
+        }
+
+        .previousbutton {
+            width: 5em;
+            height: 2em;
+            display: inline-block;
+        }
+
+        .nextbutton {
+            width: 5em;
+            height: 2em;
+            display: inline-block;
         }
 
         .skipButton {
@@ -243,10 +294,6 @@
             border-bottom: 1px solid black;
             border-top: 0px;
             margin: 0;
-        }
-
-        #searchBox {
-            width: 50%;
         }
 
         #songsDiv {
@@ -306,6 +353,7 @@
             text-align: center;
             vertical-align: top;
             width: 4.25em;
+            cursor: default;
         }
 
         .songNameColumn {
@@ -314,6 +362,8 @@
             -o-text-overflow: ellipsis;
             text-overflow: ellipsis;
             white-space: nowrap;
+            cursor: pointer;
+            cursor: hand;
         }
 
         .songArtistColumn {
@@ -323,6 +373,8 @@
             text-overflow: ellipsis;
             white-space: nowrap;
             width: 25%;
+            cursor: pointer;
+            cursor: hand;
         }
 
         .songDurationColumn {
@@ -332,6 +384,7 @@
             text-overflow: ellipsis;
             white-space: nowrap;
             width: 3em;
+            cursor: default;
         }
 
         .songGenreColumn {
@@ -342,6 +395,8 @@
             white-space: nowrap;
             width: 8em;
             display: none;
+            cursor: pointer;
+            cursor: hand;
         }
 
         .songYearColumn {
@@ -351,6 +406,8 @@
             text-overflow: ellipsis;
             white-space: nowrap;
             width: 3em;
+            cursor: pointer;
+            cursor: hand;
         }
 
         .songDateCreatedColumn {
@@ -361,6 +418,20 @@
             white-space: nowrap;
             width: 8em;
             display: none;
+            cursor: pointer;
+            cursor: hand;
+        }
+
+        .songDatePlayedColumn {
+            overflow: hidden;
+            -ms-text-overflow: ellipsis;
+            -o-text-overflow: ellipsis;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            width: 8em;
+            display: none;
+            cursor: pointer;
+            cursor: hand;
         }
 
         @media screen and (min-width: 590px) {
@@ -382,7 +453,7 @@
             }
 
             #controlsDiv {
-                position: fixed;
+                position: absolute;
                 left: 25em;
                 top: 0.25em;
                 display: inline-block;
@@ -489,7 +560,17 @@
                 height: 3em;
             }
 
-            .searchButton {
+            .searchtext {
+            }
+
+            .searchbutton {
+                width: 4em;
+                height: 2em;
+            }
+
+            .clearbutton {
+                width: 4em;
+                height: 2em;
             }
 
             .skipButton {
@@ -525,17 +606,17 @@
             .songYearColumn {
                 display: table-cell;
             }
-
-            .songDateCreatedColumn {
-                display: table-cell;
-            }
         }
 
         @media screen and (min-width: 1024px) {
+
+            .songDatePlayedColumn {
+                display: table-cell;
+            }
         }
     </style>
     <script type="text/javascript" src="/static/underscore-min.js"></script>
-    <script type="text/javascript" src="/static/jquery-1.8.2.js"></script>
+    <script type="text/javascript" src="/static/jquery-1.8.2.min.js"></script>
     <script type="text/javascript" src="/static/angular.min.js"></script>
     <script type="text/javascript" src="/static/SongRequest.js"></script>
 </head>
@@ -565,8 +646,8 @@
         <div id="queueDiv">
             <div id="queueHeaderDiv" class="gradient">
                 <h2 ng-pluralize count="queue.length" when="{'0': 'Queue | No songs',
-				'one': 'Queue | 1 song',
-				'other': 'Queue | {} songs ({{getQueueDuration()}})'}"></h2>
+                'one': 'Queue | 1 song',
+                'other': 'Queue | {} songs ({{getQueueDuration()}})'}"></h2>
             </div>
             <div id="queueListDiv" ng-repeat="item in queue">
                 <div class="queueItem">
@@ -590,16 +671,17 @@
                 </div>
                 <div id="songsSearchDiv">
                     <form ng-submit="search()">
-                        <input type="text" name="searchtext" id="searchtext" ng-model="filter" value="{{filter}}" style="width: 200px;">
-                        <input type="submit" class="button" name="searchbutton" id="searchbutton" value="Search">
-                        <input ng-click="clear()" type="button" class="button" name="clearbutton" id="clearbutton" value="Clear">
+                        <input type="text" class="searchtext" name="searchtext" id="searchtext" ng-model="filter" value="{{filter}}">
+                        <input type="submit" class="button searchbutton" name="searchbutton" id="searchbutton" value="Search">
+                        <input ng-click="clear()" type="button" class="button clearbutton" name="clearbutton" id="clearbutton" value="Reset">
                     </form>
                     <form id="pageForm" ng-submit="getPlayList()">
-                        <input type="text" id="currentPage" ng-model="currentPage" value="{{currentPage}}" style="width: 60px;">
-                        of <span id="pageCount">{{pageCount}}</span>
+                        Page:&nbsp;
+                        <input type="text" name="pagetext" class="pagetext" id="currentPage" ng-model="currentPage" value="{{currentPage}}">
+                        of&nbsp;<span class="pageCount">{{pageCount}}</span>
                     </form>
-                    <input ng-disabled="currentPage <= 1" ng-click="previousPage()" type="button" class="button" name="previousbutton" id="previousbutton" value="Previous">
-                    <input ng-disabled="currentPage >= pageCount" ng-click="nextPage()" type="button" class="button" name="nextbutton" id="nextbutton" value="Next">
+                    <input ng-disabled="currentPage <= 1" ng-click="previousPage()" type="button" class="button previousbutton" name="previousbutton" id="previousbutton" value="Previous">
+                    <input ng-disabled="currentPage >= pageCount" ng-click="nextPage()" type="button" class="button nextbutton" name="nextbutton" id="nextbutton" value="Next">
                 </div>
                 <div id="songsDiv">
 
@@ -612,6 +694,7 @@
                             <th ng-click="sort('genre')" class="songGenreColumn {{getHeaderClass('genre')}}">Genre</th>
                             <th ng-click="sort('year')" class="songYearColumn {{getHeaderClass('year')}}">Year</th>
                             <th ng-click="sort('date')" id="dateHeader" class="songDateCreatedColumn {{getHeaderClass('date')}}">Date added</th>
+                            <th ng-click="sort('playdate')" id="playedHeader" class="songDatePlayedColumn {{getHeaderClass('playdate')}}">Last played</th>
                         </tr>
                         <tr class="songRow" ng-repeat="song in searchResult" ng-class-even="'evenrow'" ng-class-odd="'oddrow'">
                             <td class="actionColumn">
@@ -623,6 +706,7 @@
                             <td class="songGenreColumn">{{song.Genre}}</td>
                             <td class="songYearColumn">{{song.Year}}</td>
                             <td class="songDateCreatedColumn">{{song.DateCreated}}</td>
+                            <td class="songDatePlayedColumn">{{song.LastPlayTime}}</td>
                         </tr>
                     </table>
 

@@ -7,6 +7,11 @@ namespace SongRequest
     [Serializable]
     public class Song
     {
+        public Song()
+        {
+            LastPlayTime = string.Empty;
+        }
+
         private string _id = null;
 
         public string TempId
@@ -69,9 +74,40 @@ namespace SongRequest
         public string Year { get; set; }
 
         /// <summary>
+        /// Last time song is played
+        /// </summary>
+        public string LastPlayTime { get; private set; }
+
+        /// <summary>
+        /// If true, tag is read
+        /// </summary>
+        public bool IsDirty { get; private set; }
+
+        /// <summary>
         /// Last play time of song
         /// </summary>
-        public DateTime LastPlayTime { get; set; }
+        public DateTime? LastPlayDateTime
+        {
+            get
+            {
+                return _lastPlayDateTime;
+            }
+            set
+            {
+                _lastPlayDateTime = value;
+                if (_lastPlayDateTime != null)
+                {
+                    IsDirty = true;
+                    LastPlayTime = _lastPlayDateTime.Value.ToString("yyyy-MM-dd HH:mm");
+                }
+                else if (!string.IsNullOrEmpty(LastPlayTime))
+                {
+                    IsDirty = true;
+                    LastPlayTime = string.Empty;
+                }
+            }
+        }
+        private DateTime? _lastPlayDateTime;
 
         /// <summary>
         /// Get artist & title combined

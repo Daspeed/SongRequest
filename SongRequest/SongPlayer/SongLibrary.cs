@@ -55,7 +55,11 @@ namespace SongRequest
                 OnStatusChanged("Library update completed (" + _songs.Count() + " songs). Next scan: " + (_lastFullUpdate + TimeSpan.FromMinutes(minutesBetweenScans)).ToShortTimeString());
             }
 
-            _unsavedChanges = _unsavedChanges || tagChanges > 0;
+            // check need to save
+            // -> unsaved changes
+            // -> tag(s) are changed
+            // -> song is marked dirty (last time played is changed)
+            _unsavedChanges = _unsavedChanges || tagChanges > 0 || _songs.Any(x => x.IsDirty);
 
             //Save, but no more than once every 2 minutes
             if (_unsavedChanges && _lastSerialize + TimeSpan.FromMinutes(2) < DateTime.Now)
@@ -242,11 +246,16 @@ namespace SongRequest
                     if (taglibFile.Tag != null)
                     {
                         if (!string.IsNullOrEmpty(taglibFile.Tag.Title))
-                            song.Name = taglibFile.Tag.Title;
+                            song.Name = taglibFile.Tag.Title.Trim();
 
-                        song.Artist = taglibFile.Tag.JoinedPerformers;
+                        if (!string.IsNullOrEmpty(taglibFile.Tag.JoinedPerformers))
+                            song.Artist = taglibFile.Tag.JoinedPerformers.Trim();
+
+                        if (!string.IsNullOrEmpty(taglibFile.Tag.JoinedGenres))
+                            song.Genre = taglibFile.Tag.JoinedGenres.Trim();
+
                         song.Duration = (int)taglibFile.Properties.Duration.TotalSeconds;
-                        song.Genre = taglibFile.Tag.JoinedGenres;
+
                         uint year = taglibFile.Tag.Year;
                         song.Year = year > 0 ? year.ToString() : string.Empty;
 
@@ -306,16 +315,18 @@ namespace SongRequest
 
                 // get correct stuff to sort on
                 SortBy importantSort;
-                if (sortBy.Equals("date", StringComparison.OrdinalIgnoreCase))
+                if (string.IsNullOrEmpty(sortBy) || sortBy.Equals("artist", StringComparison.OrdinalIgnoreCase))
+                    importantSort = SortBy.Artist;
+                else if (sortBy.Equals("date", StringComparison.OrdinalIgnoreCase))
                     importantSort = SortBy.Date;
+                else if (sortBy.Equals("playdate", StringComparison.OrdinalIgnoreCase))
+                    importantSort = SortBy.PlayDate;
                 else if (sortBy.Equals("genre", StringComparison.OrdinalIgnoreCase))
                     importantSort = SortBy.Genre;
                 else if (sortBy.Equals("year", StringComparison.OrdinalIgnoreCase))
                     importantSort = SortBy.Year;
-                else if (sortBy.Equals("name", StringComparison.OrdinalIgnoreCase))
-                    importantSort = SortBy.Name;
                 else
-                    importantSort = SortBy.Artist;
+                    importantSort = SortBy.Name;
 
                 Func<IEnumerable<Song>, Func<Song, string>, IComparer<string>, IOrderedEnumerable<Song>> firstSorter = Enumerable.OrderBy;
                 if (!ascending)
@@ -380,6 +391,20 @@ namespace SongRequest
                         return song.Name;
                 }
             }
+            else if (sortBy == SortBy.PlayDate)
+            {
+                switch (level)
+                {
+                    case 0:
+                        if (song.LastPlayDateTime.HasValue)
+                            return song.LastPlayDateTime.Value.ToString("yyyy-MM-dd HH:mm:ss.fff");
+                        return string.Empty;
+                    case 1:
+                        return song.Artist;
+                    case 2:
+                        return song.Name;
+                }
+            }
             else if (sortBy == SortBy.Genre)
             {
                 switch (level)
@@ -413,6 +438,7 @@ namespace SongRequest
             Artist,
             Name,
             Date,
+            PlayDate,
             Genre,
             Year
         }
@@ -438,10 +464,21 @@ namespace SongRequest
 
                 Song randomSong = _songs[random.Next(_songs.Count)];
 
-                //If song is > 10 minutes, pick another song... But don't try ferever...
-                if (randomSong.Duration != null &&
-                    randomSong.Duration > 600)
+                int randomizerIgnoreHours;
+                if (!int.TryParse(SongPlayerFactory.GetConfigFile().GetValue("player.randomizerignorehours"), out randomizerIgnoreHours))
+                    randomizerIgnoreHours = 8;
+
+                // If song is > 10 minutes, pick another song...
+                // If song is played last 8 hours, pick another song...
+                // But don't try ferever... (Like 25 times)
+                int tries = 0;
+                while (randomSong.Duration != null && randomSong.Duration > 600
+                    && (randomSong.LastPlayDateTime != null && randomSong.LastPlayDateTime < DateTime.Now.AddHours(-1 * randomizerIgnoreHours))
+                    && tries < 25)
+                {
+                    tries++;
                     randomSong = _songs[random.Next(_songs.Count)];
+                }
 
                 return new RequestedSong()
                 {

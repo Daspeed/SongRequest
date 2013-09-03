@@ -131,6 +131,7 @@ namespace SongRequest
                     try
                     {
                         player.URL = _currentSong.Song.FileName;
+                        _currentSong.Song.LastPlayDateTime = DateTime.Now;
                     }
                     catch
                     {
