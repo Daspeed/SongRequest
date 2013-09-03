@@ -16,12 +16,18 @@
 		h1 {
 			font-size: 1.4em;
 			display: inline;
+			font-weight: normal;
+			color: #fdfdfd;
+			text-shadow: 0.1em 0.2em 0.4em #000;
 		}
 
 		h2 {
 			font-size: 1.2em;
 			padding: 0;
 			margin: 0;
+			font-weight: normal;
+			color: #fdfdfd;
+			text-shadow: 0.1em 0.2em 0.4em #000;
 		}
 
 		div {
@@ -32,24 +38,64 @@
 			text-align: left;
 		}
 
-		.divheader {
-			background: rgb(30,87,153); /* Old browsers */
-			background: -moz-linear-gradient(top, rgba(30,87,153,1) 0%, rgba(41,137,216,1) 50%, rgba(32,124,202,1) 51%, rgba(125,185,232,1) 100%); /* FF3.6+ */
-			background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(30,87,153,1)), color-stop(50%,rgba(41,137,216,1)), color-stop(51%,rgba(32,124,202,1)), color-stop(100%,rgba(125,185,232,1))); /* Chrome,Safari4+ */
-			background: -webkit-linear-gradient(top, rgba(30,87,153,1) 0%,rgba(41,137,216,1) 50%,rgba(32,124,202,1) 51%,rgba(125,185,232,1) 100%); /* Chrome10+,Safari5.1+ */
-			background: -o-linear-gradient(top, rgba(30,87,153,1) 0%,rgba(41,137,216,1) 50%,rgba(32,124,202,1) 51%,rgba(125,185,232,1) 100%); /* Opera 11.10+ */
-			background: -ms-linear-gradient(top, rgba(30,87,153,1) 0%,rgba(41,137,216,1) 50%,rgba(32,124,202,1) 51%,rgba(125,185,232,1) 100%); /* IE10+ */
-			background: linear-gradient(to bottom, rgba(30,87,153,1) 0%,rgba(41,137,216,1) 50%,rgba(32,124,202,1) 51%,rgba(125,185,232,1) 100%); /* W3C */
-			filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#1e5799', endColorstr='#7db9e8',GradientType=0 ); /* IE6-9 */
+		.gradient {
+			background: rgb(136,191,232); /* Old browsers */
+			background: -moz-linear-gradient(top, rgba(136,191,232,1) 0%, rgba(112,176,224,1) 100%); /* FF3.6+ */
+			background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(136,191,232,1)), color-stop(100%,rgba(112,176,224,1))); /* Chrome,Safari4+ */
+			background: -webkit-linear-gradient(top, rgba(136,191,232,1) 0%,rgba(112,176,224,1) 100%); /* Chrome10+,Safari5.1+ */
+			background: -o-linear-gradient(top, rgba(136,191,232,1) 0%,rgba(112,176,224,1) 100%); /* Opera 11.10+ */
+			background: -ms-linear-gradient(top, rgba(136,191,232,1) 0%,rgba(112,176,224,1) 100%); /* IE10+ */
+			background: linear-gradient(to bottom, rgba(136,191,232,1) 0%,rgba(112,176,224,1) 100%); /* W3C */
+			filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#88bfe8', endColorstr='#70b0e0',GradientType=0 ); /* IE6-9 */
 		}
+
+		.button {
+			padding: 0;
+			margin: 0;
+			border: 1px solid #777777;
+			text-align: center;
+			vertical-align: middle;
+			color: #fdfdfd;
+			text-shadow: 0.1em 0.2em 0.4em #000;
+			background: rgb(136,191,232); /* Old browsers */
+			background: -moz-linear-gradient(top, rgba(136,191,232,1) 0%, rgba(112,176,224,1) 100%); /* FF3.6+ */
+			background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(136,191,232,1)), color-stop(100%,rgba(112,176,224,1))); /* Chrome,Safari4+ */
+			background: -webkit-linear-gradient(top, rgba(136,191,232,1) 0%,rgba(112,176,224,1) 100%); /* Chrome10+,Safari5.1+ */
+			background: -o-linear-gradient(top, rgba(136,191,232,1) 0%,rgba(112,176,224,1) 100%); /* Opera 11.10+ */
+			background: -ms-linear-gradient(top, rgba(136,191,232,1) 0%,rgba(112,176,224,1) 100%); /* IE10+ */
+			background: linear-gradient(to bottom, rgba(136,191,232,1) 0%,rgba(112,176,224,1) 100%); /* W3C */
+			filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#88bfe8', endColorstr='#70b0e0',GradientType=0 ); /* IE6-9 */
+		}
+
+			.button:active {
+				color: #fdfdfd;
+				background: rgb(48,150,219); /* Old browsers */
+				background: -moz-linear-gradient(top, rgba(48,150,219,1) 0%, rgba(136,191,232,1) 100%); /* FF3.6+ */
+				background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(48,150,219,1)), color-stop(100%,rgba(136,191,232,1))); /* Chrome,Safari4+ */
+				background: -webkit-linear-gradient(top, rgba(48,150,219,1) 0%,rgba(136,191,232,1) 100%); /* Chrome10+,Safari5.1+ */
+				background: -o-linear-gradient(top, rgba(48,150,219,1) 0%,rgba(136,191,232,1) 100%); /* Opera 11.10+ */
+				background: -ms-linear-gradient(top, rgba(48,150,219,1) 0%,rgba(136,191,232,1) 100%); /* IE10+ */
+				background: linear-gradient(to bottom, rgba(48,150,219,1) 0%,rgba(136,191,232,1) 100%); /* W3C */
+				filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#3096db', endColorstr='#88bfe8',GradientType=0 ); /* IE6-9 */
+			}
 
 		#currentStatusDiv {
 			border: 1px solid black;
 		}
 
-		#controlsDiv {
+		#controlCombineDiv {
 			border: 1px solid black;
 			border-top: 0px;
+			padding: 0;
+			margin: 0;
+		}
+
+		#statusDiv {
+			font-size: 1.2em;
+		}
+
+		#controlsDiv {
+			text-align: center;
 		}
 
 		#outerCombineDiv {
@@ -125,19 +171,51 @@
 			color: gray;
 		}
 
+		.nextButton {
+			width: 5em;
+			height: 5em;
+		}
+
+		.pauseButton {
+			width: 5em;
+			height: 5em;
+		}
+
+		.rescanButton {
+			width: 5em;
+			height: 5em;
+		}
+
+		.volumeButton {
+			width: 5em;
+			height: 5em;
+		}
+
+		.playinfo {
+			border: 1px solid gray;
+			display: inline-block;
+			width: 5em;
+			height: 4em;
+			margin: 0;
+			padding: 0;
+		}
+
+			.playinfo p {
+				text-align: center;
+			}
+
+		.searchButton {
+		}
+
 		.skipButton {
 			float: right;
 			width: 3.5em;
 			height: 3.5em;
-			text-align: center;
-			vertical-align: central;
 		}
 
 		.addButton {
 			width: 3.5em;
 			height: 3.5em;
-			text-align: center;
-			vertical-align: central;
 		}
 
 		#combineDiv {
@@ -203,16 +281,18 @@
 		}
 
 		.headerrow {
-			border-bottom: 1px solid gray;
+			border-bottom: 1px solid black;
+			color: #fdfdfd;
+			text-shadow: 0.1em 0.2em 0.4em #000;
 		}
 
 		.evenrow {
+			background-color: lightgray;
 			border-left: 1px solid lightgray;
 			border-right: 1px solid lightgray;
 		}
 
 		.oddrow {
-			background-color: lightgray;
 			border-left: 1px solid lightgray;
 			border-right: 1px solid lightgray;
 		}
@@ -287,6 +367,31 @@
 
 		@media screen and (min-width: 768px) {
 
+			#currentStatusDiv {
+			}
+
+			#controlCombineDiv {
+			}
+
+			#statusDiv {
+				width: 40em;
+				display: inline-block;
+			}
+
+			.statusArtistTitle {
+			}
+
+			.statusTime {
+			}
+
+			.statusRequester {
+			}
+
+			#controlsDiv {
+				display: inline-block;
+				text-align: left;
+			}
+
 			#outerCombineDiv {
 				width: 100%;
 				overflow: hidden;
@@ -347,6 +452,29 @@
 				border-left: 0px;
 			}
 
+			.nextButton {
+				width: 3em;
+				height: 3em;
+			}
+
+			.pauseButton {
+				width: 3em;
+				height: 3em;
+			}
+
+			.rescanButton {
+				width: 3em;
+				height: 3em;
+			}
+
+			.volumeButton {
+				width: 4em;
+				height: 3em;
+			}
+
+			.searchButton {
+			}
+
 			.skipButton {
 				width: 1.75em;
 				height: 1.75em;
@@ -395,20 +523,28 @@
 	<script type="text/javascript" src="/static/SongRequest.js"></script>
 </head>
 <body ng-controller="SongRequestController">
-	<div id="currentStatusDiv" class="divheader">
-		<h1>SongRequest</h1>
+	<div id="currentStatusDiv" class="gradient">
+		<h1>SongRequest&nbsp;♫</h1>
 	</div>
-	<div id="controlsDiv">
-		<p>
-			<span class="statusArtistTitle">{{getCurrentSongName()}}</span>&nbsp;<span class="statusTime">({{getCurrentSongPosition()}}/{{getCurrentSongDuration()}})</span>
-		</p>
-		<p>
-			<span class="statusRequester">Requested by: {{getCurrentSongRequester()}}</span>
-		</p>
+	<div id="controlCombineDiv">
+		<div id="statusDiv">
+			<p>
+				<span class="statusArtistTitle">{{getCurrentSongName()}}</span>&nbsp;<span class="statusTime">({{getCurrentSongPosition()}}/{{getCurrentSongDuration()}})</span>
+			</p>
+			<p>
+				<span class="statusRequester">Requested by: {{getCurrentSongRequester()}}</span>
+			</p>
+		</div>
+		<div id="controlsDiv">
+			<input ng-click="next()" id="next" type="button" class="button nextButton" value="►►">
+			<input ng-click="pause()" id="pause" type="button" class="button pauseButton" value="►">
+			<input ng-click="rescan()" id="rescan" type="button" class="button rescanButton" value="&#x21bb">
+			<input ng-click="changeVolume()" id="volume" type="button" class="button volumeButton" value="Volume&#13;&#10;{{getVolume()}}">
+		</div>
 	</div>
 	<div id="outerCombineDiv">
 		<div id="queueDiv">
-			<div id="queueHeaderDiv" class="divheader">
+			<div id="queueHeaderDiv" class="gradient">
 				<h2 ng-pluralize count="queue.length" when="{'0': 'Queue | No songs',
 				'one': 'Queue | 1 song',
 				'other': 'Queue | {} songs ({{getQueueDuration()}})'}"></h2>
@@ -416,7 +552,7 @@
 			<div id="queueListDiv" ng-repeat="item in queue">
 				<div class="queueItem">
 					<div class="{{getQueueItemClass(item, $index)}}">
-						<input class="skipButton" ng-click="removeFromQueue(item.Song)" type="button" value="-" title="Remove song from queue" />
+						<input class="button skipButton" ng-click="removeFromQueue(item.Song)" type="button" value="-" title="Remove song from queue" />
 						<p><span class="queueRequester">ETA: {{item.Till}}, requested by: {{item.RequesterName}}</span></p>
 						<p>
 							<span class="queueArtist">{{getSongArtist(item.Song)}}</span>
@@ -430,28 +566,28 @@
 		</div>
 		<div id="combineDiv">
 			<div id="songsOuterDiv">
-				<div id="songsHeaderDiv" class="divheader">
+				<div id="songsHeaderDiv" class="gradient">
 					<h2>Songs</h2>
 				</div>
 				<div id="songsSearchDiv">
 					<input id="searchBox" type="text" />
-					<input id="searchButton" type="button" value="Search" />
+					<input id="searchButton" class="button searchButton" type="button" value="Search" />
 				</div>
 				<div id="songsDiv">
 
 					<table class="songsTable">
-						<tr class="headerrow">
+						<tr class="gradient headerrow">
 							<th class="actionColumn">Action</th>
 							<th ng-click="sort('name')" id="nameHeader" class="songNameColumn {{getHeaderClass('name')}}">Name</th>
 							<th ng-click="sort('artist')" id="artistHeader" class="songArtistColumn {{getHeaderClass('artist')}}">Artist</th>
 							<th class="songDurationColumn">Length</th>
 							<th class="songGenreColumn">Genre</th>
 							<th class="songYearColumn">Year</th>
-							<th ng-click="sort('date')" id="dateHeader" class="songDateCreatedColumn {{getHeaderClass('date')}}">Date created</th>
+							<th ng-click="sort('date')" id="dateHeader" class="songDateCreatedColumn {{getHeaderClass('date')}}">Date added</th>
 						</tr>
 						<tr class="songRow" ng-repeat="song in searchResult" ng-class-even="'evenrow'" ng-class-odd="'oddrow'">
 							<td class="actionColumn">
-								<input type="button" class="addButton" value="+" ng-click="addToQueue(song)" title="Add song to queue" />
+								<input type="button" class="button addButton" value="+" ng-click="addToQueue(song)" title="Add song to queue" />
 							</td>
 							<td class="songNameColumn"><a class="songlink" href="file://{{song.FileName}}" title="{{song.FileName}}">{{song.Name}}</a></td>
 							<td class="songArtistColumn">{{song.Artist}}</td>
