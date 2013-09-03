@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -134,6 +135,9 @@ namespace SongRequest.Handlers
             }
         }
 
+        private static object _lockObject = new object();
+        private static Dictionary<string, string> ipToHostName = new Dictionary<string, string>();
+
         /// <summary>
         /// Get requester
         /// </summary>
@@ -141,16 +145,30 @@ namespace SongRequest.Handlers
         /// <returns>Requester as string</returns>
         private static string GetRequester(HttpListenerRequest request)
         {
-            if (request != null && request.RemoteEndPoint != null)
+            if (request != null && request.RemoteEndPoint != null && request.RemoteEndPoint.Address != null)
             {
-                try
+                string hostName;
+
+                lock (_lockObject)
                 {
-                    return Dns.GetHostEntry(request.RemoteEndPoint.Address).HostName;
+                    string ip = request.RemoteEndPoint.Address.ToString();
+
+                    if (ipToHostName.ContainsKey(ip))
+                        return ipToHostName[ip];
+
+                    try
+                    {
+                        hostName = Dns.GetHostEntry(request.RemoteEndPoint.Address).HostName;
+                    }
+                    catch (Exception)
+                    {
+                        hostName = request.RemoteEndPoint.Address.ToString();
+                    }
+
+                    ipToHostName.Add(ip, hostName);
                 }
-                catch (Exception)
-                {
-                    return request.RemoteEndPoint.Address.ToString();
-                }
+
+                return hostName;
             }
 
             return "unknown";

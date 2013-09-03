@@ -23,8 +23,10 @@ namespace SongRequest
 
             string[] path = context.Request.RawUrl.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
 
-            _mappings[path.Length == 0 ? string.Empty : path[0]]
-                .Process(context.Request, context.Response);
+            string searchKey = path.Length == 0 ? string.Empty : path[0];
+
+            if (_mappings.ContainsKey(searchKey))
+                _mappings[searchKey].Process(context.Request, context.Response);
 
             context.Response.OutputStream.Flush();
             context.Response.OutputStream.Close();
