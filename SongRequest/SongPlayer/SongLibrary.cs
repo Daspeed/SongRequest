@@ -303,20 +303,18 @@ namespace SongRequest
                     );
                 }
 
+                // get correct stuff to sort on
                 SortBy importantSort;
-                switch (sortBy)
-                {
-                    case "date":
-                        importantSort = SortBy.Date;
-                        break;
-                    case "name":
-                        importantSort = SortBy.Name;
-                        break;
-                    case "artist":
-                    default:
-                        importantSort = SortBy.Artist;
-                        break;
-                }
+                if (sortBy.Equals("date", StringComparison.OrdinalIgnoreCase))
+                    importantSort = SortBy.Date;
+                else if (sortBy.Equals("genre", StringComparison.OrdinalIgnoreCase))
+                    importantSort = SortBy.Genre;
+                else if (sortBy.Equals("year", StringComparison.OrdinalIgnoreCase))
+                    importantSort = SortBy.Year;
+                else if (sortBy.Equals("name", StringComparison.OrdinalIgnoreCase))
+                    importantSort = SortBy.Name;
+                else
+                    importantSort = SortBy.Artist;
 
                 Func<IEnumerable<Song>, Func<Song, string>, IComparer<string>, IOrderedEnumerable<Song>> firstSorter = Enumerable.OrderBy;
                 if (!ascending)
@@ -334,18 +332,88 @@ namespace SongRequest
                     thirdSorter(
                         secondSorter(
                             firstSorter(songs,
-                                x => { return ((importantSort == SortBy.Artist) ? x.Artist : (importantSort == SortBy.Name ? x.Name : x.DateCreated)); }, StringComparer.OrdinalIgnoreCase),
-                                x => { return ((importantSort == SortBy.Artist) ? x.Name : (importantSort == SortBy.Name ? x.Artist : x.Artist)); }, StringComparer.OrdinalIgnoreCase),
-                                x => { return ((importantSort == SortBy.Artist) ? x.TempId : (importantSort == SortBy.Name ? x.TempId : x.Name)); }, StringComparer.OrdinalIgnoreCase
-                                );
+                                x => GetSortString(x, importantSort, 0), StringComparer.OrdinalIgnoreCase),
+                                x => GetSortString(x, importantSort, 1), StringComparer.OrdinalIgnoreCase),
+                                x => GetSortString(x, importantSort, 2), StringComparer.OrdinalIgnoreCase);
             }
+        }
+
+        /// <summary>
+        /// Get correct sort string
+        /// </summary>
+        private string GetSortString(Song song, SortBy sortBy, int level)
+        {
+            if (sortBy == SortBy.Artist)
+            {
+                switch (level)
+                {
+                    case 0:
+                        return song.Artist;
+                    case 1:
+                        return song.Name;
+                    case 2:
+                        return song.Year;
+                }
+            }
+            else if (sortBy == SortBy.Name)
+            {
+                switch (level)
+                {
+                    case 0:
+                        return song.Name;
+                    case 1:
+                        return song.Artist;
+                    case 2:
+                        return song.TempId;
+                }
+            }
+            else if (sortBy == SortBy.Date)
+            {
+                switch (level)
+                {
+                    case 0:
+                        return song.DateCreated;
+                    case 1:
+                        return song.Artist;
+                    case 2:
+                        return song.Name;
+                }
+            }
+            else if (sortBy == SortBy.Genre)
+            {
+                switch (level)
+                {
+                    case 0:
+                        return song.Genre;
+                    case 1:
+                        return song.Artist;
+                    case 2:
+                        return song.Name;
+                }
+            }
+            else if (sortBy == SortBy.Year)
+            {
+                switch (level)
+                {
+                    case 0:
+                        return song.Year;
+                    case 1:
+                        return song.Artist;
+                    case 2:
+                        return song.Name;
+                }
+            }
+
+            return string.Empty;
         }
 
         private enum SortBy
         {
             Artist,
             Name,
-            Date
+            Date,
+            Genre,
+            Year
         }
 
         public void Rescan()

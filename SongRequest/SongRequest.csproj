@@ -72,7 +72,6 @@
     <Compile Include="Handlers\DynamicHandler.cs" />
     <Compile Include="Handlers\StaticHandler.cs" />
     <Compile Include="Handlers\IndexHandler.cs" />
-    <Compile Include="Handlers\KillHandler.cs" />
     <Compile Include="Handlers\PageNotFoundHandler.cs" />
     <Compile Include="Handlers\IHandler.cs" />
     <Compile Include="Program.cs" />

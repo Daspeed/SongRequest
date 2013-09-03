@@ -69,6 +69,11 @@ namespace SongRequest
         public string Year { get; set; }
 
         /// <summary>
+        /// Last play time of song
+        /// </summary>
+        public DateTime LastPlayTime { get; set; }
+
+        /// <summary>
         /// Get artist & title combined
         /// </summary>
         public string GetArtistAndTitle()
