@@ -293,7 +293,7 @@ namespace SongRequest
             lock (lockObject)
             {
                 IEnumerable<Song> songs = null;
-                if (string.IsNullOrEmpty(filter))
+                if (string.IsNullOrWhiteSpace(filter))
                 {
                     songs = _songs;
                 }
