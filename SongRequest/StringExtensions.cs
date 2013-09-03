@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using System.Threading;
+using DoubleMetaphone;
 
 namespace SongRequest
 {
@@ -11,10 +12,24 @@ namespace SongRequest
             return source.IndexOf(value, StringComparison.OrdinalIgnoreCase) > -1;
         }
 
+
         public static bool ContainsIgnoreCaseNonSpace(this string source, string value)
         {
-            return Thread.CurrentThread.CurrentCulture.CompareInfo
-                .IndexOf(source.ReplaceUniqueCharacters(), value.ReplaceUniqueCharacters(), CompareOptions.IgnoreCase | CompareOptions.IgnoreNonSpace) > -1;
+            string sourceReplaced = source.ReplaceUniqueCharacters();
+            string valueReplaced = value.ReplaceUniqueCharacters();
+
+            bool normal = Thread.CurrentThread.CurrentCulture.CompareInfo.IndexOf(sourceReplaced, valueReplaced, CompareOptions.IgnoreCase | CompareOptions.IgnoreNonSpace) > -1;
+            if (normal)
+                return true;
+
+            string sourceDoubleMetaphone = source.GenerateDoubleMetaphone();
+            string valueDoubleMetaphone = value.GenerateDoubleMetaphone();
+
+            bool doubleMetaphone = sourceDoubleMetaphone.Equals(valueDoubleMetaphone, StringComparison.Ordinal);
+            if (doubleMetaphone)
+                return true;
+
+            return false;
         }
 
         public static string ReplaceUniqueCharacters(this string source)

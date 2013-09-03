@@ -66,6 +66,7 @@
     <Compile Include="ConfigReader.cs" />
     <Compile Include="Config\ConfigSection.cs" />
     <Compile Include="Config\ConfigFile.cs" />
+    <Compile Include="DoubleMetaphone.cs" />
     <Compile Include="Dispatcher.cs" />
     <Compile Include="Handlers\BaseHandler.cs" />
     <Compile Include="Handlers\FaviconHandler.cs" />

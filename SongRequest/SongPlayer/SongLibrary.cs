@@ -59,7 +59,8 @@ namespace SongRequest
             // -> unsaved changes
             // -> tag(s) are changed
             // -> song is marked dirty (last time played is changed)
-            _unsavedChanges = _unsavedChanges || tagChanges > 0 || _songs.Any(x => x.IsDirty);
+            bool dirtySongs = _songs.Any(x => x.IsDirty);
+            _unsavedChanges = _unsavedChanges || tagChanges > 0 || dirtySongs;
 
             //Save, but no more than once every 2 minutes
             if (_unsavedChanges && _lastSerialize + TimeSpan.FromMinutes(2) < DateTime.Now)
@@ -94,6 +95,11 @@ namespace SongRequest
             {
                 lock (lockObject)
                 {
+                    // don't be dirty anymore!
+                    List<Song> dirtySongs = _songs.Where(x => x.IsDirty).ToList();
+                    foreach (Song song in dirtySongs)
+                        song.IsDirty = false;
+
                     using (Stream stream = File.Open("library.bin", FileMode.Create))
                     {
                         BinaryFormatter bin = new BinaryFormatter();
@@ -124,6 +130,11 @@ namespace SongRequest
                             {
                                 BinaryFormatter bin = new BinaryFormatter();
                                 _songs = (List<Song>)bin.Deserialize(stream);
+
+                                // can't be dirty when just deserialized...
+                                List<Song> dirtySongs = _songs.Where(x => x.IsDirty).ToList();
+                                foreach (Song song in dirtySongs)
+                                    song.IsDirty = false;
                             }
                         }
                     }

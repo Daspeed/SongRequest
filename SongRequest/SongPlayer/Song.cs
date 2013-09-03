@@ -81,7 +81,7 @@ namespace SongRequest
         /// <summary>
         /// If true, tag is read
         /// </summary>
-        public bool IsDirty { get; private set; }
+        public bool IsDirty { get; set; }
 
         /// <summary>
         /// Last play time of song
