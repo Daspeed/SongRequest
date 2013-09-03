@@ -1,4 +1,5 @@
 ﻿using SongRequest.Interfaces;
+using System;
 using System.IO;
 using System.Net;
 using System.Text;
@@ -11,8 +12,14 @@ namespace SongRequest.Handlers
 
         public virtual void WriteUtf8String(Stream stream, string text)
         {
-            using (var writer = new StreamWriter(stream, Encoding.UTF8))
-                writer.Write(text);
+            try
+            {
+                using (var writer = new StreamWriter(stream, Encoding.UTF8))
+                    writer.Write(text);
+            }
+            catch (Exception)
+            {
+            }
         }
     }
 }

@@ -100,8 +100,9 @@ namespace SongRequest
                     _lastSerialize = DateTime.Now;
                 }
             }
-            catch (IOException)
+            catch (IOException exception)
             {
+                OnStatusChanged("Library saving failed. -> " + exception.Message);
             }
         }
 

@@ -116,7 +116,12 @@ namespace SongRequest.Handlers
                         using (var reader = new StreamReader(request.InputStream))
                         {
                             string posted = reader.ReadToEnd();
-                            songPlayer.Volume = int.Parse(posted);
+
+                            int volume;
+                            if (int.TryParse(posted, out volume))
+                            {
+                                songPlayer.Volume = volume;
+                            }
 
                             WriteUtf8String(response.OutputStream, JsonConvert.SerializeObject(songPlayer.Volume));
                         }
