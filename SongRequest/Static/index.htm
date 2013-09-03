@@ -3,6 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="image/png" href="/static/favicon.ico">
     <title ng-controller="SongRequestController">SongRequest</title>
     <style>
         body {
@@ -439,6 +440,18 @@
             .songDateCreatedColumn {
                 display: table-cell;
             }
+
+            .songDatePlayedColumn {
+                display: table-cell;
+            }
+        }
+
+        .Asc {
+            text-decoration: overline;
+        }
+
+        .Desc {
+            text-decoration: underline;
         }
 
         @media screen and (min-width: 768px) {
@@ -609,10 +622,6 @@
         }
 
         @media screen and (min-width: 1024px) {
-
-            .songDatePlayedColumn {
-                display: table-cell;
-            }
         }
     </style>
     <script type="text/javascript" src="/static/underscore-min.js"></script>

@@ -212,7 +212,7 @@
             <div class="playinfo">
                 <div style="float: left;">
                     <strong>{{getCurrentSongName()}}
-					{{getCurrentSongPosition()}} - {{getCurrentSongDuration()}}
+                    {{getCurrentSongPosition()}} - {{getCurrentSongDuration()}}
                     </strong>
                 </div>
                 <div style="clear: both;">Requested by: {{getCurrentSongRequester()}}</div>
@@ -236,8 +236,8 @@
 
             <div class="listheader queueheader">
                 <span ng-pluralize count="queue.length" when="{'0': 'Queue | No songs',
-				'one': 'Queue | 1 song',
-				'other': 'Queue | {} songs ({{getQueueDuration()}})'}"></span>
+                'one': 'Queue | 1 song',
+                'other': 'Queue | {} songs ({{getQueueDuration()}})'}"></span>
                 <span ng-hide="queue.length == 0"></span>
             </div>
 
@@ -246,7 +246,7 @@
                     <div class="queueitem">
                         <input ng-click="removeFromQueue(item.Song)" type="button" class="button removebutton" value="-">
                         <strong>{{getSongArtistAndName(item.Song)}}
-					({{convertNumberToTime(item.Song.Duration)}})
+                    ({{convertNumberToTime(item.Song.Duration)}})
                         </strong>
                         <div>Requested by: {{item.RequesterName}} (ETA: {{item.Till}})</div>
                     </div>
