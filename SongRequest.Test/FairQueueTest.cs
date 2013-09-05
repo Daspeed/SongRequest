@@ -46,7 +46,7 @@ namespace SongRequest.Test
             Assert.AreEqual("D.mp3", queue.Current.ElementAt(2).Song.FileName);
             Assert.AreEqual("B.mp3", queue.Current.ElementAt(3).Song.FileName);
 
-            queue.Remove(first);
+            queue.Remove(first, "randomizer", null);
 
             Assert.AreEqual(queue.Count, 3);
             Assert.IsNotNull(queue.Current.First());

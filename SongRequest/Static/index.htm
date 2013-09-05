@@ -435,6 +435,28 @@
             cursor: hand;
         }
 
+        .songRequesterColumn {
+            overflow: hidden;
+            -ms-text-overflow: ellipsis;
+            -o-text-overflow: ellipsis;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            width: 8em;
+            display: none;
+            cursor: default;
+        }
+
+        .songSkippedByColumn {
+            overflow: hidden;
+            -ms-text-overflow: ellipsis;
+            -o-text-overflow: ellipsis;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            width: 8em;
+            display: none;
+            cursor: default;
+        }
+
         @media screen and (min-width: 590px) {
 
             .songDateCreatedColumn {
@@ -622,6 +644,14 @@
         }
 
         @media screen and (min-width: 1024px) {
+
+            .songRequesterColumn {
+                display: table-cell;
+            }
+
+            .songSkippedByColumn {
+                display: table-cell;
+            }
         }
     </style>
     <script type="text/javascript" src="/static/underscore-min.js"></script>
@@ -704,6 +734,8 @@
                             <th ng-click="sort('year')" class="songYearColumn {{getHeaderClass('year')}}">Year</th>
                             <th ng-click="sort('date')" id="dateHeader" class="songDateCreatedColumn {{getHeaderClass('date')}}">Date added</th>
                             <th ng-click="sort('playdate')" id="playedHeader" class="songDatePlayedColumn {{getHeaderClass('playdate')}}">Last played</th>
+                            <th class="songRequesterColumn">Requester</th>
+                            <th class="songSkippedByColumn">Skipped by</th>
                         </tr>
                         <tr class="songRow" ng-repeat="song in searchResult" ng-class-even="'evenrow'" ng-class-odd="'oddrow'">
                             <td class="actionColumn">
@@ -716,6 +748,8 @@
                             <td class="songYearColumn">{{song.Year}}</td>
                             <td class="songDateCreatedColumn">{{song.DateCreated}}</td>
                             <td class="songDatePlayedColumn">{{song.LastPlayTime}}</td>
+                            <td class="songRequesterColumn">{{song.LastRequester}}</td>
+                            <td class="songSkippedByColumn">{{song.SkippedBy}}</td>
                         </tr>
                     </table>
 

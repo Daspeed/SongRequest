@@ -51,12 +51,12 @@ namespace SongRequest
         /// <summary>
         /// Dequeue song
         /// </summary>
-        void Dequeue(string id);
+        void Dequeue(string id, string requesterName);
 
         /// <summary>
         /// Dequeue song
         /// </summary>
-        void Dequeue(Song song);
+        void Dequeue(Song song, string requesterName);
 
         /// <summary>
         /// Pause song playing
@@ -66,7 +66,7 @@ namespace SongRequest
         /// <summary>
         /// Plan next song
         /// </summary>
-        void Next();
+        void Next(string requester);
 
         /// <summary>
         /// Rescan complete library

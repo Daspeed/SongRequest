@@ -84,6 +84,31 @@ namespace SongRequest
         public bool IsDirty { get; set; }
 
         /// <summary>
+        /// Name of last requester
+        /// </summary>
+        public string LastRequester { get; set; }
+
+        /// <summary>
+        /// Name of last requester
+        /// </summary>
+        public string _skippedBy;
+
+        /// <summary>
+        /// Name of last requester
+        /// </summary>
+        public string SkippedBy
+        {
+            get { return _skippedBy; }
+            set
+            {
+                if (string.IsNullOrEmpty(value) || value.Equals("randomizer", StringComparison.OrdinalIgnoreCase))
+                    _skippedBy = string.Empty;
+                else
+                    _skippedBy = value;
+            }
+        }
+
+        /// <summary>
         /// Last play time of song
         /// </summary>
         public DateTime? LastPlayDateTime

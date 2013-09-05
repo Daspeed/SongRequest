@@ -473,23 +473,19 @@ namespace SongRequest
                 if (_songs.Count == 0)
                     return null;
 
-                Song randomSong = _songs[random.Next(_songs.Count)];
-
                 int randomizerIgnoreHours;
                 if (!int.TryParse(SongPlayerFactory.GetConfigFile().GetValue("player.randomizerignorehours"), out randomizerIgnoreHours))
                     randomizerIgnoreHours = 8;
 
-                // If song is > 10 minutes, pick another song...
-                // If song is played last 8 hours, pick another song...
-                // But don't try ferever... (Like 25 times)
-                int tries = 0;
-                while (randomSong.Duration != null && randomSong.Duration > 600
-                    && (randomSong.LastPlayDateTime != null && randomSong.LastPlayDateTime < DateTime.Now.AddHours(-1 * randomizerIgnoreHours))
-                    && tries < 25)
-                {
-                    tries++;
-                    randomSong = _songs[random.Next(_songs.Count)];
-                }
+                // If song is > 10 minutes, ignore
+                // If song is played last xxx hours, ignore
+                List<Song> songsToChooseFrom = _songs.Where(x => (x.Duration != null && x.Duration < 600)
+                    && (x.LastPlayDateTime == null || x.LastPlayDateTime < DateTime.Now.AddHours(-1 * randomizerIgnoreHours))).ToList();
+
+                if (songsToChooseFrom.Count == 0)
+                    songsToChooseFrom = _songs;
+
+                Song randomSong = songsToChooseFrom[random.Next(songsToChooseFrom.Count)];
 
                 return new RequestedSong()
                 {

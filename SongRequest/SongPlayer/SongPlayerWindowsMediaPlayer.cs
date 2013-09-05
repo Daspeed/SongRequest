@@ -104,8 +104,11 @@ namespace SongRequest
         /// <summary>
         /// Play next song
         /// </summary>
-        public void Next()
+        public void Next(string requester)
         {
+            if (_currentSong != null)
+                _currentSong.Song.SkippedBy = requester;
+
             if (_queue.Count > 0)
             {
                 lock (lockObject)
@@ -113,7 +116,7 @@ namespace SongRequest
                     //Take next song from queue
                     _currentSong = _queue.Current.First();
 
-                    _queue.Remove(_currentSong);
+                    _queue.Remove(_currentSong, requester, _currentSong.Song.TempId);
                 }
             }
             else
@@ -131,6 +134,8 @@ namespace SongRequest
                     try
                     {
                         player.URL = _currentSong.Song.FileName;
+                        _currentSong.Song.LastRequester = _currentSong.RequesterName.Equals("randomizer", StringComparison.OrdinalIgnoreCase) ? string.Empty : _currentSong.RequesterName;
+                        _currentSong.Song.SkippedBy = string.Empty;
                         _currentSong.Song.LastPlayDateTime = DateTime.Now;
                     }
                     catch
@@ -169,7 +174,7 @@ namespace SongRequest
                     }
 
                     if (playState == WMPPlayState.wmppsStopped || playState == WMPPlayState.wmppsUndefined)
-                        Next();
+                        Next("randomizer");
                 }
                 catch
                 {
@@ -195,7 +200,6 @@ namespace SongRequest
                     if (requestedSong != null)
                         Enqueue(requestedSong.Song, requestedSong.RequesterName);
                 }
-
             }
         }
 
@@ -283,20 +287,20 @@ namespace SongRequest
         /// <summary>
         /// Dequeue song
         /// </summary>
-        public void Dequeue(string id)
+        public void Dequeue(string id, string requester)
         {
             Song song = _songLibrary.GetSongs(string.Empty, null, true).FirstOrDefault(x => x.TempId == id);
 
             if (song != null)
-                Dequeue(song);
+                Dequeue(song, requester);
         }
 
         /// <summary>
         /// Dequeue song
         /// </summary>
-        public void Dequeue(Song song)
+        public void Dequeue(Song song, string requester)
         {
-            _queue.Remove(song.TempId);
+            _queue.Remove(song.TempId, requester, _currentSong.Song.TempId);
         }
 
         /// <summary>

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace SongRequest
@@ -66,10 +67,24 @@ namespace SongRequest
         /// Remove song from queue
         /// </summary>
         /// <param name="id">Id of song to delete</param>
-        public void Remove(string id)
+        public void Remove(string id, string requester, string currentSongId)
         {
             lock (lockObject)
             {
+                List<RequestedSong> matches = _requestedSongs.Where(x => x.Song.TempId == id).ToList();
+                foreach (RequestedSong requestedSong in matches)
+                {
+                    string combine = requester;
+                    if (!requestedSong.Song.TempId.Equals(currentSongId))
+                    {
+                        // show it's from the queue and set 'play date' so we can define when skipped
+                        combine += " (q)";
+                        requestedSong.Song.LastPlayDateTime = DateTime.Now;
+                    }
+
+                    requestedSong.Song.SkippedBy = combine;
+                }
+
                 _requestedSongs.RemoveAll(x => x.Song.TempId == id);
             }
         }
@@ -78,9 +93,9 @@ namespace SongRequest
         /// Remove song from queue
         /// </summary>
         /// <param name="requestedSong">Song to delete</param>
-        public void Remove(RequestedSong requestedSong)
+        public void Remove(RequestedSong requestedSong, string requester, string currentSongId)
         {
-            Remove(requestedSong.Song.TempId);
+            Remove(requestedSong.Song.TempId, requester, currentSongId);
         }
 
         /// <summary>

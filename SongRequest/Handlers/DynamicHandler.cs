@@ -62,7 +62,7 @@ namespace SongRequest.Handlers
                         case "DELETE":
                             using (var reader = new StreamReader(request.InputStream))
                             {
-                                songPlayer.Dequeue(reader.ReadToEnd());
+                                songPlayer.Dequeue(reader.ReadToEnd(), requester);
                             }
                             break;
                     }
@@ -99,7 +99,7 @@ namespace SongRequest.Handlers
                     }
                 case "next":
                     response.ContentType = "application/json";
-                    songPlayer.Next();
+                    songPlayer.Next(requester);
                     WriteUtf8String(response.OutputStream, JsonConvert.SerializeObject(songPlayer.PlayerStatus));
                     break;
                 case "rescan":
