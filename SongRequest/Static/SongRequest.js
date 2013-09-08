@@ -227,13 +227,6 @@
                 $scope.getPlayList();
             };
 
-            $scope.getPlaylistWidth = function () {
-                return Math.max(670, $(window).width() - $('#queue').width() - 50);
-            }
-            $scope.$watch($scope.getPlaylistWidth, function (newValue, oldValue) {
-                $scope.playlistStyle = { width: String(newValue) + 'px' };
-            });
-
             refreshQueue();
             $scope.getPlayList();
 

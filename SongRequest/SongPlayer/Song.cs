@@ -91,7 +91,7 @@ namespace SongRequest
         /// <summary>
         /// Name of last requester
         /// </summary>
-        public string _skippedBy;
+        private string _skippedBy;
 
         /// <summary>
         /// Name of last requester

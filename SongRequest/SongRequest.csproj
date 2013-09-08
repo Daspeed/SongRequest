@@ -91,9 +91,6 @@
     <EmbeddedResource Include="Static\404.htm" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Static\index_old.htm" />
-  </ItemGroup>
-  <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
       <Visible>False</Visible>
       <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
@@ -112,9 +109,6 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Static\underscore-min.js" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Static\jquery-1.8.2.min.js" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -144,5 +138,8 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Static\index.htm" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Static\style.css" />
   </ItemGroup>
 </Project>
