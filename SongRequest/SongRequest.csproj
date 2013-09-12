@@ -140,6 +140,6 @@
     <EmbeddedResource Include="Static\index.htm" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Static\style.css" />
+    <EmbeddedResource Include="Static\style.css" />
   </ItemGroup>
 </Project>
