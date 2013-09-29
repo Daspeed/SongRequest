@@ -6,6 +6,11 @@
     padding: 0;
 }
 
+#app {
+    margin:0px;
+    padding:0px;
+}
+
 h1 {
     font-size: 1.4em;
     display: inline;
@@ -45,6 +50,7 @@ div {
 .button {
     padding: 0;
     margin: 0;
+    margin-right:3px;
     border: 1px solid #777777;
     text-align: center;
     vertical-align: middle;
@@ -72,37 +78,37 @@ div {
         filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#3096db', endColorstr='#88bfe8',GradientType=0 ); /* IE6-9 */
     }
 
-#currentStatusDiv {
+.currentStatusDiv {
     border: 1px solid black;
 }
 
-#controlCombineDiv {
+.controlCombineDiv {
     border: 1px solid black;
     border-top: 0px;
     padding: 0;
     margin: 0;
 }
 
-#statusDiv {
+.statusDiv {
     font-size: 1.2em;
 }
 
-#headerDiv {
+.headerDiv {
     background-color: transparent;
 }
 
-#controlsDiv {
+.controlsDiv {
     text-align: center;
     border: 1px solid gray;
 }
 
-#outerCombineDiv {
+.outerCombineDiv {
     background: none;
     background-color: transparent;
     padding: 0;
 }
 
-#queueDiv {
+.queueDiv {
     padding: 0;
     border: 1px solid black;
     border-top: 0px;
@@ -116,10 +122,7 @@ p {
     text-align: left;
 }
 
-#queueHeaderDiv {
-}
-
-#queueListDiv {
+.queueListDiv {
     padding: 0;
 }
 
@@ -267,29 +270,29 @@ form {
     height: 3.5em;
 }
 
-#combineDiv {
+.combineDiv {
     padding: 0;
     background: none;
-    background-color: transparent;
+    background-color: gray;
 }
 
-#songsOuterDiv {
+.songsOuterDiv {
     padding: 0;
     border: 1px solid black;
     border-top: 0px;
 }
 
-#songsHeaderDiv {
+.songsHeaderDiv {
     border-bottom: 1px solid black;
 }
 
-#songsSearchDiv {
+.songsSearchDiv {
     border-bottom: 1px solid black;
     border-top: 0px;
     margin: 0;
 }
 
-#songsDiv {
+.songsDiv {
     padding: 0;
     margin: 0;
 }
@@ -482,16 +485,16 @@ td {
 
 @media screen and (min-width: 768px) {
 
-    #currentStatusDiv {
+    .currentStatusDiv {
         height: 4.0em;
     }
 
-    #headerDiv {
+    headerDiv {
         display: inline-block;
         background-color: transparent;
     }
 
-    #controlsDiv {
+    .controlsDiv {
         position: absolute;
         left: 25em;
         top: 0.25em;
@@ -500,38 +503,23 @@ td {
         background: none;
     }
 
-    #controlCombineDiv {
-    }
-
-    #statusDiv {
-    }
-
-    .statusArtistTitle {
-    }
-
-    .statusTime {
-    }
-
-    .statusRequester {
-    }
-
-    #controlsDiv {
+    .controlsDiv {
         text-align: left;
     }
 
-    #outerCombineDiv {
+    .outerCombineDiv {
         width: 100%;
         overflow: hidden;
         display: table;
         padding: 0;
     }
 
-    #queueDiv {
+    .queueDiv {
         width: 25em;
         display: table-cell;
     }
 
-    #queueHeaderDiv {
+    .queueHeaderDiv {
         border-bottom: 1px solid black;
     }
 
@@ -566,16 +554,16 @@ td {
         display: inline-block;
     }
 
-    #combineDiv {
+    .combineDiv {
         overflow: hidden;
         display: table-cell;
     }
 
-    #songsSearchDiv {
+    .songsSearchDiv {
         border-left: 0px;
     }
 
-    #songsOuterDiv {
+    .songsOuterDiv {
         border-left: 0px;
     }
 

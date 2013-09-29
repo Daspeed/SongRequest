@@ -1,241 +1,391 @@
-(function () {
-    angular
-        .module('SongRequest', [])
-        .config(function ($compileProvider) {
-            $compileProvider.urlSanitizationWhitelist(/^\s*file:/);
-        })
-        .controller('SongRequestController', function ($scope, $http, $timeout) {
-            $scope.queue = [];
-            $scope.self = '';
-            $scope.playerStatus = {};
+﻿(function (React, reqwest, JSON, window) {
+    'use strict';
 
-            $scope.sortBy = 'artist';
-            $scope.ascending = true;
-            $scope.searchResult = [];
-            $scope.currentPage = 1;
-            $scope.filter = '';
-            $scope.pageCount = 0;
-            $scope.playlistStyle = {};
+    var convertNumberToTime = function (num) {
+        var minutes = parseInt(num / 60, 10);
+        var seconds = parseInt(num % 60, 10);
 
-            var convertNumberToTime = function (num) {
-                var minutes = parseInt(num / 60, 10);
-                var seconds = parseInt(num % 60, 10);
+        return String(minutes) + ((seconds < 10) ? ':0' : ':') + String(seconds);
+    };
 
-                return String(minutes) + ((seconds < 10) ? ':0' : ':') + String(seconds);
-            };
-            $scope.convertNumberToTime = convertNumberToTime;
+    var fixer = function (num) {
+        return (num < 10 ? '0' : '') + String(num);
+    };
 
-            var fixer = function (num) {
-                return (num < 10 ? '0' : '') + String(num);
-            };
+    var D = React.DOM;
 
-            var digitize = function (arg) {
-                var allDigits = String(arg).replace(/\D/g, '');
-                if (allDigits && allDigits.length > 0)
-                    return parseInt(allDigits, 10);
-                else
-                    return 0;
-            };
-
-            var enrichQueue = function (queue) {
-                if (!$scope.playerStatus || !$scope.playerStatus.RequestedSong)
-                    return [];
-
-                var acc = Math.max(0, $scope.playerStatus.RequestedSong.Song.Duration - ($scope.playerStatus.Position || 0));
-
-                angular.forEach(queue, function (value) {
-                    value.ETA = acc;
-                    acc += value.Song.Duration;
-                    value.Till = (function (baseDate) {
-                        baseDate.setSeconds(baseDate.getSeconds() + value.ETA);
-                        return fixer(baseDate.getHours()) + ':' + fixer(baseDate.getMinutes());
-                    })(new Date());
+    var ControlsPanel = React.createClass({
+        next: function () {
+            reqwest('/dynamic/next');
+        },
+        pause: function () {
+            reqwest('/dynamic/pause');
+        },
+        rescan: function () {
+            reqwest('/dynamic/rescan');
+        },
+        changeVolume: function () {
+            var newVolume = prompt('New volume', String(this.props.volume));
+            if (newVolume) {
+                reqwest({
+                    url: '/dynamic/volume',
+                    method: 'post',
+                    data: newVolume
                 });
+            }
+        },
+        render: function () {
+            var me = this;
+            var headerDiv = D.div({ className: 'headerDiv' }, D.h1({}, 'SongRequest ♫'));
+            var controlsDiv = D.div({ className: 'controlsDiv' }, [
+                D.input({ type: 'button', className: 'button nextButton', value: '►►', onClick: me.next }),
+                D.input({ type: 'button', className: 'button pauseButton', value: '►', onClick: me.pause }),
+                D.input({ type: 'button', className: 'button rescanButton', value: '↻', onClick: me.rescan }),
+                D.input({ type: 'button', className: 'button volumeButton', value: 'Volume\r\n' + this.props.volume, onClick: me.changeVolume })
+            ]);
 
-                return queue;
-            };
+            return D.div({ className: 'currentStatusDiv gradient' }, [headerDiv, controlsDiv]);
+        }
+    });
 
-            var refreshQueue = function () {
-                $http({ method: 'GET', url: '/dynamic/queue' }).success(function (data) {
-                    $scope.queue = enrichQueue(data.Queue);
-                    $scope.self = data.Self;
-                    $scope.playerStatus = data.PlayerStatus;
-                });
-            };
+    var DisplayControl = React.createClass({
+        render: function () {
 
-            $scope.getPlayList = function () {
-                var message = {
-                    'Filter': $scope.filter,
-                    'Page': digitize($scope.currentPage) || 1,
-                    'SortBy': $scope.sortBy,
-                    'Ascending': $scope.ascending
-                };
+            var songDescription = (this.props.RequestedSong.Song.Artist || 'Unknown') + ' - ' + (this.props.RequestedSong.Song.Name || 'Unknown');
+            var timeDisplay = '('+convertNumberToTime(this.props.Position || 0) + '/' + convertNumberToTime(this.props.RequestedSong.Song.Duration || 0) +')';
+            var requesterDescription = 'Requested by: ' + (this.props.RequestedSong.RequesterName || '');
 
-                $http({ method: 'POST', url: '/dynamic/playlist', data: message }).success(function (data) {
-                    var currentPage = Math.max(data.CurrentPage, 1);
-                    var totalPageCount = Math.max(data.TotalPageCount, 1);
-                    $scope.sortBy = data.SortBy,
-                    $scope.ascending = data.Ascending;
-                    $scope.searchResult = data.SongsForCurrentPage;
-                    $scope.currentPage = data.CurrentPage;
-                    $scope.pageCount = Math.max(data.TotalPageCount, 1);
-                });
-            };
+            return D.div(
+                { className: 'controlCombineDiv' },
+                D.div(
+                    { className: 'statusDiv' },
+                    [
+                        D.p(null, [
+                            D.span({ className: 'statusArtistTitle' }, songDescription),
+                            ' ',
+                            D.span({ className: 'statusTime' }, timeDisplay)
+                        ]),
+                        D.p(null, [
+                            D.span({ className: 'statusRequester' }, requesterDescription)
+                        ])
+                    ])
+                );
+        }
+    });
 
-            $scope.getSongArtistAndName = function (song) {
-                return $scope.getSongArtist(song) + ' - ' + $scope.getSongName(song);
-            };
+    var QueueItem = React.createClass({
+        removeFromQueue: function () {
+            reqwest({
+                url: '/dynamic/queue',
+                method: 'delete',
+                data: this.props.item.Song.TempId
+            });
+        },
+        render: function () {
+            var me = this;
 
-            $scope.getSongArtist = function (song) {
-                if (song.Artist)
-                    return song.Artist;
+            return D.div(
+                { className: 'queueListDiv' },
+                D.div({ className: 'queueItem' }, D.div({ className: this.props.className }, [
+                    D.input({ type: 'button', className: 'button skipButton', value: '-', title: 'Remove song from queue', onClick: me.removeFromQueue }),
+                    D.p(null, D.span({ className: 'queueRequester' }, 'ETA: ' + this.props.displayETA + ', requested by: ' + this.props.item.RequesterName)),
+                    D.p(null, D.span({ className: 'queueArtist' }, (this.props.item.Song.Artist||'Unknown'))),
+                    D.p(null, [
+                        D.span({ className: 'queueTitle' }, (this.props.item.Song.Name||'Unknown')),
+                        D.span({ className: 'queueTime' }, '(' + convertNumberToTime(this.props.item.Song.Duration || 0) + ')')
+                    ])
+                ]))
+            );
+        }
+    });
 
-                return 'Unknown';
-            };
+    var QueueControl = React.createClass({
+        render: function () {
+            var me = this;
 
-            $scope.getSongName = function (song) {
-                if (song.Name)
-                    return song.Name;
-
-                return 'Unknown';
-            };
-
-            $scope.getCurrentSongName = function () {
-                if (!$scope.playerStatus)
-                    return '';
-
-                if (!$scope.playerStatus.RequestedSong)
-                    return '';
-
-                var requestedSong = $scope.playerStatus.RequestedSong.Song;
-
-                return $scope.getSongArtistAndName(requestedSong);
-            };
-
-            $scope.getCurrentSongPosition = function () {
-                if (!$scope.playerStatus)
-                    return convertNumberToTime(0);
-
-                return convertNumberToTime($scope.playerStatus.Position || 0);
-            };
-
-            $scope.getCurrentSongDuration = function () {
-                if (!$scope.playerStatus)
-                    return convertNumberToTime(0);
-
-                if (!$scope.playerStatus.RequestedSong)
-                    return convertNumberToTime(0);
-
-                return convertNumberToTime($scope.playerStatus.RequestedSong.Song.Duration);
-            };
-
-            $scope.getCurrentSongRequester = function () {
-                if (!$scope.playerStatus)
-                    return this.convertNumberToTime();
-
-                if (!$scope.playerStatus.RequestedSong)
-                    return '';
-
-                return $scope.playerStatus.RequestedSong.RequesterName;
-            };
-
-            $scope.getVolume = function () {
-                if (!$scope.playerStatus)
-                    return '0';
-
-                return $scope.playerStatus.Volume;
+            var getHeaderText = function (queueLength, duration) {
+                switch (queueLength) {
+                    case 0:
+                        return 'Queue | No songs';
+                    case 1:
+                        return 'Queue | 1 song';
+                    default:
+                        return 'Queue | ' + queueLength + ' songs (' + convertNumberToTime(duration) + ')';
+                }
             }
 
-            $scope.getQueueDuration = function () {
-                return convertNumberToTime(
-                    _.chain($scope.queue)
-                    .map(function (requestedSong) { return requestedSong.Song.Duration; })
-                    .reduce(function (state, value) { return state + value; }, 0)
-                    .value());
+            var queue = this.props.Queue;
+            var controls = [];
+            var item, containerClassName;
+            var duration = 0;
+            var ETA = (this.props.PlayerStatus.RequestedSong.Song.Duration || 0) - (this.props.PlayerStatus.Position || 0);
+            for (var i = 0; i < queue.length; i += 1) {
+                containerClassName = 'qitem ' +
+                    (queue[i].RequesterName === this.props.Self ? 'self' : '') +
+                    (i % 2 === 0 ? 'even' : 'odd') + 'queueitemcontainer';
+
+                var displayETA = (function (baseDate) {
+                    baseDate.setSeconds(baseDate.getSeconds() + ETA);
+                    return fixer(baseDate.getHours()) + ':' + fixer(baseDate.getMinutes());
+                })(new Date());
+
+                item = QueueItem({ item: queue[i], 'displayETA': displayETA, className: containerClassName });
+
+                duration += (queue[i].Song.Duration || 0);
+
+                controls.push(item);
+
+                ETA += (queue[i].Song.Duration || 0);
+            }
+
+            var header = D.div(
+                { className: 'queueHeaderDiv gradient' },
+                D.h2(null, getHeaderText(this.props.Queue.length, duration))
+            );
+
+            //prepend
+            controls.unshift(header);
+
+            return D.div({ className: 'queueDiv' }, controls);
+        }
+    });
+
+
+    var SongsControl = React.createClass({
+        getInitialState: function () {
+            return {
+                searchText: '',
+                pageNumber: 1,
+                totalPages: 0,
+                sortBy: 'artist',
+                ascending: true,
+                songsForCurrentPage: []
+            };
+        },
+        onSearchTextChange: function(e) {
+            this.setState({ searchText: e.target.value });
+        },
+        onPageNumberChange: function(e) {
+            this.setState({ pageNumber: (parseInt(e.target.value, 10)||1) });
+        },
+        onSearch: function () {
+            var me = this;
+
+            var message = {
+                'Filter': this.state.searchText,
+                'Page': this.state.pageNumber || 1,
+                'SortBy': this.state.sortBy,
+                'Ascending': this.state.ascending
             };
 
-            $scope.getQueueItemClass = function (item, index) {
-                return 'qitem ' +
-                    (item.RequesterName === $scope.self ? 'self' : '') +
-                    (index % 2 === 0 ? 'even' : 'odd') +
-                    'queueitemcontainer';
-            };
-
-            $scope.changeVolume = function () {
-                var newVolume = prompt('New volume', String($scope.playerStatus.Volume));
-                if (newVolume) {
-                    $http({ method: 'POST', url: '/dynamic/volume', data: newVolume }).success(function (volume) {
-                        $scope.playerStatus.Volume = volume;
+            reqwest({
+                url: '/dynamic/playlist',
+                method: 'post',
+                contentType: 'application/json',
+                type: 'json',
+                data: JSON.stringify(message),
+                success: function (resp) {
+                    me.setState({
+                        ascending: resp.Ascending,
+                        pageNumber: resp.CurrentPage,
+                        sortBy: resp.SortBy,
+                        totalPages: resp.TotalPageCount,
+                        songsForCurrentPage: resp.SongsForCurrentPage
                     });
                 }
-            };
+            });
+        },
+        onReset: function (e) {
+            var me = this;
 
-            $scope.next = function () {
-                $http({ method: 'GET', url: '/dynamic/next' });
-            };
+            this.setState({ searchText: '' }, function () { me.onSearch(); });
+        },
+        onPrevious: function (e) {
+            var me = this;
 
-            $scope.pause = function () {
-                $http({ method: 'GET', url: '/dynamic/pause' });
-            };
+            var newPage = Math.max(this.state.pageNumber - 1, 1);
+            this.setState({ pageNumber: newPage }, function () { me.onSearch(); });
+        },
+        onNext: function (e) {
+            var me = this;
 
-            $scope.rescan = function () {
-                $http({ method: 'GET', url: '/dynamic/rescan' });
-            };
+            var newPage = Math.min(this.state.pageNumber + 1, this.state.totalPages);
+            this.setState({ pageNumber: newPage }, function () { me.onSearch(); });
+        },
+        componentWillMount: function () {
+            var me = this;
 
-            $scope.addToQueue = function (song) {
-                $http({ method: 'POST', url: '/dynamic/queue', data: song.TempId }).success(function () {
-                    refreshQueue();
-                });
-            };
+            me.onSearch();
+        },
+        headerClick: function(e){
+            var me = this;
+            var newSortBy = e.target.attributes['data-id'].value;
 
-            $scope.removeFromQueue = function (song) {
-                $http({ method: 'DELETE', url: '/dynamic/queue', data: song.TempId }).success(function () {
-                    refreshQueue();
-                });
-            };
+            me.setState({
+                ascending: !me.state.ascending,
+                sortBy: newSortBy
+            }, function () { me.onSearch(); });
+        },
+        addToQueue: function(e){
+            var tempId = e.target.attributes['data-id'].value;
 
-            $scope.search = function () {
-                $scope.currentPage = 1;
-                $scope.getPlayList();
-            };
+            reqwest({
+                url: '/dynamic/queue',
+                method: 'post',
+                type: 'json',
+                data: tempId
+            });
+        },
+        render: function () {
+            var me = this;
 
-            $scope.clear = function () {
-                $scope.filter = '';
-                $scope.currentPage = 1;
-                $scope.getPlayList();
-            };
+            /* begin search */
 
-            $scope.previousPage = function () {
-                $scope.currentPage--;
-                $scope.getPlayList();
-            };
+            var prev = { type: 'button', className: 'button previousbutton', value: 'Previous', onClick: me.onPrevious };
+            var next = { type: 'button', className: 'button nextbutton', value: 'Next', onClick: me.onNext };
 
-            $scope.nextPage = function () {
-                $scope.currentPage++;
-                $scope.getPlayList();
-            };
+            if (this.state.pageNumber <= 1)
+                prev.disabled = true;
 
-            $scope.getHeaderClass = function (headerName) {
-                if (headerName === $scope.sortBy)
-                    return 'sorted' + ($scope.ascending ? ' Asc' : ' Desc');
+            if (this.state.pageNumber >= this.state.totalPages)
+                next.disabled = true;
+
+            var searchControl = D.div(
+                { className: 'songsSearchDiv' }, [
+                    D.form({ onSubmit: function (e) { e.preventDefault(); } }, [
+                        D.input({ type: 'text', className: 'searchtext', value: this.state.searchText, onChange: me.onSearchTextChange }),
+                        ' ',
+                        D.input({ type: 'submit', className: 'button searchbutton', value: 'Search', onClick: me.onSearch }),
+                        D.input({ type: 'button', className: 'button clearbutton', value: 'Reset', onClick: me.onReset })
+                    ]),
+                    D.form({ onSubmit: function (e) { e.preventDefault(); } }, [
+                        'Page: ',
+                        D.input({ type: 'text', className: 'pagetext', value: this.state.pageNumber, onChange: me.onPageNumberChange }),
+                        ' of ',
+                        D.span({ className: 'pageCount' }, this.state.totalPages)
+                    ]),
+                    ' ',
+                    D.input(prev),
+                    D.input(next)
+                ]);
+
+            /* end search */
+
+            /* begin songs */
+
+            var getHeaderClass = function (headerName) {
+                if (headerName === me.state.sortBy)
+                    return 'sorted' + (me.state.ascending ? ' Asc' : ' Desc');
                 return '';
             };
 
-            $scope.sort = function (sortBy) {
-                $scope.ascending = !$scope.ascending;
-                $scope.sortBy = sortBy;
-                $scope.getPlayList();
+            var header = D.tr({ className: 'gradient headerrow' }, [
+                D.th({ className: 'actionColumn' }, 'Action'),
+                D.th({ 'data-id': 'name', onClick: me.headerClick, className: 'songNameColumn ' + getHeaderClass('name') }, 'Name'),
+                D.th({ 'data-id': 'artist', onClick: me.headerClick, className: 'songArtistColumn ' + getHeaderClass('artist') }, 'Artist'),
+                D.th({ className: 'songDurationColumn' }, 'Length'),
+                D.th({ 'data-id': 'genre', onClick: me.headerClick, className: 'songGenreColumn ' + getHeaderClass('genre') }, 'Genre'),
+                D.th({ 'data-id': 'year', onClick: me.headerClick, className: 'songYearColumn ' + getHeaderClass('year') }, 'Year'),
+                D.th({ 'data-id': 'date', onClick: me.headerClick, className: 'songDateCreatedColumn ' + getHeaderClass('date') }, 'Date added'),
+                D.th({ 'data-id': 'playdate', onClick: me.headerClick, className: 'songDatePlayedColumn ' + getHeaderClass('playdate') }, 'Last played'),
+                D.th({ className: 'songRequesterColumn' }, 'Requester'),
+                D.th({ className: 'songSkippedByColumn' }, 'Skipped by')
+            ]);
+
+            var songs = this.state.songsForCurrentPage;
+            var rows = [header];
+            var song, row;
+
+            for (var i = 0; i < songs.length; i += 1) {
+                song = songs[i];
+
+                row = D.tr({ className: 'songRow ' + ((i % 2 == 1) ? 'evenrow' : 'oddrow') }, [
+                    D.td({ className: 'actionColumn' },
+                        D.input({ 'data-id': song.TempId, type: 'button', className: 'button addButton', value: '+', title: 'Add song to queue', onClick: me.addToQueue })),
+                    D.td({ className: 'songNameColumn' }, D.a({href: song.FileName, title: song.FileName}, song.Name)),
+                    D.td({ className: 'songArtistColumn' }, song.Artist),
+                    D.td({ className: 'songDurationColumn' }, convertNumberToTime(song.Duration)),
+                    D.td({ className: 'songGenreColumn' }, song.Genre),
+                    D.td({ className: 'songYearColumn' }, song.Year),
+                    D.td({ className: 'songDateCreatedColumn' }, song.DateCreated),
+                    D.td({ className: 'songDatePlayedColumn' }, song.LastPlayTime),
+                    D.td({ className: 'songRequesterColumn' }, song.LastRequester),
+                    D.td({ className: 'songSkippedByColumn' }, song.SkippedBy)
+                ]);
+
+                rows.push(row);
+            }
+
+            /* end songs */
+
+            return D.div({ className: 'songsOuterDiv' }, [
+                D.div({ className: 'songsHeaderDiv gradient' }, D.h2(null, 'Songs')),
+                searchControl,
+                D.div({ className: 'songsDiv' }, [
+                    D.table({ className: 'songsTable' }, rows)
+                ])
+            ]);
+        }
+    });
+
+    var SongRequest = React.createClass({
+        getCurrentState: function () {
+            var me = this;
+
+            reqwest({
+                url: '/dynamic/queue',
+                method: 'get',
+                type: 'json',
+                success: function (resp) {
+                    me.setState(resp);
+
+                    var song = resp.PlayerStatus.RequestedSong.Song;
+
+                    window.document.title = 'SongRequest | ' + (song.Artist || 'Unknown') + ' - ' + (song.Name || 'Unknown');
+                }
+            });
+        },
+        getInitialState: function () {
+            return {
+                PlayerStatus: {
+                    Position: 0,
+                    RequestedSong: {
+                        Song: {}
+                    },
+                    Volume: 0
+                },
+                Queue: [],
+                Self: ''
             };
+        },
+        componentWillMount: function () {
+            var me = this;
 
-            refreshQueue();
-            $scope.getPlayList();
+            me.getCurrentState();
+            setInterval(
+              function () { me.getCurrentState() },
+              1000
+            );
+        },
+        render: function () {
+            var me = this;
 
-            (function () {
-                function poll() {
-                    refreshQueue();
-                    $timeout(poll, 1000);
-                };
-                poll();
-            })();
-        })
-})();
+            var controlsPanel = ControlsPanel({ volume: this.state.PlayerStatus.Volume });
+            var displayControl = DisplayControl(this.state.PlayerStatus);
+            var queueControl = QueueControl(this.state);
+            var songsControl = SongsControl();
+
+            return D.div({ style: { padding: '0px' } }, [
+                controlsPanel,
+                displayControl,
+                D.div({ className: 'outerCombineDiv' }, [
+                    queueControl,
+                    D.div({ className: 'combineDiv' },
+                        songsControl)
+                ])
+            ]);
+        }
+    });
+
+    React.renderComponent(SongRequest(), document.getElementById('app'));
+})(React, reqwest, JSON, window);

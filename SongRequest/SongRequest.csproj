@@ -107,9 +107,6 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Static\underscore-min.js" />
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
@@ -133,7 +130,6 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Static\angular.min.js" />
     <EmbeddedResource Include="Static\SongRequest.js" />
   </ItemGroup>
   <ItemGroup>
@@ -141,5 +137,12 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Static\style.css" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Static\react-0.4.1.js" />
+    <EmbeddedResource Include="Static\reqwest.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Static\json2.js" />
   </ItemGroup>
 </Project>

@@ -1,112 +1,19 @@
 ﻿<!DOCTYPE HTML>
-<html ng-app="SongRequest">
+<html>
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" type="image/png" href="/static/favicon.ico">
     <link rel="stylesheet" type="text/css" href="/static/style.css">
-    <title ng-controller="SongRequestController" ng-bind-template="SongRequest | {{getCurrentSongName()}}"></title>
-    <script type="text/javascript" src="/static/underscore-min.js"></script>
-    <script type="text/javascript" src="/static/angular.min.js"></script>
-    <script type="text/javascript" src="/static/SongRequest.js"></script>
+    <title>SongRequest</title>
 </head>
-<body ng-controller="SongRequestController">
-    <div id="currentStatusDiv" class="gradient">
-        <div id="headerDiv">
-            <h1>SongRequest&nbsp;♫</h1>
-        </div>
-        <div id="controlsDiv">
-            <input ng-click="next()" id="next" type="button" class="button nextButton" value="►►">
-            <input ng-click="pause()" id="pause" type="button" class="button pauseButton" value="►">
-            <input ng-click="rescan()" id="rescan" type="button" class="button rescanButton" value="&#x21bb">
-            <input ng-click="changeVolume()" id="volume" type="button" class="button volumeButton" value="Volume&#13;&#10;{{getVolume()}}">
-        </div>
-    </div>
-    <div id="controlCombineDiv">
-        <div id="statusDiv">
-            <p>
-                <span class="statusArtistTitle">{{getCurrentSongName()}}</span>&nbsp;<span class="statusTime">({{getCurrentSongPosition()}}/{{getCurrentSongDuration()}})</span>
-            </p>
-            <p>
-                <span class="statusRequester">Requested by: {{getCurrentSongRequester()}}</span>
-            </p>
-        </div>
-    </div>
-    <div id="outerCombineDiv">
-        <div id="queueDiv">
-            <div id="queueHeaderDiv" class="gradient">
-                <h2 ng-pluralize count="queue.length" when="{'0': 'Queue | No songs',
-                'one': 'Queue | 1 song',
-                'other': 'Queue | {} songs ({{getQueueDuration()}})'}"></h2>
-            </div>
-            <div id="queueListDiv" ng-repeat="item in queue">
-                <div class="queueItem">
-                    <div class="{{getQueueItemClass(item, $index)}}">
-                        <input class="button skipButton" ng-click="removeFromQueue(item.Song)" type="button" value="-" title="Remove song from queue" />
-                        <p><span class="queueRequester">ETA: {{item.Till}}, requested by: {{item.RequesterName}}</span></p>
-                        <p>
-                            <span class="queueArtist">{{getSongArtist(item.Song)}}</span>
-                        </p>
-                        <p>
-                            <span class="queueTitle">{{getSongName(item.Song)}}</span>&nbsp;<span class="queueTime">({{convertNumberToTime(item.Song.Duration)}})</span>
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div id="combineDiv">
-            <div id="songsOuterDiv">
-                <div id="songsHeaderDiv" class="gradient">
-                    <h2>Songs</h2>
-                </div>
-                <div id="songsSearchDiv">
-                    <form ng-submit="search()">
-                        <input type="text" class="searchtext" name="searchtext" id="searchtext" ng-model="filter" value="{{filter}}">
-                        <input type="submit" class="button searchbutton" name="searchbutton" id="searchbutton" value="Search">
-                        <input ng-click="clear()" type="button" class="button clearbutton" name="clearbutton" id="clearbutton" value="Reset">
-                    </form>
-                    <form id="pageForm" ng-submit="getPlayList()">
-                        Page:&nbsp;
-                        <input type="text" name="pagetext" class="pagetext" id="currentPage" ng-model="currentPage" value="{{currentPage}}">
-                        of&nbsp;<span class="pageCount">{{pageCount}}</span>
-                    </form>
-                    <input ng-disabled="currentPage <= 1" ng-click="previousPage()" type="button" class="button previousbutton" name="previousbutton" id="previousbutton" value="Previous">
-                    <input ng-disabled="currentPage >= pageCount" ng-click="nextPage()" type="button" class="button nextbutton" name="nextbutton" id="nextbutton" value="Next">
-                </div>
-                <div id="songsDiv">
+<body>
+    <div id="app">
 
-                    <table class="songsTable">
-                        <tr class="gradient headerrow">
-                            <th class="actionColumn">Action</th>
-                            <th ng-click="sort('name')" id="nameHeader" class="songNameColumn {{getHeaderClass('name')}}">Name</th>
-                            <th ng-click="sort('artist')" id="artistHeader" class="songArtistColumn {{getHeaderClass('artist')}}">Artist</th>
-                            <th class="songDurationColumn">Length</th>
-                            <th ng-click="sort('genre')" class="songGenreColumn {{getHeaderClass('genre')}}">Genre</th>
-                            <th ng-click="sort('year')" class="songYearColumn {{getHeaderClass('year')}}">Year</th>
-                            <th ng-click="sort('date')" id="dateHeader" class="songDateCreatedColumn {{getHeaderClass('date')}}">Date added</th>
-                            <th ng-click="sort('playdate')" id="playedHeader" class="songDatePlayedColumn {{getHeaderClass('playdate')}}">Last played</th>
-                            <th class="songRequesterColumn">Requester</th>
-                            <th class="songSkippedByColumn">Skipped by</th>
-                        </tr>
-                        <tr class="songRow" ng-repeat="song in searchResult" ng-class-even="'evenrow'" ng-class-odd="'oddrow'">
-                            <td class="actionColumn">
-                                <input type="button" class="button addButton" value="+" ng-click="addToQueue(song)" title="Add song to queue" />
-                            </td>
-                            <td class="songNameColumn"><a class="songlink" href="file://{{song.FileName}}" title="{{song.FileName}}">{{song.Name}}</a></td>
-                            <td class="songArtistColumn">{{song.Artist}}</td>
-                            <td class="songDurationColumn">{{convertNumberToTime(song.Duration)}}</td>
-                            <td class="songGenreColumn">{{song.Genre}}</td>
-                            <td class="songYearColumn">{{song.Year}}</td>
-                            <td class="songDateCreatedColumn">{{song.DateCreated}}</td>
-                            <td class="songDatePlayedColumn">{{song.LastPlayTime}}</td>
-                            <td class="songRequesterColumn">{{song.LastRequester}}</td>
-                            <td class="songSkippedByColumn">{{song.SkippedBy}}</td>
-                        </tr>
-                    </table>
-
-                </div>
-            </div>
-        </div>
     </div>
+    <script type="text/javascript" src="/static/json2.js"></script>
+    <script type="text/javascript" src="/static/react-0.4.1.js"></script>
+    <script type="text/javascript" src="/static/reqwest.js"></script>
+    <script type="text/javascript" src="/static/SongRequest.js"></script>
 </body>
 </html>
