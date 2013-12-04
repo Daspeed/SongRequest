@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace SongRequest
@@ -218,10 +219,14 @@ namespace SongRequest
 
         private int UpdateTags()
         {
+            if (_songs.Count == 0)
+                return 0;
+
             Song song;
             int songsTagged = 0;
 
             bool fixErrors = DateTime.Now > _lastFixErrors + TimeSpan.FromMinutes(2);
+            List<ManualResetEvent> doneEvents = new List<ManualResetEvent>();
 
             do
             {
@@ -239,15 +244,31 @@ namespace SongRequest
                     if (song.ErrorReadingTag)
                         _lastFixErrors = DateTime.Now;
 
-                    UpdateSingleTag(song);
-                    songsTagged++;
+                    ManualResetEvent manualResetEvent = new ManualResetEvent(false);
+                    doneEvents.Add(manualResetEvent);
 
+                    SongLibrarySongUpdate songUpdate = new SongLibrarySongUpdate(manualResetEvent);
+                    ThreadPool.QueueUserWorkItem(songUpdate.ThreadPoolCallback, song);
+
+                    songsTagged++;
                 }
-            } while (song != null && songsTagged < 200);
+
+                // loop until no song found or more than 64 (max for threadpool!) will be tagged
+            } while (song != null && songsTagged < 64);
+
+            if (songsTagged > 0)
+            {
+                // Wait for all threads in pool to calculate.
+                // But only when song's need to be tagged
+                WaitHandle.WaitAll(doneEvents.ToArray());
+            }
 
             return songsTagged;
         }
 
+        /// <summary>
+        /// Update tags for single song
+        /// </summary>
         public static void UpdateSingleTag(Song song)
         {
             try
@@ -492,6 +513,42 @@ namespace SongRequest
                     Song = randomSong,
                     RequesterName = "randomizer"
                 };
+            }
+        }
+
+        /// <summary>
+        /// Private class for containing some information when updating songs using thread pool
+        /// </summary>
+        private class SongLibrarySongUpdate
+        {
+            /// <summary>
+            /// Constructor
+            /// </summary>
+            /// <param name="doneEvent"></param>
+            public SongLibrarySongUpdate(ManualResetEvent doneEvent)
+            {
+                _doneEvent = doneEvent;
+            }
+
+            /// <summary>
+            /// Reset event for the thread pool
+            /// </summary>
+            private ManualResetEvent _doneEvent;
+
+            /// <summary>
+            /// Callback method
+            /// </summary>
+            /// <param name="threadContext"></param>
+            public void ThreadPoolCallback(object threadContext)
+            {
+                // get song
+                Song song = (Song)threadContext;
+
+                // update song
+                UpdateSingleTag(song);
+
+                // finish!
+                _doneEvent.Set();
             }
         }
     }
