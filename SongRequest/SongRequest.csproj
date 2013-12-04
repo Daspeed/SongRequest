@@ -140,6 +140,6 @@
     <EmbeddedResource Include="Static\x-sr-queue.htm" />
     <EmbeddedResource Include="Static\x-sr-controlpanel.htm" />
     <EmbeddedResource Include="Static\x-songrequest.htm" />
-    <Content Include="Static\polymer.min.js" />
+    <EmbeddedResource Include="Static\polymer.min.js" />
   </ItemGroup>
 </Project>
