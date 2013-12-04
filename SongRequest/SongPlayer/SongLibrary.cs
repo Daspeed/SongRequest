@@ -151,6 +151,69 @@ namespace SongRequest
             _unsavedChanges = false;
         }
 
+        private HashSet<string> GetFilesRecursive(string directory, string extension)
+        {
+            HashSet<string> files = new HashSet<string>();
+
+            DirectoryInfo currentDirectory = new DirectoryInfo(directory);
+
+            FileInfo[] directoryFiles = currentDirectory.GetFiles("*." + extension, SearchOption.TopDirectoryOnly);
+
+            foreach (FileInfo fileInfo in directoryFiles)
+            {
+                FileAttributes fileAttribute = File.GetAttributes(fileInfo.FullName);
+
+                // skip hidden files
+                if (SkipFileOrFolder(fileInfo.FullName))
+                    continue;
+
+                files.Add(fileInfo.FullName);
+            }
+
+            foreach (DirectoryInfo subDirectory in currentDirectory.GetDirectories("*", SearchOption.TopDirectoryOnly))
+            {
+                if (SkipFileOrFolder(subDirectory.FullName))
+                    continue;
+
+                try
+                {
+                    HashSet<string> subDirectoryFiles = GetFilesRecursive(subDirectory.FullName, extension);
+                    files.UnionWith(subDirectoryFiles);
+                }
+                catch (UnauthorizedAccessException)
+                {
+                }
+            }
+
+            return files;
+        }
+
+        private bool SkipFileOrFolder(string path)
+        {
+            FileAttributes fileAttribute = File.GetAttributes(path);
+
+            // skip hidden folders
+            if ((fileAttribute & FileAttributes.Hidden) > 0)
+                return true;
+
+            if ((fileAttribute & FileAttributes.Offline) > 0)
+                return true;
+
+            if ((fileAttribute & FileAttributes.System) > 0)
+                return true;
+
+            if ((fileAttribute & FileAttributes.Temporary) > 0)
+                return true;
+
+            if ((fileAttribute & FileAttributes.ReparsePoint) > 0)
+                return true;
+
+            if ((fileAttribute & FileAttributes.SparseFile) > 0)
+                return true;
+
+            return false;
+        }
+
         private int ScanSongs()
         {
             int changesMade = 0;
@@ -161,7 +224,7 @@ namespace SongRequest
             if (extensions.Length == 0)
                 extensions = new string[] { "mp3" };
 
-            List<string> files = new List<string>();
+            HashSet<string> files = new HashSet<string>();
 
             //assuming we could have several dirs here, lets speed up the process
             Parallel.ForEach(directories, directory =>
@@ -170,10 +233,12 @@ namespace SongRequest
                 {
                     foreach (var extension in extensions)
                     {
+                        HashSet<string> filesFound = GetFilesRecursive(directory, extension);
+
                         // lock files object
                         lock (lockObject)
                         {
-                            files.AddRange(Directory.GetFiles(directory, "*." + extension, SearchOption.AllDirectories).AsEnumerable<string>());
+                            files.UnionWith(filesFound);
                         }
                     }
                 }
