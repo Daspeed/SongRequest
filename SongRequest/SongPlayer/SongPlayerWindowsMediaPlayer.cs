@@ -162,9 +162,6 @@ namespace SongRequest
         {
             while (_running)
             {
-                if (!_songLibrary.ScanLibrary())
-                    Thread.Sleep(500);
-
                 try
                 {
                     WMPPlayState playState;
@@ -200,6 +197,9 @@ namespace SongRequest
                     if (requestedSong != null)
                         Enqueue(requestedSong.Song, requestedSong.RequesterName);
                 }
+
+                if (!_songLibrary.ScanLibrary())
+                    Thread.Sleep(500);
             }
         }
 
