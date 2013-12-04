@@ -151,37 +151,74 @@ namespace SongRequest
             _unsavedChanges = false;
         }
 
-        private HashSet<string> GetFilesRecursive(string directory, string extension)
+        /// <summary>
+        /// Get all matching files in a folder
+        /// </summary>
+        private HashSet<string> GetFilesRecursive(string directory, IList<string> extensions)
         {
+            // big list with (at the end) all extension matching files of this folder and it's subfolders
             HashSet<string> files = new HashSet<string>();
 
+            // change this when error occurrend
+            bool doSubdirectories = true;
+
+            // use directory info
             DirectoryInfo currentDirectory = new DirectoryInfo(directory);
 
-            FileInfo[] directoryFiles = currentDirectory.GetFiles("*." + extension, SearchOption.TopDirectoryOnly);
-
-            foreach (FileInfo fileInfo in directoryFiles)
+            // do every extension parallel
+            Parallel.ForEach(extensions, extension =>
             {
-                FileAttributes fileAttribute = File.GetAttributes(fileInfo.FullName);
-
-                // skip hidden files
-                if (SkipFileOrFolder(fileInfo.FullName))
-                    continue;
-
-                files.Add(fileInfo.FullName);
-            }
-
-            foreach (DirectoryInfo subDirectory in currentDirectory.GetDirectories("*", SearchOption.TopDirectoryOnly))
-            {
-                if (SkipFileOrFolder(subDirectory.FullName))
-                    continue;
-
                 try
                 {
-                    HashSet<string> subDirectoryFiles = GetFilesRecursive(subDirectory.FullName, extension);
-                    files.UnionWith(subDirectoryFiles);
+                    // store temporary, union later
+                    HashSet<string> currentDirectoryFiles = new HashSet<string>();
+
+                    // loop trough files
+                    FileInfo[] directoryFiles = currentDirectory.GetFiles("*." + extension, SearchOption.TopDirectoryOnly);
+
+                    foreach (FileInfo fileInfo in directoryFiles)
+                    {
+                        // skip hidden files
+                        if (SkipFileOrFolder(fileInfo.FullName))
+                            continue;
+
+                        currentDirectoryFiles.Add(fileInfo.FullName);
+                    }
+
+                    if (currentDirectoryFiles.Count > 0)
+                    {
+                        // lock big list, can go wrong
+                        lock (files)
+                        {
+                            files.UnionWith(currentDirectoryFiles);
+                        }
+                    }
                 }
                 catch (UnauthorizedAccessException)
                 {
+                    doSubdirectories = false;
+                }
+            });
+
+            // do subdirectories if no unauthorized exception occurred
+            if (doSubdirectories)
+            {
+                // get all directories
+                foreach (DirectoryInfo subDirectory in currentDirectory.GetDirectories("*", SearchOption.TopDirectoryOnly))
+                {
+                    // check need to skip (like hidden folder)
+                    if (SkipFileOrFolder(subDirectory.FullName))
+                        continue;
+
+                    // get files from folder
+                    HashSet<string> subDirectoryFiles = GetFilesRecursive(subDirectory.FullName, extensions);
+                    if (subDirectoryFiles.Count > 0)
+                    {
+                        lock (files)
+                        {
+                            files.UnionWith(subDirectoryFiles);
+                        }
+                    }
                 }
             }
 
@@ -231,15 +268,12 @@ namespace SongRequest
             {
                 if (Directory.Exists(directory))
                 {
-                    foreach (var extension in extensions)
-                    {
-                        HashSet<string> filesFound = GetFilesRecursive(directory, extension);
+                    HashSet<string> filesFound = GetFilesRecursive(directory, extensions);
 
-                        // lock files object
-                        lock (lockObject)
-                        {
-                            files.UnionWith(filesFound);
-                        }
+                    // lock files object
+                    lock (lockObject)
+                    {
+                        files.UnionWith(filesFound);
                     }
                 }
             });
