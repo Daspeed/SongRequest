@@ -16,6 +16,7 @@ h1 {
     display: inline;
     font-weight: normal;
     color: #fdfdfd;
+    -webkit-text-shadow: 0.1em 0.2em 0.4em #000;
     text-shadow: 0.1em 0.2em 0.4em #000;
 }
 
@@ -25,6 +26,7 @@ h2 {
     margin: 0;
     font-weight: normal;
     color: #fdfdfd;
+    -webkit-text-shadow: 0.1em 0.2em 0.4em #000;
     text-shadow: 0.1em 0.2em 0.4em #000;
 }
 
@@ -55,6 +57,7 @@ div {
     text-align: center;
     vertical-align: middle;
     color: #fdfdfd;
+    -webkit-text-shadow: 0.1em 0.2em 0.4em #000;
     text-shadow: 0.1em 0.2em 0.4em #000;
     background: rgb(136,191,232); /* Old browsers */
     background: -moz-linear-gradient(top, rgba(136,191,232,1) 0%, rgba(112,176,224,1) 100%); /* FF3.6+ */
@@ -190,6 +193,8 @@ p {
 .volumeButton {
     width: 5em;
     height: 5em;
+    -ms-word-wrap: break-word;
+    word-wrap: break-word;
 }
 
 .playinfo {
@@ -240,7 +245,6 @@ form {
     margin: 0;
     padding: 0.15em;
     height: 1.5em;
-    vertical-align: top;
     border: 1px solid gray;
     vertical-align: middle;
     width: 3em;
@@ -331,12 +335,14 @@ td {
 .headerrow {
     border-bottom: 1px solid black;
     color: #fdfdfd;
+    -webkit-text-shadow: 0.1em 0.2em 0.4em #000;
     text-shadow: 0.1em 0.2em 0.4em #000;
 }
-.headerrow th{
-    padding-top:2px;
-    padding-bottom:3px;
-}
+
+    .headerrow th {
+        padding-top: 2px;
+        padding-bottom: 3px;
+    }
 
 .evenrow {
     background-color: lightgray;
@@ -366,13 +372,13 @@ td {
     cursor: hand;
 }
 
-.songNameColumn a,
-.songNameColumn a:link,
-.songNameColumn a:visited,
-.songNameColumn a:hover {
-    color:black;
-    text-decoration:none;
-}
+    .songNameColumn a,
+    .songNameColumn a:link,
+    .songNameColumn a:visited,
+    .songNameColumn a:hover {
+        color: black;
+        text-decoration: none;
+    }
 
 .songArtistColumn {
     overflow: hidden;

@@ -276,6 +276,7 @@ namespace SongRequest
                 return;
 
             SongLibrary.UpdateSingleTag(song);
+
             _queue.Add(new RequestedSong
             {
                 Song = song,

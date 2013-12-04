@@ -1,8 +1,5 @@
 ﻿using SongRequest.Config;
-using System;
-using System.IO;
 using System.Net;
-using System.Text;
 
 namespace SongRequest.Handlers
 {
@@ -11,14 +8,8 @@ namespace SongRequest.Handlers
         public override void Process(HttpListenerRequest request, HttpListenerResponse response)
         {
             ConfigFile config = SongPlayerFactory.GetConfigFile();
-            string text;
 
-            string ui = config.GetValue("server.ui");
-            if (ui.Equals("old", StringComparison.OrdinalIgnoreCase))
-                text = Get("index_old.htm");
-            else
-                text = Get("index.htm");
-
+            string text = Get("index.htm");
             response.ContentType = "text/html";
 
             WriteUtf8String(response.OutputStream, text);
