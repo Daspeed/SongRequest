@@ -188,7 +188,7 @@ namespace SongRequest
                     if (currentDirectoryFiles.Count > 0)
                     {
                         // lock big list, can go wrong
-                        lock (files)
+                        lock (lockObject)
                         {
                             files.UnionWith(currentDirectoryFiles);
                         }
@@ -214,7 +214,7 @@ namespace SongRequest
                     HashSet<string> subDirectoryFiles = GetFilesRecursive(subDirectory.FullName, extensions);
                     if (subDirectoryFiles.Count > 0)
                     {
-                        lock (files)
+                        lock (lockObject)
                         {
                             files.UnionWith(subDirectoryFiles);
                         }
@@ -576,7 +576,7 @@ namespace SongRequest
 
         public void Rescan()
         {
-            lock (_songs)
+            lock (lockObject)
             {
                 Parallel.ForEach(_songs, song =>
                 {
