@@ -1,0 +1,37 @@
+﻿<polymer-element name="x-sr-controlpanel" attributes="volume songName songPosition songDuration songRequester">
+  <template>
+    <div id="currentStatusDiv" class="gradient">
+        <div id="headerDiv">
+            <h1>SongRequest&nbsp;♫</h1>
+        </div>
+        <div id="controlsDiv">
+            <input id="next" type="button" class="button nextButton" value="►►">
+            <input id="pause" type="button" class="button pauseButton" value="►">
+            <input id="rescan" type="button" class="button rescanButton" value="↻">
+            <input id="volume" type="button" class="button volumeButton" value="Volume&#13;&#10;{{volume}}">
+        </div>
+    </div>
+    <div id="controlCombineDiv">
+        <div id="statusDiv">
+            <p>
+                <span class="statusArtistTitle">{{songName}}</span>&nbsp;<span class="statusTime">({{songPosition}}/{{songDuration}})</span>
+            </p>
+            <p>
+                <span class="statusRequester">Requested by: {{songRequester}}</span>
+            </p>
+        </div>
+    </div>
+  </template>
+  <script>
+      Polymer('x-sr-controlpanel', {
+          volume: 0,
+          songName: 'Song name',
+          songPosition: '0:00',
+          songDuration: '0:00',
+          songRequester: 'randomizer',
+          ready: function () {
+              //...
+          }
+      });
+  </script>
+</polymer-element>

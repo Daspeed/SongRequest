@@ -1,0 +1,19 @@
+﻿<link rel="import" href="x-sr-controlpanel.htm">
+<link rel="import" href="x-sr-queue.htm">
+<link rel="import" href="x-sr-playlist.htm">
+<polymer-element name="x-songrequest">
+  <template>
+    <x-sr-controlpanel volume="10" songName="Testje" songPosition="0:30" songDuration="4:13" songRequester="randomizer"></x-sr-controlpanel>
+    <div id="outerCombineDiv">
+        <x-sr-queue></x-sr-queue>
+        <x-sr-playlist></x-sr-playlist>
+    </div>
+  </template>
+  <script>
+      Polymer('x-songrequest', {
+          ready: function () {
+              //...
+          }
+      });
+  </script>
+</polymer-element>

@@ -1,0 +1,30 @@
+﻿<polymer-element name="x-sr-queue">
+  <template>
+    <div id="queueDiv">
+        <div id="queueHeaderDiv" class="gradient">
+            <h2>TODO</h2>
+        </div>
+        <div id="queueListDiv" ng-repeat="item in queue">
+            <div class="queueItem">
+                <div class="{{getQueueItemClass(item, $index)}}">
+                    <input class="button skipButton" type="button" value="-" title="Remove song from queue" />
+                    <p><span class="queueRequester">ETA: item.Till, requested by: item.RequesterName</span></p>
+                    <p>
+                        <span class="queueArtist">getSongArtist(item.Song)</span>
+                    </p>
+                    <p>
+                        <span class="queueTitle">getSongName(item.Song)</span>&nbsp;<span class="queueTime">(convertNumberToTime(item.Song.Duration))</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+  </template>
+  <script>
+      Polymer('x-sr-queue', {
+          ready: function () {
+              //...
+          }
+      });
+  </script>
+</polymer-element>
