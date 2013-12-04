@@ -187,6 +187,7 @@ p {
 .volumeButton {
     width: 5em;
     height: 5em;
+    word-wrap: break-word;
 }
 
 .playinfo {
@@ -330,10 +331,11 @@ td {
     color: #fdfdfd;
     text-shadow: 0.1em 0.2em 0.4em #000;
 }
-.headerrow th{
-    padding-top:2px;
-    padding-bottom:3px;
-}
+
+    .headerrow th {
+        padding-top: 2px;
+        padding-bottom: 3px;
+    }
 
 .evenrow {
     background-color: lightgray;
@@ -363,13 +365,13 @@ td {
     cursor: hand;
 }
 
-.songNameColumn a,
-.songNameColumn a:link,
-.songNameColumn a:visited,
-.songNameColumn a:hover {
-    color:black;
-    text-decoration:none;
-}
+    .songNameColumn a,
+    .songNameColumn a:link,
+    .songNameColumn a:visited,
+    .songNameColumn a:hover {
+        color: black;
+        text-decoration: none;
+    }
 
 .songArtistColumn {
     overflow: hidden;
