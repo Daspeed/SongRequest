@@ -8,7 +8,7 @@ namespace SongRequest
 
         public static ISongplayer GetSongPlayer()
         {
-            return _songPlayer ?? (_songPlayer = new SongPlayerWindowsMediaPlayer());
+            return _songPlayer ?? (_songPlayer = new SongPlayer());
         }
 
         public static ConfigFile GetConfigFile()

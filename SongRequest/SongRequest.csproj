@@ -39,6 +39,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -77,14 +78,15 @@
     <Compile Include="Handlers\IHandler.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SongPlayer\SongPlayer.cs" />
     <Compile Include="SongPlayer\FairQueue.cs" />
     <Compile Include="SongPlayer\RequestedSong.cs" />
-    <Compile Include="SongPlayer\SongPlayerWindowsMediaPlayer.cs" />
     <Compile Include="SongPlayer\ISongPlayer.cs" />
     <Compile Include="SongPlayer\Song.cs" />
     <Compile Include="SongPlayer\PlayerStatus.cs" />
     <Compile Include="SongPlayer\SongLibrary.cs" />
     <Compile Include="SongPlayer\SongPlayerFactory.cs" />
+    <Compile Include="SongPlayer\VlcWrapper.cs" />
     <Compile Include="StringExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -120,17 +122,6 @@
   -->
   <ItemGroup>
     <EmbeddedResource Include="Static\favicon.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <COMReference Include="WMPLib">
-      <Guid>{6BF52A50-394A-11D3-B153-00C04F79FAA6}</Guid>
-      <VersionMajor>1</VersionMajor>
-      <VersionMinor>0</VersionMinor>
-      <Lcid>0</Lcid>
-      <WrapperTool>tlbimp</WrapperTool>
-      <Isolated>False</Isolated>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </COMReference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Static\angular.min.js" />

@@ -2,15 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using WMPLib;
 
 namespace SongRequest
 {
-    public class SongPlayerWindowsMediaPlayer : ISongplayer, IDisposable
+    public class SongPlayer : ISongplayer, IDisposable
     {
         private static object lockObject = new object();
         private SongLibrary _songLibrary;
-        private WindowsMediaPlayer player;
+
+        private VlcWrapper player;
 
         private FairQueue _queue;
         private RequestedSong _currentSong;
@@ -24,11 +24,11 @@ namespace SongRequest
         /// <summary>
         /// Constructor
         /// </summary>
-        public SongPlayerWindowsMediaPlayer()
+        public SongPlayer()
         {
-            player = new WindowsMediaPlayer();
-            player.settings.volume = 75;
-
+            player = new VlcWrapper();
+            player.Volume = 75;
+            
             _queue = new FairQueue();
             _songLibrary = new SongLibrary();
             _songLibrary.StatusChanged += OnLibraryStatusChanged;
@@ -61,7 +61,7 @@ namespace SongRequest
                 {
                     lock (lockObject)
                     {
-                        return player.settings.volume;
+                        return player.Volume;
                     }
                 }
                 catch
@@ -92,7 +92,7 @@ namespace SongRequest
 
                     lock (lockObject)
                     {
-                        player.settings.volume = Math.Max(Math.Min(value, maximumVolume), minimumVolume);
+                        player.Volume = Math.Max(Math.Min(value, maximumVolume), minimumVolume);
                     }
                 }
                 catch
@@ -133,7 +133,7 @@ namespace SongRequest
                 {
                     try
                     {
-                        player.URL = _currentSong.Song.FileName;
+                        player.PlaySong(_currentSong.Song.FileName);
                         _currentSong.Song.LastRequester = _currentSong.RequesterName.Equals("randomizer", StringComparison.OrdinalIgnoreCase) ? string.Empty : _currentSong.RequesterName;
                         _currentSong.Song.SkippedBy = string.Empty;
                         _currentSong.Song.LastPlayDateTime = DateTime.Now;
@@ -143,7 +143,7 @@ namespace SongRequest
                         try
                         {
                             Thread.Sleep(50);
-                            player.controls.stop();
+                            player.Stop();
                             //Try to stop the player... if this fails, just ignore...
                         }
                         catch
@@ -164,13 +164,13 @@ namespace SongRequest
             {
                 try
                 {
-                    WMPPlayState playState;
+                    bool playState;
                     lock (lockObject)
                     {
-                        playState = player.playState;
+                        playState = player.Playing; 
                     }
 
-                    if (playState == WMPPlayState.wmppsStopped || playState == WMPPlayState.wmppsUndefined)
+                    if (!playState)
                         Next("randomizer");
                 }
                 catch
@@ -218,7 +218,7 @@ namespace SongRequest
                 {
                     try
                     {
-                        playerStatus.Position = (int)player.controls.currentPosition;
+                        playerStatus.Position = (int)player.Position/1000; 
                     }
                     catch
                     {
@@ -311,10 +311,7 @@ namespace SongRequest
         {
             lock (lockObject)
             {
-                if (player.playState == WMPPlayState.wmppsPaused)
-                    player.controls.play();
-                else
-                    player.controls.pause();
+                player.Pause();
             }
         }
 
