@@ -13,7 +13,7 @@ namespace SongRequest
     {
         private static object lockObject = new object();
         private Random random = new Random(Environment.TickCount);
-        private List<Song> _songs;
+        private Dictionary<string, Song> _songs;
         private DateTime _lastFullUpdate;
         private DateTime _lastFixErrors;
         private DateTime _lastSerialize;
@@ -22,7 +22,7 @@ namespace SongRequest
 
         public SongLibrary()
         {
-            _songs = new List<Song>();
+            _songs = new Dictionary<string, Song>(StringComparer.OrdinalIgnoreCase);
             _lastFullUpdate = DateTime.Now - TimeSpan.FromDays(1000);
             _lastFixErrors = DateTime.Now - TimeSpan.FromDays(1000);
             _lastSerialize = DateTime.Now;
@@ -48,7 +48,7 @@ namespace SongRequest
             if (tagChanges > 0)
             {
                 int songCount = _songs.Count();
-                int noTagCount = _songs.Count(s => s.TagRead);
+                int noTagCount = _songs.Values.Count(s => s.TagRead);
                 OnStatusChanged(string.Format("Library updated: {0} songs. Tags read: {1}/{0}. Next scan: {2}.", songCount, noTagCount, (_lastFullUpdate + TimeSpan.FromMinutes(minutesBetweenScans)).ToShortTimeString()));
             }
             else
@@ -60,7 +60,7 @@ namespace SongRequest
             // -> unsaved changes
             // -> tag(s) are changed
             // -> song is marked dirty (last time played is changed)
-            bool dirtySongs = _songs.Any(x => x.IsDirty);
+            bool dirtySongs = _songs.Values.Any(x => x.IsDirty);
             _unsavedChanges = _unsavedChanges || tagChanges > 0 || dirtySongs;
 
             //Save, but no more than once every 2 minutes
@@ -76,7 +76,7 @@ namespace SongRequest
             if (fileChanges > 0 || tagChanges > 0)
             {
                 int songCount = _songs.Count();
-                int noTagCount = _songs.Count(s => s.TagRead);
+                int noTagCount = _songs.Values.Count(s => s.TagRead);
                 OnStatusChanged(string.Format("Library updated: {0} songs. Tags read: {1}/{0}. Next scan: {2}.", songCount, noTagCount, (_lastFullUpdate + TimeSpan.FromMinutes(minutesBetweenScans)).ToShortTimeString()));
             }
 
@@ -97,16 +97,17 @@ namespace SongRequest
                 lock (lockObject)
                 {
                     // don't be dirty anymore!
-                    List<Song> dirtySongs = _songs.Where(x => x.IsDirty).ToList();
+                    List<Song> dirtySongs = _songs.Values.Where(x => x.IsDirty).ToList();
                     foreach (Song song in dirtySongs)
                         song.IsDirty = false;
 
                     using (Stream stream = File.Open("library.bin", FileMode.Create))
                     {
                         BinaryFormatter bin = new BinaryFormatter();
-                        bin.Serialize(stream, _songs);
+                        bin.Serialize(stream, _songs.Values);
                         OnStatusChanged("Saved library to file");
                     }
+
                     _unsavedChanges = false;
                     _lastSerialize = DateTime.Now;
                 }
@@ -130,10 +131,14 @@ namespace SongRequest
                             if (stream.Length > 0)
                             {
                                 BinaryFormatter bin = new BinaryFormatter();
-                                _songs = (List<Song>)bin.Deserialize(stream);
+
+                                List<Song> songs = (List<Song>)bin.Deserialize(stream);
+
+                                foreach (Song song in songs)
+                                    _songs.Add(song.FileName, song);
 
                                 // can't be dirty when just deserialized...
-                                List<Song> dirtySongs = _songs.Where(x => x.IsDirty).ToList();
+                                List<Song> dirtySongs = _songs.Values.Where(x => x.IsDirty).ToList();
                                 foreach (Song song in dirtySongs)
                                     song.IsDirty = false;
                             }
@@ -157,7 +162,7 @@ namespace SongRequest
         private HashSet<string> GetFilesRecursive(string directory, IList<string> extensions)
         {
             // big list with (at the end) all extension matching files of this folder and it's subfolders
-            HashSet<string> files = new HashSet<string>();
+            HashSet<string> files = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
             // change this when error occurrend
             bool doSubdirectories = true;
@@ -171,7 +176,7 @@ namespace SongRequest
                 try
                 {
                     // store temporary, union later
-                    HashSet<string> currentDirectoryFiles = new HashSet<string>();
+                    HashSet<string> currentDirectoryFiles = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
                     // loop trough files
                     FileInfo[] directoryFiles = currentDirectory.GetFiles("*." + extension, SearchOption.TopDirectoryOnly);
@@ -261,7 +266,7 @@ namespace SongRequest
             if (extensions.Length == 0)
                 extensions = new string[] { "mp3" };
 
-            HashSet<string> files = new HashSet<string>();
+            HashSet<string> files = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
             //assuming we could have several dirs here, lets speed up the process
             Parallel.ForEach(directories, directory =>
@@ -281,8 +286,13 @@ namespace SongRequest
             //Find removed songs
             lock (lockObject)
             {
-                if (_songs.RemoveAll(s => !files.Any(f => f == s.FileName)) > 0)
-                    changesMade++;
+                var toRemove = _songs.Keys.Where(x => !files.Contains(x, StringComparer.OrdinalIgnoreCase));
+
+                foreach (string key in toRemove)
+                {
+                    if (_songs.Remove(key))
+                        changesMade++;
+                }
             }
 
             //Find added songs. Here we can have thousands of files
@@ -292,7 +302,7 @@ namespace SongRequest
 
                 lock (lockObject)
                 {
-                    if (_songs.Any(s => s.FileName == fileName))
+                    if (_songs.ContainsKey(fileName))
                         checkNext = true;
                 }
 
@@ -306,7 +316,7 @@ namespace SongRequest
 
                     lock (lockObject)
                     {
-                        _songs.Add(song);
+                        _songs.Add(fileName, song);
                     }
 
                     changesMade++;
@@ -333,9 +343,9 @@ namespace SongRequest
                 lock (lockObject)
                 {
                     if (fixErrors)
-                        song = _songs.FirstOrDefault(s => s.TagRead == false);
+                        song = _songs.Values.FirstOrDefault(s => s.TagRead == false);
                     else
-                        song = _songs.FirstOrDefault(s => s.TagRead == false && s.ErrorReadingTag == false);
+                        song = _songs.Values.FirstOrDefault(s => s.TagRead == false && s.ErrorReadingTag == false);
                 }
 
                 if (song != null)
@@ -415,7 +425,7 @@ namespace SongRequest
                 IEnumerable<Song> songs = null;
                 if (string.IsNullOrWhiteSpace(filter))
                 {
-                    songs = _songs;
+                    songs = _songs.Values;
                 }
                 else
                 {
@@ -438,10 +448,10 @@ namespace SongRequest
                     }
 
                     songs = _songs.AsParallel().Where(s =>
-                        searchFunc(s.Name ?? string.Empty) ||
-                        searchFunc(s.Artist ?? string.Empty) ||
-                        (includeFileNameInSearch ? searchFunc(s.FileName ?? string.Empty) : false)
-                    );
+                        searchFunc(s.Value.Name ?? string.Empty) ||
+                        searchFunc(s.Value.Artist ?? string.Empty) ||
+                        (includeFileNameInSearch ? searchFunc(s.Key ?? string.Empty) : false)
+                    ).Select(x => x.Value);
                 }
 
                 // get correct stuff to sort on
@@ -578,7 +588,7 @@ namespace SongRequest
         {
             lock (lockObject)
             {
-                Parallel.ForEach(_songs, song =>
+                Parallel.ForEach(_songs.Values, song =>
                 {
                     _lastFullUpdate = DateTime.Now - TimeSpan.FromDays(1000);
                     song.TagRead = false;
@@ -599,11 +609,11 @@ namespace SongRequest
 
                 // If song is > 10 minutes, ignore
                 // If song is played last xxx hours, ignore
-                List<Song> songsToChooseFrom = _songs.Where(x => (x.Duration != null && x.Duration < 600)
+                List<Song> songsToChooseFrom = _songs.Values.Where(x => (x.Duration != null && x.Duration < 600)
                     && (x.LastPlayDateTime == null || x.LastPlayDateTime < DateTime.Now.AddHours(-1 * randomizerIgnoreHours))).ToList();
 
                 if (songsToChooseFrom.Count == 0)
-                    songsToChooseFrom = _songs;
+                    songsToChooseFrom = _songs.Values.ToList();
 
                 Song randomSong = songsToChooseFrom[random.Next(songsToChooseFrom.Count)];
 
