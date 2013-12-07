@@ -68,7 +68,7 @@
 
               return String(minutes) + ((seconds < 10) ? ':0' : ':') + String(seconds);
           },
-          serverStateChanged: function (a, b) {
+          serverStateChanged: function () {
               this.songName = (this.serverState.PlayerStatus.RequestedSong.Song.Artist || 'Unknown') + ' - ' + (this.serverState.PlayerStatus.RequestedSong.Song.Name || 'Unknown');
               this.songPosition = this.convertNumberToTime(this.serverState.PlayerStatus.Position || 0);
               this.songDuration = this.convertNumberToTime(this.serverState.PlayerStatus.RequestedSong.Song.Duration || 0);

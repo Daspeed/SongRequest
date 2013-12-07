@@ -1,29 +1,99 @@
-﻿<polymer-element name="x-sr-queue">
+﻿<polymer-element name="x-sr-queue" attributes="serverState">
   <template>
     <div id="queueDiv">
         <div id="queueHeaderDiv" class="gradient">
-            <h2>TODO</h2>
+            <h2>{{queueStats}}</h2>
         </div>
-        <div id="queueListDiv" ng-repeat="item in queue">
-            <div class="queueItem">
-                <div class="getQueueItemClass(item, $index)">
-                    <input class="button skipButton" type="button" value="-" title="Remove song from queue" />
-                    <p><span class="queueRequester">ETA: item.Till, requested by: item.RequesterName</span></p>
-                    <p>
-                        <span class="queueArtist">getSongArtist(item.Song)</span>
-                    </p>
-                    <p>
-                        <span class="queueTitle">getSongName(item.Song)</span>&nbsp;<span class="queueTime">(convertNumberToTime(item.Song.Duration))</span>
-                    </p>
+        <template repeat="{{ item, index in queue }}">
+            <div id="queueListDiv">
+                <div class="queueItem">
+                    <div class="qitem {{item.requester === self?'self':''}}{{index % 2 === 0 ? 'even' : 'odd'}}queueitemcontainer">
+                        <input class="button skipButton" type="button" value="-" title="Remove song from queue" data-songid="{{item.id}}" on-click="{{removeFromQueue}}" >
+                        <p><span class="queueRequester">ETA: {{item.ETA}}, requested by: {{item.requester}}</span></p>
+                        <p>
+                            <span class="queueArtist">{{item.artist}}</span>
+                        </p>
+                        <p>
+                            <span class="queueTitle">{{item.name}}</span>&nbsp;<span class="queueTime">({{item.duration}})</span>
+                        </p>
+                    </div>
                 </div>
             </div>
-        </div>
+        </template>
     </div>
   </template>
   <script>
       Polymer('x-sr-queue', {
+          queueStats: '',
+          self: '',
           ready: function () {
-              //...
+              this.serverState = {
+                  Queue: [],
+                  PlayerStatus: {
+                      RequestedSong: {
+                          Song: {
+                              Duration: 0
+                          }
+                      },
+                      Position: 0
+                  }
+              };
+              this.queue = [];
+          },
+          convertNumberToTime: function (num) {
+              var minutes = parseInt(num / 60, 10);
+              var seconds = parseInt(num % 60, 10);
+
+              return String(minutes) + ((seconds < 10) ? ':0' : ':') + String(seconds);
+          },
+          getHeaderText: function (queueLength, duration) {
+              switch (queueLength) {
+                  case 0:
+                      return 'Queue | No songs';
+                  case 1:
+                      return 'Queue | 1 song';
+                  default:
+                      return 'Queue | ' + queueLength + ' songs (' + this.convertNumberToTime(duration) + ')';
+              }
+          },
+          fixer: function (num) {
+              return (num < 10 ? '0' : '') + String(num);
+          },
+          removeFromQueue: function (btn) {
+              var id = btn.target.attributes['data-songid'].value;
+              this.fire('removedfromqueue', id);
+          },
+          serverStateChanged: function () {
+              var me = this;
+              var newQueue = [];
+
+              var duration = 0;
+              var queue = this.serverState.Queue;
+              var ETA = (this.serverState.PlayerStatus.RequestedSong.Song.Duration || 0) - (this.serverState.PlayerStatus.Position || 0);
+              var baseDate = new Date();
+
+              for (var i = 0; i < queue.length; i += 1) {
+                  var displayETA = (function (baseDate) {
+                      baseDate.setSeconds(baseDate.getSeconds() + ETA);
+                      return me.fixer(baseDate.getHours()) + ':' + me.fixer(baseDate.getMinutes());
+                  })(new Date());
+
+                  newQueue.push({
+                      'ETA': displayETA,
+                      artist: queue[i].Song.Artist || 'Unknown',
+                      name: queue[i].Song.Name || 'Unknown',
+                      duration: this.convertNumberToTime(queue[i].Song.Duration || 0),
+                      requester: queue[i].RequesterName,
+                      id: queue[i].Song.TempId
+                  });
+
+                  duration += (queue[i].Song.Duration || 0);
+                  ETA += (queue[i].Song.Duration || 0);
+              }
+
+              this.queueStats = this.getHeaderText(queue.length, duration);
+              this.queue = newQueue;
+              this.self = this.serverState.Self;
           }
       });
   </script>

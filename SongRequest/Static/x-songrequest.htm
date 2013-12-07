@@ -3,14 +3,18 @@
 <link rel="import" href="x-sr-playlist.htm">
 <polymer-element name="x-songrequest">
   <template>
-    <x-sr-controlpanel id="controlPanel"
+    <x-sr-controlpanel
+        id="controlPanel"
         on-next="{{next}}"
         on-pause="{{pause}}"
         on-rescan="{{rescan}}"
         on-volumechanged="{{volumeChanged}}">
     </x-sr-controlpanel>
     <div id="outerCombineDiv">
-        <x-sr-queue></x-sr-queue>
+        <x-sr-queue
+            id="queue"
+            on-removedfromqueue="{{removedFromQueue}}">
+        </x-sr-queue>
         <x-sr-playlist></x-sr-playlist>
     </div>
   </template>
@@ -37,6 +41,7 @@
                   type: 'json',
                   success: function (resp) {
                       me.$.controlPanel.serverState = resp;
+                      me.$.queue.serverState = resp;
                   }
               });
           },
@@ -54,6 +59,13 @@
                   url: '/dynamic/volume',
                   method: 'post',
                   data: String(newVolume)
+              });
+          },
+          removedFromQueue: function (_, id) {
+              reqwest({
+                  url: '/dynamic/queue',
+                  method: 'delete',
+                  data: id
               });
           }
       });
