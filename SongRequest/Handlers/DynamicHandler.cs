@@ -100,7 +100,6 @@ namespace SongRequest.Handlers
                 case "next":
                     response.ContentType = "application/json";
                     songPlayer.Next(requester);
-                    WriteUtf8String(response.OutputStream, JsonConvert.SerializeObject(songPlayer.PlayerStatus));
                     break;
                 case "rescan":
                     response.ContentType = "application/json";
