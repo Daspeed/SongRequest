@@ -145,4 +145,7 @@
   <ItemGroup>
     <EmbeddedResource Include="Static\reqwest.js" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Static\json2.js" />
+  </ItemGroup>
 </Project>

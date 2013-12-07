@@ -8,14 +8,17 @@
         on-next="{{next}}"
         on-pause="{{pause}}"
         on-rescan="{{rescan}}"
-        on-volumechanged="{{volumeChanged}}">
+        on-volumechanged="{{volumeChanged}}"
+        on-songchanged="{{songChanged}}">
     </x-sr-controlpanel>
     <div id="outerCombineDiv">
         <x-sr-queue
             id="queue"
             on-removedfromqueue="{{removedFromQueue}}">
         </x-sr-queue>
-        <x-sr-playlist></x-sr-playlist>
+        <x-sr-playlist
+            on-songadded="{{addSongToQueue}}">
+        </x-sr-playlist>
     </div>
   </template>
   <script type="text/javascript" src="reqwest.js"></script>
@@ -67,6 +70,17 @@
                   method: 'delete',
                   data: id
               });
+          },
+          addSongToQueue: function (_, id) {
+              reqwest({
+                  url: '/dynamic/queue',
+                  method: 'post',
+                  type: 'json',
+                  data: id
+              });
+          },
+          songChanged: function (_, name) {
+              window.document.title = 'SongRequest | ' + name;
           }
       });
   </script>

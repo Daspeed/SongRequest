@@ -69,9 +69,13 @@
               return String(minutes) + ((seconds < 10) ? ':0' : ':') + String(seconds);
           },
           serverStateChanged: function () {
+              var lastSongName = this.songName;
               this.songName = (this.serverState.PlayerStatus.RequestedSong.Song.Artist || 'Unknown') + ' - ' + (this.serverState.PlayerStatus.RequestedSong.Song.Name || 'Unknown');
               this.songPosition = this.convertNumberToTime(this.serverState.PlayerStatus.Position || 0);
               this.songDuration = this.convertNumberToTime(this.serverState.PlayerStatus.RequestedSong.Song.Duration || 0);
+
+              if (lastSongName !== this.songName)
+                  this.fire('songchanged', this.songName);
           }
       });
   </script>
