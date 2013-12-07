@@ -105,7 +105,7 @@ div {
     padding: 0;
 }
 
-#queueDiv {
+.queueDiv {
     padding: 0;
     border: 1px solid black;
     border-top: 0px;
@@ -271,7 +271,7 @@ form {
     height: 3.5em;
 }
 
-#combineDiv {
+.combineDiv {
     padding: 0;
     background: none;
     background-color: transparent;
@@ -532,7 +532,7 @@ td {
         padding: 0;
     }
 
-    #queueDiv {
+    .queueDiv {
         width: 25em;
         display: table-cell;
     }
@@ -572,7 +572,7 @@ td {
         display: inline-block;
     }
 
-    #combineDiv {
+    .combineDiv {
         overflow: hidden;
         display: table-cell;
     }

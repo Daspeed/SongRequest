@@ -1,58 +1,58 @@
-﻿<polymer-element name="x-sr-playlist">
+﻿<polymer-element class="combineDiv" name="x-sr-playlist">
   <template>
-    <div id="combineDiv">
-            <div id="songsOuterDiv">
-                <div id="songsHeaderDiv" class="gradient">
-                    <h2>Songs</h2>
-                </div>
-                <div id="songsSearchDiv">
-                    <form>
-                        <input type="text" class="searchtext" name="searchtext" id="searchtext" value="filter">
-                        <input type="submit" class="button searchbutton" name="searchbutton" id="searchbutton" value="Search">
-                        <input type="button" class="button clearbutton" name="clearbutton" id="clearbutton" value="Reset">
-                    </form>
-                    <form id="pageForm">
-                        Page:&nbsp;
-                        <input type="text" name="pagetext" class="pagetext" id="currentPage" value="currentPage">
-                        of&nbsp;<span class="pageCount">pageCount</span>
-                    </form>
-                    <input type="button" class="button previousbutton" name="previousbutton" id="previousbutton" value="Previous">
-                    <input type="button" class="button nextbutton" name="nextbutton" id="nextbutton" value="Next">
-                </div>
-                <div id="songsDiv">
 
-                    <table class="songsTable">
-                        <tr class="gradient headerrow">
-                            <th class="actionColumn">Action</th>
-                            <th id="nameHeader" class="songNameColumn">Name</th>
-                            <th id="artistHeader" class="songArtistColumn">Artist</th>
-                            <th class="songDurationColumn">Length</th>
-                            <th class="songGenreColumn">Genre</th>
-                            <th class="songYearColumn">Year</th>
-                            <th id="dateHeader" class="songDateCreatedColumn">Date added</th>
-                            <th id="playedHeader" class="songDatePlayedColumn">Last played</th>
-                            <th class="songRequesterColumn">Requester</th>
-                            <th class="songSkippedByColumn">Skipped by</th>
-                        </tr>
-                        <tr class="songRow" ng-repeat="song in searchResult">
-                            <td class="actionColumn">
-                                <input type="button" class="button addButton" value="+" title="Add song to queue" />
-                            </td>
-                            <td class="songNameColumn"><a class="songlink" href="file://song.FileName" title="song.FileName">song.Name</a></td>
-                            <td class="songArtistColumn">song.Artist</td>
-                            <td class="songDurationColumn">convertNumberToTime(song.Duration)</td>
-                            <td class="songGenreColumn">song.Genre</td>
-                            <td class="songYearColumn">song.Year</td>
-                            <td class="songDateCreatedColumn">song.DateCreated</td>
-                            <td class="songDatePlayedColumn">song.LastPlayTime</td>
-                            <td class="songRequesterColumn">song.LastRequester</td>
-                            <td class="songSkippedByColumn">song.SkippedBy</td>
-                        </tr>
-                    </table>
-
-                </div>
-            </div>
+    <div id="songsOuterDiv">
+        <div id="songsHeaderDiv" class="gradient">
+            <h2>Songs</h2>
         </div>
+        <div id="songsSearchDiv">
+            <form>
+                <input type="text" class="searchtext" name="searchtext" id="searchtext" value="filter">
+                <input type="submit" class="button searchbutton" name="searchbutton" id="searchbutton" value="Search">
+                <input type="button" class="button clearbutton" name="clearbutton" id="clearbutton" value="Reset">
+            </form>
+            <form id="pageForm">
+                Page:&nbsp;
+                <input type="text" name="pagetext" class="pagetext" id="currentPage" value="currentPage">
+                of&nbsp;<span class="pageCount">pageCount</span>
+            </form>
+            <input type="button" class="button previousbutton" name="previousbutton" id="previousbutton" value="Previous">
+            <input type="button" class="button nextbutton" name="nextbutton" id="nextbutton" value="Next">
+        </div>
+        <div id="songsDiv">
+
+            <table class="songsTable">
+                <tr class="gradient headerrow">
+                    <th class="actionColumn">Action</th>
+                    <th id="nameHeader" class="songNameColumn">Name</th>
+                    <th id="artistHeader" class="songArtistColumn">Artist</th>
+                    <th class="songDurationColumn">Length</th>
+                    <th class="songGenreColumn">Genre</th>
+                    <th class="songYearColumn">Year</th>
+                    <th id="dateHeader" class="songDateCreatedColumn">Date added</th>
+                    <th id="playedHeader" class="songDatePlayedColumn">Last played</th>
+                    <th class="songRequesterColumn">Requester</th>
+                    <th class="songSkippedByColumn">Skipped by</th>
+                </tr>
+                <tr class="songRow" ng-repeat="song in searchResult">
+                    <td class="actionColumn">
+                        <input type="button" class="button addButton" value="+" title="Add song to queue" />
+                    </td>
+                    <td class="songNameColumn"><a class="songlink" href="file://song.FileName" title="song.FileName">song.Name</a></td>
+                    <td class="songArtistColumn">song.Artist</td>
+                    <td class="songDurationColumn">convertNumberToTime(song.Duration)</td>
+                    <td class="songGenreColumn">song.Genre</td>
+                    <td class="songYearColumn">song.Year</td>
+                    <td class="songDateCreatedColumn">song.DateCreated</td>
+                    <td class="songDatePlayedColumn">song.LastPlayTime</td>
+                    <td class="songRequesterColumn">song.LastRequester</td>
+                    <td class="songSkippedByColumn">song.SkippedBy</td>
+                </tr>
+            </table>
+
+        </div>
+    </div>
+
   </template>
   <script>
       Polymer('x-sr-playlist', {

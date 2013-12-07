@@ -1,26 +1,24 @@
-﻿<polymer-element name="x-sr-queue" attributes="serverState">
+﻿<polymer-element class="queueDiv" name="x-sr-queue" attributes="serverState">
   <template>
-    <div id="queueDiv">
-        <div id="queueHeaderDiv" class="gradient">
-            <h2>{{queueStats}}</h2>
-        </div>
-        <template repeat="{{ item, index in queue }}">
-            <div id="queueListDiv">
-                <div class="queueItem">
-                    <div class="qitem {{item.requester === self?'self':''}}{{index % 2 === 0 ? 'even' : 'odd'}}queueitemcontainer">
-                        <input class="button skipButton" type="button" value="-" title="Remove song from queue" data-songid="{{item.id}}" on-click="{{removeFromQueue}}" >
-                        <p><span class="queueRequester">ETA: {{item.ETA}}, requested by: {{item.requester}}</span></p>
-                        <p>
-                            <span class="queueArtist">{{item.artist}}</span>
-                        </p>
-                        <p>
-                            <span class="queueTitle">{{item.name}}</span>&nbsp;<span class="queueTime">({{item.duration}})</span>
-                        </p>
-                    </div>
+    <div id="queueHeaderDiv" class="gradient">
+        <h2>{{queueStats}}</h2>
+    </div>
+    <template repeat="{{ item, index in queue }}">
+        <div id="queueListDiv">
+            <div class="queueItem">
+                <div class="qitem {{item.requester === self?'self':''}}{{index % 2 === 0 ? 'even' : 'odd'}}queueitemcontainer">
+                    <input class="button skipButton" type="button" value="-" title="Remove song from queue" data-songid="{{item.id}}" on-click="{{removeFromQueue}}" >
+                    <p><span class="queueRequester">ETA: {{item.ETA}}, requested by: {{item.requester}}</span></p>
+                    <p>
+                        <span class="queueArtist">{{item.artist}}</span>
+                    </p>
+                    <p>
+                        <span class="queueTitle">{{item.name}}</span>&nbsp;<span class="queueTime">({{item.duration}})</span>
+                    </p>
                 </div>
             </div>
-        </template>
-    </div>
+        </div>
+    </template>
   </template>
   <script>
       Polymer('x-sr-queue', {
