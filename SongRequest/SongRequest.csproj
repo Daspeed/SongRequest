@@ -142,4 +142,7 @@
     <EmbeddedResource Include="Static\x-songrequest.htm" />
     <EmbeddedResource Include="Static\polymer.min.js" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Static\reqwest.js" />
+  </ItemGroup>
 </Project>

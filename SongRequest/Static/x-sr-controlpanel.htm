@@ -1,14 +1,14 @@
-﻿<polymer-element name="x-sr-controlpanel" attributes="volume songName songPosition songDuration songRequester">
+﻿<polymer-element name="x-sr-controlpanel" attributes="serverState">
   <template>
     <div id="currentStatusDiv" class="gradient">
         <div id="headerDiv">
             <h1>SongRequest&nbsp;♫</h1>
         </div>
         <div id="controlsDiv">
-            <input id="next" type="button" class="button nextButton" value="►►">
-            <input id="pause" type="button" class="button pauseButton" value="►">
-            <input id="rescan" type="button" class="button rescanButton" value="↻">
-            <input id="volume" type="button" class="button volumeButton" value="Volume&#13;&#10;{{volume}}">
+            <input id="next" on-click="{{nextClick}}" type="button" class="button nextButton" value="►►">
+            <input id="pause" on-click="{{pauseClick}}" type="button" class="button pauseButton" value="►">
+            <input id="rescan" on-click="{{rescanClick}}" type="button" class="button rescanButton" value="↻">
+            <input id="volume" on-click="{{volumeClick}}" type="button" class="button volumeButton" value="Volume&#13;&#10;{{serverState.PlayerStatus.Volume}}">
         </div>
     </div>
     <div id="controlCombineDiv">
@@ -17,20 +17,61 @@
                 <span class="statusArtistTitle">{{songName}}</span>&nbsp;<span class="statusTime">({{songPosition}}/{{songDuration}})</span>
             </p>
             <p>
-                <span class="statusRequester">Requested by: {{songRequester}}</span>
+                <span class="statusRequester">Requested by: {{serverState.PlayerStatus.RequestedSong.RequesterName}}</span>
             </p>
         </div>
     </div>
   </template>
   <script>
       Polymer('x-sr-controlpanel', {
-          volume: 0,
-          songName: 'Song name',
+          songName: '',
           songPosition: '0:00',
           songDuration: '0:00',
-          songRequester: 'randomizer',
           ready: function () {
-              //...
+              this.serverState = {
+                  PlayerStatus: {
+                      Position: 0,
+                      RequestedSong: {
+                          Song: {}
+                      },
+                      Volume: 0
+                  },
+                  Queue: [],
+                  Self: ''
+              };
+          },
+          nextClick: function () {
+              this.fire('next');
+          },
+          pauseClick: function () {
+              this.fire('pause');
+          },
+          rescanClick: function () {
+              this.fire('rescan');
+          },
+          volumeClick: function () {
+              var prompted = prompt('New volume', String(this.volume));
+              if(prompted === undefined)
+                  return;
+
+              var newVolume = parseInt(prompted, 10);
+              if (isNaN(newVolume))
+                  return;
+              
+              if (newVolume !== undefined) {
+                  this.fire('volumechanged', newVolume);
+              }
+          },
+          convertNumberToTime: function (num) {
+              var minutes = parseInt(num / 60, 10);
+              var seconds = parseInt(num % 60, 10);
+
+              return String(minutes) + ((seconds < 10) ? ':0' : ':') + String(seconds);
+          },
+          serverStateChanged: function (a, b) {
+              this.songName = (this.serverState.PlayerStatus.RequestedSong.Song.Artist || 'Unknown') + ' - ' + (this.serverState.PlayerStatus.RequestedSong.Song.Name || 'Unknown');
+              this.songPosition = this.convertNumberToTime(this.serverState.PlayerStatus.Position || 0);
+              this.songDuration = this.convertNumberToTime(this.serverState.PlayerStatus.RequestedSong.Song.Duration || 0);
           }
       });
   </script>

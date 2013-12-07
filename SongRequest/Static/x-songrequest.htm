@@ -3,16 +3,58 @@
 <link rel="import" href="x-sr-playlist.htm">
 <polymer-element name="x-songrequest">
   <template>
-    <x-sr-controlpanel volume="10" songName="Testje" songPosition="0:30" songDuration="4:13" songRequester="randomizer"></x-sr-controlpanel>
+    <x-sr-controlpanel id="controlPanel"
+        on-next="{{next}}"
+        on-pause="{{pause}}"
+        on-rescan="{{rescan}}"
+        on-volumechanged="{{volumeChanged}}">
+    </x-sr-controlpanel>
     <div id="outerCombineDiv">
         <x-sr-queue></x-sr-queue>
         <x-sr-playlist></x-sr-playlist>
     </div>
   </template>
+  <script type="text/javascript" src="reqwest.js"></script>
   <script>
       Polymer('x-songrequest', {
+          serverState: null,
           ready: function () {
-              //...
+            var me = this;
+            setInterval(
+                function () {
+                    me.getQueue()
+                },
+                1000
+            );
+
+            this.serverState = {};
+          },
+          getQueue: function () {
+              var me = this;
+              reqwest({
+                  url: '/dynamic/queue',
+                  method: 'get',
+                  type: 'json',
+                  success: function (resp) {
+                      me.$.controlPanel.serverState = resp;
+                  }
+              });
+          },
+          next: function () {
+              reqwest('/dynamic/next');
+          },
+          pause: function () {
+              reqwest('/dynamic/pause');
+          },
+          rescan: function () {
+              reqwest('/dynamic/rescan');
+          },
+          volumeChanged: function (_, newVolume) {
+              reqwest({
+                  url: '/dynamic/volume',
+                  method: 'post',
+                  data: String(newVolume)
+              });
           }
       });
   </script>
