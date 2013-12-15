@@ -1,16 +1,34 @@
+using System.ComponentModel.Composition;
+using System.ComponentModel.Composition.Hosting;
 using SongRequest.Config;
 
 namespace SongRequest.SongPlayer
 {
-    public static class SongPlayerFactory
+    public class SongPlayerFactory
     {
-        private static ISongplayer _songPlayer;
+        private static SongPlayerFactory _factory;
+
+        public static SongPlayerFactory GetFactory()
+        {
+            if(_factory == null)
+                _factory = new SongPlayerFactory();
+
+            return _factory;
+        }
 
         public static ISongplayer GetSongPlayer()
         {
-            return _songPlayer ?? (_songPlayer = new SongPlayerWindowsMediaPlayer());
+            return GetFactory().SongPlayer;
         }
 
+        [Import(typeof(ISongplayer))]
+        public ISongplayer SongPlayer { get; set; }
+        
+        private SongPlayerFactory()
+        {
+            InitializeAddinCatalog();
+        }
+        
         public static ConfigFile GetConfigFile()
         {
             if (!System.IO.File.Exists("songrequest.config"))
@@ -29,6 +47,22 @@ namespace SongRequest.SongPlayer
 
             return new ConfigFile("songrequest.config");
         }
+
+        public void InitializeAddinCatalog()
+        {
+            DirectoryCatalog catalog = new DirectoryCatalog("addins");
+            CompositionContainer container = new CompositionContainer(catalog);
+            try
+            {
+                container.ComposeParts(this);
+            }
+            catch (CompositionException ex)
+            {
+                throw ex;
+            }
+
+        }
+
     }
 }
 
