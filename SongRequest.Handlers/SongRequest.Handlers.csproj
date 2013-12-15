@@ -57,6 +57,10 @@
       <Project>{4447182E-C61C-4FB6-960D-433A02550C73}</Project>
       <Name>SongRequest.Config</Name>
     </ProjectReference>
+    <ProjectReference Include="..\SongRequest.SongPlayer\SongRequest.SongPlayer.csproj">
+      <Project>{3EF3A104-9258-4DB9-8FDD-FF7CD586BCF1}</Project>
+      <Name>SongRequest.SongPlayer</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
