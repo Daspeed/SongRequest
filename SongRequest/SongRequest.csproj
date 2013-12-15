@@ -86,6 +86,7 @@
     <Compile Include="SongPlayer\SongLibrary.cs" />
     <Compile Include="SongPlayer\SongPlayerFactory.cs" />
     <Compile Include="StringExtensions.cs" />
+    <Compile Include="Config\Settings.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Static\404.htm" />
