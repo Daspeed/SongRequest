@@ -58,9 +58,6 @@
       <HintPath>..\dlls\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System.Configuration" />
-    <Reference Include="taglib-sharp">
-      <HintPath>..\dlls\taglib-sharp.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConfigReader.cs" />
