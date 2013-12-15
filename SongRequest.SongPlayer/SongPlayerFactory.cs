@@ -1,14 +1,17 @@
+using System.ComponentModel.Composition;
 using SongRequest.Config;
 
 namespace SongRequest.SongPlayer
 {
     public static class SongPlayerFactory
     {
+        [Import(typeof(ISongplayer))]
         private static ISongplayer _songPlayer;
 
         public static ISongplayer GetSongPlayer()
         {
-            return _songPlayer ?? (_songPlayer = new SongPlayerWindowsMediaPlayer());
+            //TODO: check for null here
+            return _songPlayer;
         }
 
         public static ConfigFile GetConfigFile()
@@ -29,6 +32,7 @@ namespace SongRequest.SongPlayer
 
             return new ConfigFile("songrequest.config");
         }
+
     }
 }
 

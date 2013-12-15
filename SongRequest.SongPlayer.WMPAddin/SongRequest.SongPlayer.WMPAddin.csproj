@@ -5,11 +5,11 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{3EF3A104-9258-4DB9-8FDD-FF7CD586BCF1}</ProjectGuid>
+    <ProjectGuid>{B8027F15-2077-4A6C-9FDF-20BA3C4991AF}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SongRequest.SongPlayer</RootNamespace>
-    <AssemblyName>SongRequest.SongPlayer</AssemblyName>
+    <RootNamespace>SongRequest.SongPlayer.WMPAddin</RootNamespace>
+    <AssemblyName>SongRequest.SongPlayer.WMPAddin</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -39,29 +39,31 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="taglib-sharp">
-      <HintPath>..\dlls\taglib-sharp.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FairQueue.cs" />
-    <Compile Include="ISongPlayer.cs" />
-    <Compile Include="PlayerStatus.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RequestedSong.cs" />
-    <Compile Include="Song.cs" />
-    <Compile Include="SongLibrary.cs" />
-    <Compile Include="SongPlayerFactory.cs" />
+    <Compile Include="SongPlayerWindowsMediaPlayer.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SongRequest.Config\SongRequest.Config.csproj">
       <Project>{4447182E-C61C-4FB6-960D-433A02550C73}</Project>
       <Name>SongRequest.Config</Name>
     </ProjectReference>
-    <ProjectReference Include="..\SongRequest.Utils\SongRequest.Utils.csproj">
-      <Project>{6D5ED1A4-E369-4753-A99A-0FAC64F6C8ED}</Project>
-      <Name>SongRequest.Utils</Name>
+    <ProjectReference Include="..\SongRequest.SongPlayer\SongRequest.SongPlayer.csproj">
+      <Project>{3EF3A104-9258-4DB9-8FDD-FF7CD586BCF1}</Project>
+      <Name>SongRequest.SongPlayer</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <COMReference Include="WMPLib">
+      <Guid>{6BF52A50-394A-11D3-B153-00C04F79FAA6}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

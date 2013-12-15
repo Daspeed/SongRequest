@@ -1,11 +1,14 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Linq;
 using System.Threading;
 using WMPLib;
 
 namespace SongRequest.SongPlayer
 {
+    [Export(typeof(ISongplayer))]
+    [ExportMetadata("Platform", "Windows")]
     public class SongPlayerWindowsMediaPlayer : ISongplayer, IDisposable
     {
         private static object lockObject = new object();
