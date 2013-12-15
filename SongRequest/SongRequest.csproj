@@ -68,13 +68,6 @@
     <Compile Include="Config\ConfigFile.cs" />
     <Compile Include="DoubleMetaphone.cs" />
     <Compile Include="Dispatcher.cs" />
-    <Compile Include="Handlers\BaseHandler.cs" />
-    <Compile Include="Handlers\FaviconHandler.cs" />
-    <Compile Include="Handlers\DynamicHandler.cs" />
-    <Compile Include="Handlers\StaticHandler.cs" />
-    <Compile Include="Handlers\IndexHandler.cs" />
-    <Compile Include="Handlers\PageNotFoundHandler.cs" />
-    <Compile Include="Handlers\IHandler.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SongPlayer\FairQueue.cs" />
@@ -142,5 +135,11 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Static\style.css" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SongRequest.Handlers\SongRequest.Handlers.csproj">
+      <Project>{89D6AA35-C401-4581-934C-E10DFA4C5EED}</Project>
+      <Name>SongRequest.Handlers</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>
