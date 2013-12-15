@@ -8,7 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using SongRequest.Utils;
 
-namespace SongRequest
+namespace SongRequest.SongPlayer
 {
     public class SongLibrary
     {

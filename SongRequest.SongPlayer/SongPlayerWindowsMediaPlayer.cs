@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading;
 using WMPLib;
 
-namespace SongRequest
+namespace SongRequest.SongPlayer
 {
     public class SongPlayerWindowsMediaPlayer : ISongplayer, IDisposable
     {

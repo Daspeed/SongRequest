@@ -1,6 +1,6 @@
 using SongRequest.Config;
 
-namespace SongRequest
+namespace SongRequest.SongPlayer
 {
     public static class SongPlayerFactory
     {

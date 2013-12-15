@@ -1,6 +1,6 @@
 using System;
 
-namespace SongRequest
+namespace SongRequest.Config
 {
     public class Settings
     {

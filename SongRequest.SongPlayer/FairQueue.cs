@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace SongRequest
+namespace SongRequest.SongPlayer
 {
     public class FairQueue
     {

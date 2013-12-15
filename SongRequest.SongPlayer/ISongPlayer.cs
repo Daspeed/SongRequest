@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace SongRequest
+namespace SongRequest.SongPlayer
 {
     /// <summary>
     /// Event handler
