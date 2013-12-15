@@ -8,7 +8,6 @@ using WMPLib;
 namespace SongRequest.SongPlayer
 {
     [Export(typeof(ISongplayer))]
-    [ExportMetadata("Platform", "Windows")]
     public class SongPlayerWindowsMediaPlayer : ISongplayer, IDisposable
     {
         private static object lockObject = new object();
