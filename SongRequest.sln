@@ -16,6 +16,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SongRequest.Handlers", "SongRequest.Handlers\SongRequest.Handlers.csproj", "{89D6AA35-C401-4581-934C-E10DFA4C5EED}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SongRequest.Config", "SongRequest.Config\SongRequest.Config.csproj", "{4447182E-C61C-4FB6-960D-433A02550C73}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SongRequest.SongPlayer", "SongRequest.SongPlayer\SongRequest.SongPlayer.csproj", "{3EF3A104-9258-4DB9-8FDD-FF7CD586BCF1}"
+EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = SongRequest.vsmdi
@@ -37,6 +41,14 @@ Global
 		{89D6AA35-C401-4581-934C-E10DFA4C5EED}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{89D6AA35-C401-4581-934C-E10DFA4C5EED}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{89D6AA35-C401-4581-934C-E10DFA4C5EED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4447182E-C61C-4FB6-960D-433A02550C73}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4447182E-C61C-4FB6-960D-433A02550C73}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4447182E-C61C-4FB6-960D-433A02550C73}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4447182E-C61C-4FB6-960D-433A02550C73}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3EF3A104-9258-4DB9-8FDD-FF7CD586BCF1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3EF3A104-9258-4DB9-8FDD-FF7CD586BCF1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3EF3A104-9258-4DB9-8FDD-FF7CD586BCF1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3EF3A104-9258-4DB9-8FDD-FF7CD586BCF1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

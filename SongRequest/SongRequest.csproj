@@ -64,8 +64,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConfigReader.cs" />
-    <Compile Include="Config\ConfigSection.cs" />
-    <Compile Include="Config\ConfigFile.cs" />
     <Compile Include="DoubleMetaphone.cs" />
     <Compile Include="Dispatcher.cs" />
     <Compile Include="Program.cs" />
@@ -79,7 +77,6 @@
     <Compile Include="SongPlayer\SongLibrary.cs" />
     <Compile Include="SongPlayer\SongPlayerFactory.cs" />
     <Compile Include="StringExtensions.cs" />
-    <Compile Include="Config\Settings.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Static\404.htm" />
