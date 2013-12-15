@@ -5,11 +5,11 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{89D6AA35-C401-4581-934C-E10DFA4C5EED}</ProjectGuid>
+    <ProjectGuid>{6D5ED1A4-E369-4753-A99A-0FAC64F6C8ED}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SongRequest.Handlers</RootNamespace>
-    <AssemblyName>SongRequest.Handlers</AssemblyName>
+    <RootNamespace>SongRequest.Utils</RootNamespace>
+    <AssemblyName>SongRequest.Utils</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -31,9 +31,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\dlls\Newtonsoft.Json.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -43,28 +40,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BaseHandler.cs" />
-    <Compile Include="DynamicHandler.cs" />
-    <Compile Include="FaviconHandler.cs" />
-    <Compile Include="IHandler.cs" />
-    <Compile Include="IndexHandler.cs" />
-    <Compile Include="PageNotFoundHandler.cs" />
+    <Compile Include="DoubleMetaphone.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="StaticHandler.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\SongRequest.Config\SongRequest.Config.csproj">
-      <Project>{4447182E-C61C-4FB6-960D-433A02550C73}</Project>
-      <Name>SongRequest.Config</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\SongRequest.SongPlayer\SongRequest.SongPlayer.csproj">
-      <Project>{3EF3A104-9258-4DB9-8FDD-FF7CD586BCF1}</Project>
-      <Name>SongRequest.SongPlayer</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\SongRequest.Utils\SongRequest.Utils.csproj">
-      <Project>{6D5ED1A4-E369-4753-A99A-0FAC64F6C8ED}</Project>
-      <Name>SongRequest.Utils</Name>
-    </ProjectReference>
+    <Compile Include="StringExtensions.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

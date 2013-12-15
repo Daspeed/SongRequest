@@ -20,6 +20,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SongRequest.Config", "SongR
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SongRequest.SongPlayer", "SongRequest.SongPlayer\SongRequest.SongPlayer.csproj", "{3EF3A104-9258-4DB9-8FDD-FF7CD586BCF1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SongRequest.Utils", "SongRequest.Utils\SongRequest.Utils.csproj", "{6D5ED1A4-E369-4753-A99A-0FAC64F6C8ED}"
+EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = SongRequest.vsmdi
@@ -49,6 +51,10 @@ Global
 		{3EF3A104-9258-4DB9-8FDD-FF7CD586BCF1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3EF3A104-9258-4DB9-8FDD-FF7CD586BCF1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3EF3A104-9258-4DB9-8FDD-FF7CD586BCF1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6D5ED1A4-E369-4753-A99A-0FAC64F6C8ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6D5ED1A4-E369-4753-A99A-0FAC64F6C8ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6D5ED1A4-E369-4753-A99A-0FAC64F6C8ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6D5ED1A4-E369-4753-A99A-0FAC64F6C8ED}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
