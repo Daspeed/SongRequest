@@ -6,12 +6,16 @@ namespace SongRequest.SongPlayer
 {
     public class SongPlayerFactory
     {
+        private static object _lockObject = new object();
         private static SongPlayerFactory _factory;
 
         public static SongPlayerFactory GetFactory()
         {
-            if(_factory == null)
-                _factory = new SongPlayerFactory();
+            lock (_lockObject)
+            {
+                if (_factory == null)
+                    _factory = new SongPlayerFactory();
+            }
 
             return _factory;
         }
