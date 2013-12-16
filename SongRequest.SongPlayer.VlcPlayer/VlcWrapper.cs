@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 
 namespace SongRequest
 {
@@ -94,11 +95,25 @@ namespace SongRequest
             }
             set
             {
-                SetVolume(player, value);
+                HashSet<int> invalidStates = new HashSet<int> { 0, 1, 2, 5, 6, 7 };
+                int state = GetState(player);
+                if (invalidStates.Contains(state)) // not ready at this time
+                {
+                    new Thread(x => {
+                        do
+                        {
+                            state = GetState(player);
+                            Thread.Sleep(10);
+                        }
+                        while (invalidStates.Contains(state));
+                        SetVolume(player, value);
+                    }).Start();
+                }
+                else
+                {
+                    SetVolume(player, value);
+                }
             }
         }
-
-
-
     }
 }
