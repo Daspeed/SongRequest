@@ -9,20 +9,23 @@ namespace SongRequest.SongPlayer
         private static object _lockObject = new object();
         private static SongPlayerFactory _factory;
 
-        public static SongPlayerFactory GetFactory()
+        private static SongPlayerFactory Instance
         {
-            lock (_lockObject)
+            get
             {
-                if (_factory == null)
-                    _factory = new SongPlayerFactory();
-            }
+                lock (_lockObject)
+                {
+                    if (_factory == null)
+                        _factory = new SongPlayerFactory();
+                }
 
-            return _factory;
+                return _factory;
+            }
         }
 
         public static ISongplayer GetSongPlayer()
         {
-            return GetFactory().SongPlayer;
+            return Instance.SongPlayer;
         }
 
         [Import(typeof(ISongplayer))]
@@ -56,17 +59,8 @@ namespace SongRequest.SongPlayer
         {
             DirectoryCatalog catalog = new DirectoryCatalog("addins");
             CompositionContainer container = new CompositionContainer(catalog);
-            try
-            {
-                container.ComposeParts(this);
-            }
-            catch (CompositionException ex)
-            {
-                throw ex;
-            }
-
+            container.ComposeParts(this);
         }
-
     }
 }
 
