@@ -2,9 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.ComponentModel.Composition;
 
 namespace SongRequest.SongPlayer
 {
+    [Export(typeof(ISongplayer))]
     public class SongPlayer : ISongplayer, IDisposable
     {
         private static object lockObject = new object();
