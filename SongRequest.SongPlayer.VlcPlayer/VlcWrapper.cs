@@ -9,38 +9,38 @@ namespace SongRequest
 {
     public class VlcWrapper
     {
-        [DllImport(@"libvlc.so.5", EntryPoint = "libvlc_new", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(@"C:\Program Files (x86)\VideoLAN\VLC\libvlc", EntryPoint = "libvlc_new", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr NewCore(int argc, IntPtr argv);
 
-        [DllImport(@"libvlc.so.5", EntryPoint = "libvlc_media_player_new", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(@"C:\Program Files (x86)\VideoLAN\VLC\libvlc", EntryPoint = "libvlc_media_player_new", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr NewPlayer(IntPtr instance);
 
-        [DllImport(@"libvlc.so.5", EntryPoint = "libvlc_media_new_path", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(@"C:\Program Files (x86)\VideoLAN\VLC\libvlc", EntryPoint = "libvlc_media_new_path", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr NewMedia(IntPtr instance, string path);
 
-        [DllImport(@"libvlc.so.5", EntryPoint = "libvlc_media_player_set_media", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(@"C:\Program Files (x86)\VideoLAN\VLC\libvlc", EntryPoint = "libvlc_media_player_set_media", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetMedia(IntPtr player, IntPtr media);
 
-        [DllImport(@"libvlc.so.5", EntryPoint = "libvlc_audio_set_volume", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(@"C:\Program Files (x86)\VideoLAN\VLC\libvlc", EntryPoint = "libvlc_audio_set_volume", CallingConvention = CallingConvention.Cdecl)]
         public static extern int SetVolume(IntPtr player, int volume);
 
-        [DllImport(@"libvlc.so.5", EntryPoint = "libvlc_audio_get_volume", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(@"C:\Program Files (x86)\VideoLAN\VLC\libvlc", EntryPoint = "libvlc_audio_get_volume", CallingConvention = CallingConvention.Cdecl)]
         public static extern int GetVolume(IntPtr player);
 
-        [DllImport(@"libvlc.so.5", EntryPoint = "libvlc_media_player_get_time", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(@"C:\Program Files (x86)\VideoLAN\VLC\libvlc", EntryPoint = "libvlc_media_player_get_time", CallingConvention = CallingConvention.Cdecl)]
         public static extern long GetPosition(IntPtr player);
 
         // IDLE/CLOSE=0, OPENING=1, BUFFERING=2, PLAYING=3, PAUSED=4, STOPPING=5, ENDED=6, ERROR=7
-        [DllImport(@"libvlc.so.5", EntryPoint = "libvlc_media_player_get_state", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(@"C:\Program Files (x86)\VideoLAN\VLC\libvlc", EntryPoint = "libvlc_media_player_get_state", CallingConvention = CallingConvention.Cdecl)]
         public static extern int GetState(IntPtr player);
 
-        [DllImport(@"libvlc.so.5", EntryPoint = "libvlc_media_player_play", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(@"C:\Program Files (x86)\VideoLAN\VLC\libvlc", EntryPoint = "libvlc_media_player_play", CallingConvention = CallingConvention.Cdecl)]
         public static extern int Play(IntPtr player);
 
-        [DllImport(@"libvlc.so.5", EntryPoint = "libvlc_media_player_pause", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(@"C:\Program Files (x86)\VideoLAN\VLC\libvlc", EntryPoint = "libvlc_media_player_pause", CallingConvention = CallingConvention.Cdecl)]
         public static extern void Pause(IntPtr player);
 
-        [DllImport(@"libvlc.so.5", EntryPoint = "libvlc_media_player_pause", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(@"C:\Program Files (x86)\VideoLAN\VLC\libvlc", EntryPoint = "libvlc_media_player_pause", CallingConvention = CallingConvention.Cdecl)]
         public static extern void Stop(IntPtr player);
 
 
