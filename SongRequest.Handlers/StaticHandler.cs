@@ -7,11 +7,11 @@ namespace SongRequest.Handlers
 {
     public class StaticHandler : BaseHandler
     {
-		System.Reflection.Assembly _resourceAssembly;
+		private Func<string, Stream> _resourceGetter;
 
-		public StaticHandler (System.Reflection.Assembly resourceAssembly)
+        public StaticHandler(Func<string, Stream> resourceGetter)
 		{
-			this._resourceAssembly = resourceAssembly;
+            _resourceGetter = resourceGetter;
 		}
 
         public override void Process(HttpListenerRequest request, HttpListenerResponse response)
@@ -95,7 +95,7 @@ namespace SongRequest.Handlers
             return File.Open(path, FileMode.Open, FileAccess.Read, FileShare.Read);
 #else
             string resourceName = name.Replace("/", ".");
-            return _resourceAssembly.GetManifestResourceStream("SongRequest.Static." + resourceName);
+            return _resourceGetter("SongRequest.Static." + resourceName);
 #endif
         }
     }

@@ -1,13 +1,15 @@
 ﻿using System.Net;
 using SongRequest.Config;
 using SongRequest.SongPlayer;
+using System;
+using System.IO;
 
 namespace SongRequest.Handlers
 {
     public class IndexHandler : StaticHandler
     {
-		public IndexHandler (System.Reflection.Assembly resourceAssembly) :
-			base(resourceAssembly)
+        public IndexHandler(Func<string, Stream> resourceGetter) :
+            base(resourceGetter)
 		{
 			
 		}
