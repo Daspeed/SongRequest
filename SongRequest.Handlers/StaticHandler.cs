@@ -79,7 +79,11 @@ namespace SongRequest.Handlers
         {
             // When in debug mode, get files from hard disk instead of resources
 #if DEBUG
-            string path = Path.GetFullPath(Environment.CurrentDirectory + @"\..\..\Static\" + name);
+#if __MonoCS__
+			string path = Path.GetFullPath(Environment.CurrentDirectory + @"/../../Static/" + name);
+#else
+			string path = Path.GetFullPath(Environment.CurrentDirectory + @"\..\..\Static\" + name);
+#endif
             return File.Open(path, FileMode.Open, FileAccess.Read, FileShare.Read);
 #else
             string resourceName = name.Replace("/", ".");
