@@ -9,14 +9,15 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>SongRequest.SongPlayer.VlcPlayer</RootNamespace>
     <AssemblyName>SongRequest.SongPlayer.VlcPlayer</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <ProductVersion>10.0.0</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>..\SongRequest\bin\Debug\addins</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -25,7 +26,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>..\SongRequest\bin\Release\addins</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -45,11 +46,11 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SongRequest.Config\SongRequest.Config.csproj">
-      <Project>{4447182e-c61c-4fb6-960d-433a02550c73}</Project>
+      <Project>{4447182E-C61C-4FB6-960D-433A02550C73}</Project>
       <Name>SongRequest.Config</Name>
     </ProjectReference>
     <ProjectReference Include="..\SongRequest.SongPlayer\SongRequest.SongPlayer.csproj">
-      <Project>{3ef3a104-9258-4db9-8fdd-ff7cd586bcf1}</Project>
+      <Project>{3EF3A104-9258-4DB9-8FDD-FF7CD586BCF1}</Project>
       <Name>SongRequest.SongPlayer</Name>
     </ProjectReference>
   </ItemGroup>

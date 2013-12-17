@@ -149,7 +149,7 @@ namespace SongRequest.SongPlayer
 
                 OnStatusChanged("Loaded library containing " + _songs.Count() + " songs");
             }
-            catch (IOException)
+            catch (Exception)
             {
                 OnStatusChanged("Error loading library...");
             }

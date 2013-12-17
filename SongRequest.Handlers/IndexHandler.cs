@@ -6,9 +6,15 @@ namespace SongRequest.Handlers
 {
     public class IndexHandler : StaticHandler
     {
+		public IndexHandler (System.Reflection.Assembly resourceAssembly) :
+			base(resourceAssembly)
+		{
+			
+		}
+
         public override void Process(HttpListenerRequest request, HttpListenerResponse response)
         {
-            ConfigFile config = SongPlayerFactory.GetConfigFile();
+            SongPlayerFactory.GetConfigFile();
 
             string text = Get("index.htm");
             response.ContentType = "text/html";

@@ -1,4 +1,4 @@
-﻿﻿using System;
+﻿using System;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
@@ -49,8 +49,7 @@ namespace SongRequest
         {
             Console.Clear();
             DrawArt();
-
-            using (HttpListener listener = new HttpListener())
+			            using (HttpListener listener = new HttpListener())
             {
                 if (!int.TryParse(SongPlayerFactory.GetConfigFile().GetValue("server.port"), out port))
                     port = 8765;

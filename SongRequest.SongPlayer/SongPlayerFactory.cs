@@ -43,10 +43,12 @@ namespace SongRequest.SongPlayer
                 ConfigFile configFile = new ConfigFile("songrequest.config");
                 configFile.SetValue("server.port", "8765");
                 configFile.SetValue("server.clients", "all");
+                
                 if (Settings.IsRunningOnWindows())
                     configFile.SetValue ("library.path", "c:\\music");
                 else
-                    configFile.SetValue ("library.path", "//music");
+                    configFile.SetValue ("library.path", "~/Music");
+
                 configFile.SetValue("library.minutesbetweenscans", "1");
                 configFile.SetValue("library.extensions", "mp3");
                 configFile.SetValue("player.minimalsonginqueue", "0");
