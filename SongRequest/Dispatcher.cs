@@ -1,5 +1,4 @@
 ﻿using SongRequest.Handlers;
-using SongRequest.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -11,8 +10,8 @@ namespace SongRequest
     {
         private static Dictionary<string, IHandler> _mappings = new Dictionary<string, IHandler>
         {
-            {string.Empty, new IndexHandler()},
-            {"static", new StaticHandler()},
+            {string.Empty, new IndexHandler(typeof(Dispatcher).Assembly.GetManifestResourceStream)},
+            {"static", new StaticHandler(typeof(Dispatcher).Assembly.GetManifestResourceStream)},
             {"dynamic", new DynamicHandler()},            
             {"favicon.ico", new FaviconHandler()}
         };

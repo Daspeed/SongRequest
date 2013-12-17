@@ -7,6 +7,13 @@ namespace SongRequest.Handlers
 {
     public class StaticHandler : BaseHandler
     {
+		private Func<string, Stream> _resourceGetter;
+
+        public StaticHandler(Func<string, Stream> resourceGetter)
+		{
+            _resourceGetter = resourceGetter;
+		}
+
         public override void Process(HttpListenerRequest request, HttpListenerResponse response)
         {
             Match match = Regex.Match(request.RawUrl, "^/static/(.+)$");
@@ -77,13 +84,18 @@ namespace SongRequest.Handlers
 
         protected Stream GetStream(string name)
         {
+
             // When in debug mode, get files from hard disk instead of resources
 #if DEBUG
-            string path = Path.GetFullPath(Environment.CurrentDirectory + @"\..\..\Static\" + name);
+#if __MonoCS__
+			string path = Path.GetFullPath(Environment.CurrentDirectory + @"/../../Static/" + name);
+#else
+			string path = Path.GetFullPath(Environment.CurrentDirectory + @"\..\..\Static\" + name);
+#endif
             return File.Open(path, FileMode.Open, FileAccess.Read, FileShare.Read);
 #else
             string resourceName = name.Replace("/", ".");
-            return typeof(StaticHandler).Assembly.GetManifestResourceStream("SongRequest.Static." + resourceName);
+            return _resourceGetter("SongRequest.Static." + resourceName);
 #endif
         }
     }

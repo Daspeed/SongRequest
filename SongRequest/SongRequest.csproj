@@ -39,6 +39,8 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+    <ConsolePause>false</ConsolePause>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -47,44 +49,20 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
-    <Reference Include="System.Data" />
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\dlls\Newtonsoft.Json.dll</HintPath>
-    </Reference>
     <Reference Include="System.Configuration" />
-    <Reference Include="taglib-sharp">
-      <HintPath>..\dlls\taglib-sharp.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConfigReader.cs" />
-    <Compile Include="Config\ConfigSection.cs" />
-    <Compile Include="Config\ConfigFile.cs" />
-    <Compile Include="DoubleMetaphone.cs" />
     <Compile Include="Dispatcher.cs" />
-    <Compile Include="Handlers\BaseHandler.cs" />
-    <Compile Include="Handlers\FaviconHandler.cs" />
-    <Compile Include="Handlers\DynamicHandler.cs" />
-    <Compile Include="Handlers\StaticHandler.cs" />
-    <Compile Include="Handlers\IndexHandler.cs" />
-    <Compile Include="Handlers\IHandler.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SongPlayer\FairQueue.cs" />
-    <Compile Include="SongPlayer\RequestedSong.cs" />
-    <Compile Include="SongPlayer\SongPlayerWindowsMediaPlayer.cs" />
-    <Compile Include="SongPlayer\ISongPlayer.cs" />
-    <Compile Include="SongPlayer\Song.cs" />
-    <Compile Include="SongPlayer\PlayerStatus.cs" />
-    <Compile Include="SongPlayer\SongLibrary.cs" />
-    <Compile Include="SongPlayer\SongPlayerFactory.cs" />
-    <Compile Include="StringExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Static\404.htm" />
@@ -121,17 +99,6 @@
     <EmbeddedResource Include="Static\favicon.ico" />
   </ItemGroup>
   <ItemGroup>
-    <COMReference Include="WMPLib">
-      <Guid>{6BF52A50-394A-11D3-B153-00C04F79FAA6}</Guid>
-      <VersionMajor>1</VersionMajor>
-      <VersionMinor>0</VersionMinor>
-      <Lcid>0</Lcid>
-      <WrapperTool>tlbimp</WrapperTool>
-      <Isolated>False</Isolated>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </COMReference>
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Static\angular.min.js" />
     <EmbeddedResource Include="Static\SongRequest.js" />
   </ItemGroup>
@@ -140,5 +107,23 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Static\style.css" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SongRequest.Config\SongRequest.Config.csproj">
+      <Project>{4447182E-C61C-4FB6-960D-433A02550C73}</Project>
+      <Name>SongRequest.Config</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SongRequest.Handlers\SongRequest.Handlers.csproj">
+      <Project>{89D6AA35-C401-4581-934C-E10DFA4C5EED}</Project>
+      <Name>SongRequest.Handlers</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SongRequest.SongPlayer\SongRequest.SongPlayer.csproj">
+      <Project>{3EF3A104-9258-4DB9-8FDD-FF7CD586BCF1}</Project>
+      <Name>SongRequest.SongPlayer</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SongRequest.Utils\SongRequest.Utils.csproj">
+      <Project>{6D5ED1A4-E369-4753-A99A-0FAC64F6C8ED}</Project>
+      <Name>SongRequest.Utils</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>

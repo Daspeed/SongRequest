@@ -6,8 +6,9 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using SongRequest.Utils;
 
-namespace SongRequest
+namespace SongRequest.SongPlayer
 {
     public class SongLibrary
     {
@@ -148,7 +149,7 @@ namespace SongRequest
 
                 OnStatusChanged("Loaded library containing " + _songs.Count() + " songs");
             }
-            catch (IOException)
+            catch (Exception)
             {
                 OnStatusChanged("Error loading library...");
             }

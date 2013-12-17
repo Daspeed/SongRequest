@@ -1,6 +1,6 @@
 ﻿using System.Net;
 
-namespace SongRequest.Interfaces
+namespace SongRequest.Handlers
 {
     public interface IHandler
     {

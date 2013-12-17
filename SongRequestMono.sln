@@ -1,0 +1,60 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SongRequest", "SongRequest\SongRequest.csproj", "{3156BF98-361E-4C62-A228-01E0F233BA9E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dlls", "dlls", "{F541C411-AB7A-4353-8469-3DF3AE203675}"
+	ProjectSection(SolutionItems) = preProject
+		dlls\Newtonsoft.Json.dll = dlls\Newtonsoft.Json.dll
+		dlls\policy.2.0.taglib-sharp.config = dlls\policy.2.0.taglib-sharp.config
+		dlls\policy.2.0.taglib-sharp.dll = dlls\policy.2.0.taglib-sharp.dll
+		dlls\taglib-sharp.dll = dlls\taglib-sharp.dll
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SongRequest.Handlers", "SongRequest.Handlers\SongRequest.Handlers.csproj", "{89D6AA35-C401-4581-934C-E10DFA4C5EED}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SongRequest.Config", "SongRequest.Config\SongRequest.Config.csproj", "{4447182E-C61C-4FB6-960D-433A02550C73}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SongRequest.Utils", "SongRequest.Utils\SongRequest.Utils.csproj", "{6D5ED1A4-E369-4753-A99A-0FAC64F6C8ED}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SongRequest.SongPlayer", "SongRequest.SongPlayer\SongRequest.SongPlayer.csproj", "{3EF3A104-9258-4DB9-8FDD-FF7CD586BCF1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SongRequest.SongPlayer.VlcPlayer", "SongRequest.SongPlayer.VlcPlayer\SongRequest.SongPlayer.VlcPlayer.csproj", "{556D0B74-6450-445C-9CCB-442C926BD8AC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3156BF98-361E-4C62-A228-01E0F233BA9E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3156BF98-361E-4C62-A228-01E0F233BA9E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3156BF98-361E-4C62-A228-01E0F233BA9E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3156BF98-361E-4C62-A228-01E0F233BA9E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3EF3A104-9258-4DB9-8FDD-FF7CD586BCF1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3EF3A104-9258-4DB9-8FDD-FF7CD586BCF1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3EF3A104-9258-4DB9-8FDD-FF7CD586BCF1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3EF3A104-9258-4DB9-8FDD-FF7CD586BCF1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4447182E-C61C-4FB6-960D-433A02550C73}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4447182E-C61C-4FB6-960D-433A02550C73}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4447182E-C61C-4FB6-960D-433A02550C73}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4447182E-C61C-4FB6-960D-433A02550C73}.Release|Any CPU.Build.0 = Release|Any CPU
+		{556D0B74-6450-445C-9CCB-442C926BD8AC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{556D0B74-6450-445C-9CCB-442C926BD8AC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{556D0B74-6450-445C-9CCB-442C926BD8AC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{556D0B74-6450-445C-9CCB-442C926BD8AC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6D5ED1A4-E369-4753-A99A-0FAC64F6C8ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6D5ED1A4-E369-4753-A99A-0FAC64F6C8ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6D5ED1A4-E369-4753-A99A-0FAC64F6C8ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6D5ED1A4-E369-4753-A99A-0FAC64F6C8ED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{89D6AA35-C401-4581-934C-E10DFA4C5EED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{89D6AA35-C401-4581-934C-E10DFA4C5EED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{89D6AA35-C401-4581-934C-E10DFA4C5EED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{89D6AA35-C401-4581-934C-E10DFA4C5EED}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = SongRequest\SongRequest.csproj
+	EndGlobalSection
+EndGlobal

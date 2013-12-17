@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SongRequest
+namespace SongRequest.SongPlayer
 {
     public class RequestedSong
     {
