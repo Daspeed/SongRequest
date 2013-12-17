@@ -4,6 +4,12 @@ namespace SongRequest.Handlers
 {
     public class PageNotFoundHandler : StaticHandler
     {
+		public PageNotFoundHandler (System.Reflection.Assembly resourceAssembly) :
+			base(resourceAssembly)
+		{
+			
+		}
+
         public override void Process(HttpListenerRequest request, HttpListenerResponse response)
         {
             string text = Get("404.htm");

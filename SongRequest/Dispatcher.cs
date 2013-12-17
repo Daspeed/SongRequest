@@ -10,8 +10,8 @@ namespace SongRequest
     {
         private static Dictionary<string, IHandler> _mappings = new Dictionary<string, IHandler>
         {
-            {string.Empty, new IndexHandler()},
-            {"static", new StaticHandler()},
+            {string.Empty, new IndexHandler(typeof(Dispatcher).Assembly)},
+            {"static", new StaticHandler(typeof(Dispatcher).Assembly)},
             {"dynamic", new DynamicHandler()},            
             {"favicon.ico", new FaviconHandler()}
         };
