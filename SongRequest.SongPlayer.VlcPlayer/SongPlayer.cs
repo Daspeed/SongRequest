@@ -29,6 +29,9 @@ namespace SongRequest.SongPlayer
         /// </summary>
         public SongPlayer()
         {
+            string path = Environment.GetEnvironmentVariable("Path", EnvironmentVariableTarget.Machine);
+            Environment.SetEnvironmentVariable("Path", path + @";C:\Program Files (x86)\VideoLAN\VLC\");
+            
             player = new VlcWrapper();
             
             _queue = new FairQueue();
