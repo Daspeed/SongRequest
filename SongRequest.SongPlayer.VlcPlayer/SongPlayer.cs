@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.ComponentModel.Composition;
+using SongRequest.SongPlayer.VlcPlayer;
 
 namespace SongRequest.SongPlayer
 {

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading;
 using WMPLib;
 
-namespace SongRequest.SongPlayer
+namespace SongRequest.SongPlayer.WMPAddin
 {
     [Export(typeof(ISongplayer))]
     public class SongPlayerWindowsMediaPlayer : ISongplayer, IDisposable
