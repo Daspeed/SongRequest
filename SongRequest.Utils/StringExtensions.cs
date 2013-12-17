@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Threading;
 using DoubleMetaphone;
 
-namespace SongRequest
+namespace SongRequest.Utils
 {
     public static class StringExtensions
     {

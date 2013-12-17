@@ -1,7 +1,8 @@
-﻿using System;
+﻿﻿using System;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
+using SongRequest.SongPlayer;
 
 namespace SongRequest
 {
@@ -147,8 +148,11 @@ namespace SongRequest
         {
             lock (consoleLock)
             {
-                string white = new string(' ', Console.WindowWidth - 36);
-                Console.SetCursorPosition(0, Console.WindowHeight - 10);
+                int width = Console.WindowWidth == 0 ? 0 : Console.WindowWidth - 36;
+                int height = Console.WindowHeight == 0 ? 0 : Console.WindowHeight - 10;
+
+                string white = new string(' ', width);
+                Console.SetCursorPosition(0, height);
                 Console.WriteLine(white + @"    ,");
                 Console.WriteLine(white + @"    |\        __");
                 Console.WriteLine(white + @"    | |      |--|             __");

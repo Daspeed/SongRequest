@@ -1,5 +1,6 @@
-﻿Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2010
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dlls", "dlls", "{996BB787-D9A5-43CF-A480-142179769986}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SongRequest", "SongRequest\SongRequest.csproj", "{3156BF98-361E-4C62-A228-01E0F233BA9E}"
@@ -12,6 +13,20 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		SongRequest.vsmdi = SongRequest.vsmdi
 		TraceAndTestImpact.testsettings = TraceAndTestImpact.testsettings
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SongRequest.Handlers", "SongRequest.Handlers\SongRequest.Handlers.csproj", "{89D6AA35-C401-4581-934C-E10DFA4C5EED}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SongRequest.Config", "SongRequest.Config\SongRequest.Config.csproj", "{4447182E-C61C-4FB6-960D-433A02550C73}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SongRequest.SongPlayer", "SongRequest.SongPlayer\SongRequest.SongPlayer.csproj", "{3EF3A104-9258-4DB9-8FDD-FF7CD586BCF1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SongRequest.Utils", "SongRequest.Utils\SongRequest.Utils.csproj", "{6D5ED1A4-E369-4753-A99A-0FAC64F6C8ED}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SongRequest.SongPlayer.Addins", "SongRequest.SongPlayer.Addins", "{64B55CBE-98A4-45A2-8FD4-6C3C55742D50}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SongRequest.SongPlayer.WMPAddin", "SongRequest.SongPlayer.WMPAddin\SongRequest.SongPlayer.WMPAddin.csproj", "{B8027F15-2077-4A6C-9FDF-20BA3C4991AF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SongRequest.SongPlayer.VlcPlayer", "SongRequest.SongPlayer.VlcPlayer\SongRequest.SongPlayer.VlcPlayer.csproj", "{556D0B74-6450-445C-9CCB-442C926BD8AC}"
 EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution
@@ -30,8 +45,36 @@ Global
 		{CB6EC13B-B65E-44A7-9641-C5631929891B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CB6EC13B-B65E-44A7-9641-C5631929891B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CB6EC13B-B65E-44A7-9641-C5631929891B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{89D6AA35-C401-4581-934C-E10DFA4C5EED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{89D6AA35-C401-4581-934C-E10DFA4C5EED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{89D6AA35-C401-4581-934C-E10DFA4C5EED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{89D6AA35-C401-4581-934C-E10DFA4C5EED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4447182E-C61C-4FB6-960D-433A02550C73}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4447182E-C61C-4FB6-960D-433A02550C73}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4447182E-C61C-4FB6-960D-433A02550C73}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4447182E-C61C-4FB6-960D-433A02550C73}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3EF3A104-9258-4DB9-8FDD-FF7CD586BCF1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3EF3A104-9258-4DB9-8FDD-FF7CD586BCF1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3EF3A104-9258-4DB9-8FDD-FF7CD586BCF1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3EF3A104-9258-4DB9-8FDD-FF7CD586BCF1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6D5ED1A4-E369-4753-A99A-0FAC64F6C8ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6D5ED1A4-E369-4753-A99A-0FAC64F6C8ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6D5ED1A4-E369-4753-A99A-0FAC64F6C8ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6D5ED1A4-E369-4753-A99A-0FAC64F6C8ED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B8027F15-2077-4A6C-9FDF-20BA3C4991AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B8027F15-2077-4A6C-9FDF-20BA3C4991AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B8027F15-2077-4A6C-9FDF-20BA3C4991AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B8027F15-2077-4A6C-9FDF-20BA3C4991AF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{556D0B74-6450-445C-9CCB-442C926BD8AC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{556D0B74-6450-445C-9CCB-442C926BD8AC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{556D0B74-6450-445C-9CCB-442C926BD8AC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{556D0B74-6450-445C-9CCB-442C926BD8AC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{B8027F15-2077-4A6C-9FDF-20BA3C4991AF} = {64B55CBE-98A4-45A2-8FD4-6C3C55742D50}
+		{556D0B74-6450-445C-9CCB-442C926BD8AC} = {64B55CBE-98A4-45A2-8FD4-6C3C55742D50}
 	EndGlobalSection
 EndGlobal

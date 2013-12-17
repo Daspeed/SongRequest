@@ -1,19 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>
-    </ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{CB6EC13B-B65E-44A7-9641-C5631929891B}</ProjectGuid>
+    <ProjectGuid>{556D0B74-6450-445C-9CCB-442C926BD8AC}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SongRequest.Test</RootNamespace>
-    <AssemblyName>SongRequest.Test</AssemblyName>
+    <RootNamespace>SongRequest.SongPlayer.VlcPlayer</RootNamespace>
+    <AssemblyName>SongRequest.SongPlayer.VlcPlayer</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -23,6 +20,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -31,47 +29,37 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="System" />
-    <Reference Include="System.Core">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
+    <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.Core" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
   </ItemGroup>
   <ItemGroup>
-    <CodeAnalysisDependentAssemblyPaths Condition=" '$(VS100COMNTOOLS)' != '' " Include="$(VS100COMNTOOLS)..\IDE\PrivateAssemblies">
-      <Visible>False</Visible>
-    </CodeAnalysisDependentAssemblyPaths>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="StringTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="FairQueueTest.cs" />
+    <Compile Include="SongPlayer.cs" />
+    <Compile Include="VlcWrapper.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SongRequest.Config\SongRequest.Config.csproj">
-      <Project>{4447182E-C61C-4FB6-960D-433A02550C73}</Project>
+      <Project>{4447182e-c61c-4fb6-960d-433a02550c73}</Project>
       <Name>SongRequest.Config</Name>
     </ProjectReference>
-    <ProjectReference Include="..\SongRequest.Handlers\SongRequest.Handlers.csproj">
-      <Project>{89D6AA35-C401-4581-934C-E10DFA4C5EED}</Project>
-      <Name>SongRequest.Handlers</Name>
-    </ProjectReference>
     <ProjectReference Include="..\SongRequest.SongPlayer\SongRequest.SongPlayer.csproj">
-      <Project>{3EF3A104-9258-4DB9-8FDD-FF7CD586BCF1}</Project>
+      <Project>{3ef3a104-9258-4db9-8fdd-ff7cd586bcf1}</Project>
       <Name>SongRequest.SongPlayer</Name>
     </ProjectReference>
-    <ProjectReference Include="..\SongRequest.Utils\SongRequest.Utils.csproj">
-      <Project>{6D5ED1A4-E369-4753-A99A-0FAC64F6C8ED}</Project>
-      <Name>SongRequest.Utils</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\SongRequest\SongRequest.csproj">
-      <Project>{3156BF98-361E-4C62-A228-01E0F233BA9E}</Project>
-      <Name>SongRequest</Name>
-    </ProjectReference>
   </ItemGroup>
-  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>
+      mkdir "$(SolutionDir)$(SolutionName)\$(OutDir)addins"
+      copy "$(TargetDir)$(TargetFileName)" "$(SolutionDir)$(SolutionName)\$(OutDir)addins\$(TargetFileName)"
+    </PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
