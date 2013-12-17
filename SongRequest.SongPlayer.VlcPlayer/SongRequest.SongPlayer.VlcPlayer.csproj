@@ -1,15 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{3EF3A104-9258-4DB9-8FDD-FF7CD586BCF1}</ProjectGuid>
+    <ProjectGuid>{556D0B74-6450-445C-9CCB-442C926BD8AC}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SongRequest.SongPlayer</RootNamespace>
-    <AssemblyName>SongRequest.SongPlayer</AssemblyName>
+    <RootNamespace>SongRequest.SongPlayer.VlcPlayer</RootNamespace>
+    <AssemblyName>SongRequest.SongPlayer.VlcPlayer</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -21,6 +20,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -29,37 +29,37 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="taglib-sharp">
-      <HintPath>..\dlls\taglib-sharp.dll</HintPath>
-    </Reference>
+    <Reference Include="System.Data" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FairQueue.cs" />
-    <Compile Include="ISongPlayer.cs" />
-    <Compile Include="PlayerStatus.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RequestedSong.cs" />
-    <Compile Include="Song.cs" />
-    <Compile Include="SongLibrary.cs" />
-    <Compile Include="SongPlayerFactory.cs" />
+    <Compile Include="SongPlayer.cs" />
+    <Compile Include="VlcWrapper.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SongRequest.Config\SongRequest.Config.csproj">
-      <Project>{4447182E-C61C-4FB6-960D-433A02550C73}</Project>
+      <Project>{4447182e-c61c-4fb6-960d-433a02550c73}</Project>
       <Name>SongRequest.Config</Name>
     </ProjectReference>
-    <ProjectReference Include="..\SongRequest.Utils\SongRequest.Utils.csproj">
-      <Project>{6D5ED1A4-E369-4753-A99A-0FAC64F6C8ED}</Project>
-      <Name>SongRequest.Utils</Name>
+    <ProjectReference Include="..\SongRequest.SongPlayer\SongRequest.SongPlayer.csproj">
+      <Project>{3ef3a104-9258-4db9-8fdd-ff7cd586bcf1}</Project>
+      <Name>SongRequest.SongPlayer</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>
+      mkdir "$(SolutionDir)$(SolutionName)\$(OutDir)addins"
+      copy "$(TargetDir)$(TargetFileName)" "$(SolutionDir)$(SolutionName)\$(OutDir)addins\$(TargetFileName)"
+    </PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
