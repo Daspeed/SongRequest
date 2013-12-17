@@ -43,7 +43,6 @@
     <Compile Include="FaviconHandler.cs" />
     <Compile Include="IHandler.cs" />
     <Compile Include="IndexHandler.cs" />
-    <Compile Include="PageNotFoundHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StaticHandler.cs" />
   </ItemGroup>
