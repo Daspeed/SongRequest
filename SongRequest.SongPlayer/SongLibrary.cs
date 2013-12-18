@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using SongRequest.Utils;
+using DoubleMetaphone;
 
 namespace SongRequest.SongPlayer
 {
@@ -138,11 +139,19 @@ namespace SongRequest.SongPlayer
                                 {
                                     List<Song> songs = (List<Song>)fromLibrary;
                                     foreach (Song song in songs)
+                                    {
+                                        song.GenerateSearchAndDoubleMetaphone();
                                         _songs.Add(song.FileName, song);
+                                    }
                                 }
                                 else if (fromLibrary is Dictionary<string, Song>)
                                 {
                                     _songs = (Dictionary<string, Song>)fromLibrary;
+
+                                    foreach (Song song in _songs.Values)
+                                    {
+                                        song.GenerateSearchAndDoubleMetaphone();
+                                    }
                                 }
                                 else if (fromLibrary is Dictionary<string, Song>.ValueCollection)
                                 {
@@ -150,7 +159,10 @@ namespace SongRequest.SongPlayer
 
                                     List<Song> songs = valueCollection.ToList();
                                     foreach (Song song in songs)
+                                    {
+                                        song.GenerateSearchAndDoubleMetaphone();
                                         _songs.Add(song.FileName, song);
+                                    }
                                 }
                                 else
                                 {
@@ -333,6 +345,7 @@ namespace SongRequest.SongPlayer
                     song.FileName = fileName;
                     song.Name = Regex.Replace(fileInfo.Name, @"\" + fileInfo.Extension + "$", string.Empty, RegexOptions.IgnoreCase);
                     song.DateCreated = fileInfo.CreationTime.ToString("yyyy-MM-dd HH:mm");
+                    song.GenerateSearchAndDoubleMetaphone();
 
                     lock (lockObject)
                     {
@@ -412,6 +425,8 @@ namespace SongRequest.SongPlayer
                         if (!string.IsNullOrEmpty(taglibFile.Tag.JoinedPerformers))
                             song.Artist = taglibFile.Tag.JoinedPerformers.Trim();
 
+                        song.GenerateSearchAndDoubleMetaphone();
+
                         if (!string.IsNullOrEmpty(taglibFile.Tag.JoinedGenres))
                             song.Genre = taglibFile.Tag.JoinedGenres.Trim();
 
@@ -453,11 +468,13 @@ namespace SongRequest.SongPlayer
 
                     bool includeFileNameInSearch = match.Success && match.Groups[1].Value.Contains("f");
 
-                    Func<string, bool> searchFunc = (source) => StringExtensions.ContainsIgnoreCaseNonSpace(source, includeFileNameInSearch ? match.Groups[2].Value : filter);
+                    string searchValue = includeFileNameInSearch ? match.Groups[2].Value : filter;
+                    Func<string, bool> searchFunc = (source) => StringExtensions.ContainsIgnoreCaseNonSpace(source, searchValue);
 
+                    Regex regex = null;
                     if (match.Success && match.Groups[1].Value.Contains("r"))
                     {
-                        Regex regex = new Func<Regex>(() =>
+                        regex = new Func<Regex>(() =>
                         {
                             try { return new Regex(match.Groups[2].Value, RegexOptions.IgnoreCase); }
                             catch (Exception) { return null; }
@@ -467,11 +484,20 @@ namespace SongRequest.SongPlayer
                             searchFunc = regex.IsMatch;
                     }
 
-                    songs = _songs.AsParallel().Where(s =>
-                        searchFunc(s.Value.Name ?? string.Empty) ||
-                        searchFunc(s.Value.Artist ?? string.Empty) ||
-                        (includeFileNameInSearch ? searchFunc(s.Key ?? string.Empty) : false)
-                    ).Select(x => x.Value);
+                    if (regex != null)
+                    {
+                        songs = _songs.AsParallel().Where(s =>
+                            searchFunc(s.Value.Name ?? string.Empty) ||
+                            searchFunc(s.Value.Artist ?? string.Empty) ||
+                            (includeFileNameInSearch ? searchFunc(s.Key ?? string.Empty) : false)
+                        ).Select(x => x.Value);
+                    }
+                    else
+                    {
+                        string betterSearchValue = searchValue.ToLower().ReplaceUniqueCharacters();
+                        string searchDoubleMetaphone = betterSearchValue.GenerateDoubleMetaphone();
+                        songs = _songs.AsParallel().Where(s => SearchFunction(s.Value, betterSearchValue, searchDoubleMetaphone, includeFileNameInSearch)).Select(x => x.Value);
+                    }
                 }
 
                 // get correct stuff to sort on
@@ -509,6 +535,27 @@ namespace SongRequest.SongPlayer
                                 x => GetSortString(x, importantSort, 1), StringComparer.OrdinalIgnoreCase),
                                 x => GetSortString(x, importantSort, 2), StringComparer.OrdinalIgnoreCase);
             }
+        }
+
+        private bool SearchFunction(Song song, string searchValue, string searchValueDoubleMetaphone, bool includeFileNameInSearch)
+        {
+            // with double metaphone
+            if (!string.IsNullOrEmpty(song.NameDoubleMetaphone) && song.NameDoubleMetaphone.Equals(searchValueDoubleMetaphone, StringComparison.Ordinal))
+                return true;
+            if (!string.IsNullOrEmpty(song.ArtistDoubleMetaphone) && song.ArtistDoubleMetaphone.Equals(searchValueDoubleMetaphone, StringComparison.Ordinal))
+                return true;
+
+            // contains
+            if (!string.IsNullOrEmpty(song.NameSearchValue) && song.NameSearchValue.ContainsIgnoreCaseNonSpace(searchValue))
+                return true;
+            if (!string.IsNullOrEmpty(song.ArtistSearchValue) && song.ArtistSearchValue.ContainsIgnoreCaseNonSpace(searchValue))
+                return true;
+
+            // file name?
+            if (includeFileNameInSearch && !string.IsNullOrEmpty(song.FileNameSearchValue) && song.FileNameSearchValue.ContainsIgnoreCaseNonSpace(searchValue))
+                return true;
+
+            return false;
         }
 
         /// <summary>
