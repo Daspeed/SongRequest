@@ -16,7 +16,7 @@ namespace SongRequest.SongPlayer.VlcPlayer
         public static extern IntPtr NewPlayer(IntPtr instance);
 
         [DllImport(@"libvlc", EntryPoint = "libvlc_media_new_path", CallingConvention = CallingConvention.Cdecl)]
-        public static extern IntPtr NewMedia(IntPtr instance, string path);
+        public static extern IntPtr NewMedia(IntPtr instance, [MarshalAs(UnmanagedType.LPArray)] byte[] path);
 
         [DllImport(@"libvlc", EntryPoint = "libvlc_media_player_set_media", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetMedia(IntPtr player, IntPtr media);
@@ -82,7 +82,7 @@ namespace SongRequest.SongPlayer.VlcPlayer
 
         public void PlaySong(string name)
         {
-            IntPtr media = NewMedia(instance, name);
+            IntPtr media = NewMedia(instance, Encoding.UTF8.GetBytes(name));
             SetMedia(player, media);
             Play(player);
         }
