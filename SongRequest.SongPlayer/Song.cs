@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Security.Cryptography;
 using System.Text;
+using DoubleMetaphone;
+using SongRequest.Utils;
 
 namespace SongRequest.SongPlayer
 {
@@ -34,14 +36,73 @@ namespace SongRequest.SongPlayer
         public string Artist { get; set; }
 
         /// <summary>
+        /// Artist of song
+        /// </summary>
+        public string ArtistSearchValue { get; set; }
+
+        /// <summary>
+        /// Artist of song
+        /// </summary>
+        public string ArtistDoubleMetaphone { get; set; }
+
+        /// <summary>
         /// Name/title of song
         /// </summary>
         public string Name { get; set; }
 
         /// <summary>
+        /// Name/title of song
+        /// </summary>
+        public string NameSearchValue { get; set; }
+
+        /// <summary>
+        /// Name/title of song
+        /// </summary>
+        public string NameDoubleMetaphone { get; set; }
+
+        public void GenerateSearchAndDoubleMetaphone()
+        {
+            if (!string.IsNullOrEmpty(FileName))
+                FileNameSearchValue = FileName.ToLower().ReplaceUniqueCharacters();
+            else
+                FileNameSearchValue = null;
+
+            if (!string.IsNullOrEmpty(Artist))
+            {
+                ArtistSearchValue = Artist.ToLower().ReplaceUniqueCharacters();
+                ArtistDoubleMetaphone = ArtistSearchValue.GenerateDoubleMetaphone();
+            }
+            else
+            {
+                ArtistSearchValue = null;
+                ArtistDoubleMetaphone = null;
+            }
+
+            if (!string.IsNullOrEmpty(Name))
+            {
+                NameSearchValue = Name.ToLower().ReplaceUniqueCharacters();
+                NameDoubleMetaphone = NameSearchValue.GenerateDoubleMetaphone();
+            }
+            else
+            {
+                NameSearchValue = FileNameSearchValue;
+
+                if (!string.IsNullOrEmpty(FileNameSearchValue))
+                    NameDoubleMetaphone = FileNameSearchValue.GenerateDoubleMetaphone();
+                else
+                    NameDoubleMetaphone = null;
+            }
+        }
+
+        /// <summary>
         /// File name
         /// </summary>
         public string FileName { get; set; }
+
+        /// <summary>
+        /// File name
+        /// </summary>
+        public string FileNameSearchValue { get; set; }
 
         /// <summary>
         /// Duration in seconds

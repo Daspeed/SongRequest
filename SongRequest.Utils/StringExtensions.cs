@@ -12,34 +12,16 @@ namespace SongRequest.Utils
             return source.IndexOf(value, StringComparison.OrdinalIgnoreCase) > -1;
         }
 
-
         public static bool ContainsIgnoreCaseNonSpace(this string source, string value)
         {
-            if (string.IsNullOrEmpty(source) || string.IsNullOrEmpty(value))
-                return false;
-
-            string sourceReplaced = source.ToLower().ReplaceUniqueCharacters();
-            string valueReplaced = value.ToLower().ReplaceUniqueCharacters();
-
-            bool normal = Thread.CurrentThread.CurrentCulture.CompareInfo.IndexOf(sourceReplaced, valueReplaced, CompareOptions.IgnoreCase | CompareOptions.IgnoreNonSpace) > -1;
-            if (normal)
-                return true;
-
-            string sourceDoubleMetaphone = sourceReplaced.GenerateDoubleMetaphone();
-            string valueDoubleMetaphone = valueReplaced.GenerateDoubleMetaphone();
-
-            bool doubleMetaphone = sourceDoubleMetaphone.Equals(valueDoubleMetaphone, StringComparison.Ordinal);
-            if (doubleMetaphone)
-                return true;
-
-            return false;
+            return Thread.CurrentThread.CurrentCulture.CompareInfo.IndexOf(source, value, CompareOptions.IgnoreCase | CompareOptions.IgnoreNonSpace) > -1;
         }
 
         public static string ReplaceUniqueCharacters(this string source)
         {
             string value = source;
 
-            string[] removeAnyway = new[] { "(", ")", "[", "]", "original mix", "remix", "'", ".", "@" };
+            string[] removeAnyway = new[] { "(", ")", "[", "]", "'", ".", "@" };
 
             for (int i = 0; i < removeAnyway.Length; i++)
             {
