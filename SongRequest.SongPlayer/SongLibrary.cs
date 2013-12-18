@@ -105,7 +105,7 @@ namespace SongRequest.SongPlayer
                     using (Stream stream = File.Open("library.bin", FileMode.Create))
                     {
                         BinaryFormatter bin = new BinaryFormatter();
-                        bin.Serialize(stream, _songs.Values);
+                        bin.Serialize(stream, _songs.Values.ToList());
                         OnStatusChanged("Saved library to file");
                     }
 
@@ -132,11 +132,30 @@ namespace SongRequest.SongPlayer
                             if (stream.Length > 0)
                             {
                                 BinaryFormatter bin = new BinaryFormatter();
+                                object fromLibrary = bin.Deserialize(stream);
 
-                                List<Song> songs = (List<Song>)bin.Deserialize(stream);
+                                if (fromLibrary is List<Song>)
+                                {
+                                    List<Song> songs = (List<Song>)fromLibrary;
+                                    foreach (Song song in songs)
+                                        _songs.Add(song.FileName, song);
+                                }
+                                else if (fromLibrary is Dictionary<string, Song>)
+                                {
+                                    _songs = (Dictionary<string, Song>)fromLibrary;
+                                }
+                                else if (fromLibrary is Dictionary<string, Song>.ValueCollection)
+                                {
+                                    Dictionary<string, Song>.ValueCollection valueCollection = (Dictionary<string, Song>.ValueCollection)fromLibrary;
 
-                                foreach (Song song in songs)
-                                    _songs.Add(song.FileName, song);
+                                    List<Song> songs = valueCollection.ToList();
+                                    foreach (Song song in songs)
+                                        _songs.Add(song.FileName, song);
+                                }
+                                else
+                                {
+                                    throw new Exception(string.Format("Songs saved in unknown type '{0}'!", fromLibrary.GetType().Name));
+                                }
 
                                 // can't be dirty when just deserialized...
                                 List<Song> dirtySongs = _songs.Values.Where(x => x.IsDirty).ToList();
@@ -287,9 +306,9 @@ namespace SongRequest.SongPlayer
             //Find removed songs
             lock (lockObject)
             {
-                var toRemove = _songs.Keys.Where(x => !files.Contains(x, StringComparer.OrdinalIgnoreCase));
+                string[] keysToRemove = _songs.Keys.Where(x => !files.Contains(x, StringComparer.OrdinalIgnoreCase)).ToArray();
 
-                foreach (string key in toRemove)
+                foreach (string key in keysToRemove)
                 {
                     if (_songs.Remove(key))
                         changesMade++;
