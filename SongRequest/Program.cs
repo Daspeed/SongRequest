@@ -34,12 +34,16 @@ namespace SongRequest
                 }
                 else
                 {
+                    Console.ReadLine();
+                    Console.ReadLine();
                     Console.WriteLine(ex);
                     Console.ReadLine();
                 }
             }
             catch (Exception ex)
             {
+                Console.WriteLine();
+                Console.WriteLine();
                 Console.WriteLine(ex);
                 Console.ReadLine();
             }

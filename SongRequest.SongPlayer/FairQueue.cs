@@ -82,6 +82,7 @@ namespace SongRequest.SongPlayer
                         requestedSong.Song.LastPlayDateTime = DateTime.Now;
                     }
 
+                    requestedSong.Song.LastRequester = requestedSong.RequesterName.Equals("randomizer", StringComparison.OrdinalIgnoreCase) ? string.Empty : requestedSong.RequesterName;
                     requestedSong.Song.SkippedBy = combine;
                 }
 
