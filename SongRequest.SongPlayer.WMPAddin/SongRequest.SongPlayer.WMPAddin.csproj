@@ -17,7 +17,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>..\SongRequest\bin\Debug\addins</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -25,7 +25,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>..\SongRequest\bin\Release\addins</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -44,10 +44,12 @@
     <ProjectReference Include="..\SongRequest.Config\SongRequest.Config.csproj">
       <Project>{4447182E-C61C-4FB6-960D-433A02550C73}</Project>
       <Name>SongRequest.Config</Name>
+      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\SongRequest.SongPlayer\SongRequest.SongPlayer.csproj">
       <Project>{3EF3A104-9258-4DB9-8FDD-FF7CD586BCF1}</Project>
       <Name>SongRequest.SongPlayer</Name>
+      <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -62,12 +64,6 @@
     </COMReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>
-	mkdir "$(SolutionDir)$(SolutionName)\$(OutDir)addins"
-	copy "$(TargetDir)$(TargetFileName)" "$(SolutionDir)$(SolutionName)\$(OutDir)addins\$(TargetFileName)"
-	</PostBuildEvent>
-  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
