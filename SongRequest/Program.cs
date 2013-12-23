@@ -34,8 +34,8 @@ namespace SongRequest
                 }
                 else
                 {
-                    Console.ReadLine();
-                    Console.ReadLine();
+                    Console.WriteLine();
+                    Console.WriteLine();
                     Console.WriteLine(ex);
                     Console.ReadLine();
                 }
