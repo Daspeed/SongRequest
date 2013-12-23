@@ -10,6 +10,8 @@ SongRequest is a small music player that can be operated by several users from t
 * High performance
 * Fair queue system
 * Supports very large music libraries
+* Built-in support for VLC and Windows media player
+* Cross-platform (Tested on linux and windows with Mono)
 
 ## Configuration
 
