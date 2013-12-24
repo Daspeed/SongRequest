@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -43,6 +44,9 @@ namespace SongRequest.SongPlayer.VlcPlayer
         [DllImport(@"libvlc", EntryPoint = "libvlc_media_player_pause", CallingConvention = CallingConvention.Cdecl)]
         public static extern void Stop(IntPtr player);
 
+        [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        private static extern bool SetDllDirectory(string lpPathName);
+        
 
 
         private IntPtr instance;
@@ -58,6 +62,9 @@ namespace SongRequest.SongPlayer.VlcPlayer
         }
         public VlcWrapper()
         {
+            string vlcPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), @"VideoLAN\VLC\");
+            SetDllDirectory(vlcPath);
+
             this.instance = VlcWrapper.NewCore(0, IntPtr.Zero);
             player = NewPlayer(instance);
         }
