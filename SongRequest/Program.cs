@@ -105,10 +105,12 @@ namespace SongRequest
         {
             lock (consoleLock)
             {
+                string libraryPath = SongPlayerFactory.GetConfigFile().GetValue("library.path");
+
                 Console.SetCursorPosition(0, 2);
                 Console.Write(new string(' ', Console.WindowWidth));
                 Console.SetCursorPosition(0, 2);
-                Console.Write("Library: {0}", SongPlayerFactory.GetConfigFile().GetValue("library.path"));
+                Console.Write("Library: {0} {1}", libraryPath, Directory.Exists(libraryPath) ? "" : "- please create folder");
                 Console.SetCursorPosition(0, 3);
                 Console.Write(new string(' ', Console.WindowWidth));
                 Console.SetCursorPosition(0, 3);
