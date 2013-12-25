@@ -1,4 +1,5 @@
 ﻿using Microsoft.Win32;
+using SongRequest.Config;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -63,13 +64,22 @@ namespace SongRequest.SongPlayer.VlcPlayer
         }
         public VlcWrapper()
         {
-            string vlcPath = Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\VideoLAN\VLC", "InstallDir", string.Empty) as string;
-            if (string.IsNullOrEmpty(vlcPath))
+            // do runtime check for windows
+            if (Settings.IsRunningOnWindows())
             {
-                vlcPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), @"VideoLAN\VLC\");
+                // read vlc install directory from registry
+                string vlcPath = Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\VideoLAN\VLC", "InstallDir", string.Empty) as string;
+                if (string.IsNullOrEmpty(vlcPath))
+                {
+                    // if install directory cannot be found try to use a sensible default
+                    vlcPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), @"VideoLAN\VLC\");
+                }
+                if (Directory.Exists(vlcPath))
+                {
+                    // set vlc path as search directory for loadlibrary function
+                    SetDllDirectory(vlcPath);
+                }
             }
-            SetDllDirectory(vlcPath);
-
             this.instance = VlcWrapper.NewCore(0, IntPtr.Zero);
             player = NewPlayer(instance);
         }
