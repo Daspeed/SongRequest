@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.ComponentModel.Composition;
 using SongRequest.SongPlayer.VlcPlayer;
+using SongRequest.Config;
 
 namespace SongRequest.SongPlayer
 {
@@ -29,9 +30,12 @@ namespace SongRequest.SongPlayer
         /// </summary>
         public SongPlayer()
         {
-            string path = Environment.GetEnvironmentVariable("Path", EnvironmentVariableTarget.Machine);
-            Environment.SetEnvironmentVariable("Path", path + @";C:\Program Files (x86)\VideoLAN\VLC\");
-            
+            if(Settings.IsRunningOnWindows())
+            {
+                string path = Environment.GetEnvironmentVariable ("Path", EnvironmentVariableTarget.Machine);
+                Environment.SetEnvironmentVariable("Path", path + @";C:\Program Files (x86)\VideoLAN\VLC\");
+            }
+
             player = new VlcWrapper();
             
             _queue = new FairQueue();
