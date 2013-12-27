@@ -1,5 +1,8 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using SongRequest.Config;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -43,6 +46,9 @@ namespace SongRequest.SongPlayer.VlcPlayer
         [DllImport(@"libvlc", EntryPoint = "libvlc_media_player_pause", CallingConvention = CallingConvention.Cdecl)]
         public static extern void Stop(IntPtr player);
 
+        [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        private static extern bool SetDllDirectory(string lpPathName);
+        
 
 
         private IntPtr instance;
@@ -58,6 +64,22 @@ namespace SongRequest.SongPlayer.VlcPlayer
         }
         public VlcWrapper()
         {
+            // do runtime check for windows
+            if (Settings.IsRunningOnWindows())
+            {
+                // read vlc install directory from registry
+                string vlcPath = Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\VideoLAN\VLC", "InstallDir", string.Empty) as string;
+                if (string.IsNullOrEmpty(vlcPath))
+                {
+                    // if install directory cannot be found try to use a sensible default
+                    vlcPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), @"VideoLAN\VLC\");
+                }
+                if (Directory.Exists(vlcPath))
+                {
+                    // set vlc path as search directory for loadlibrary function
+                    SetDllDirectory(vlcPath);
+                }
+            }
             this.instance = VlcWrapper.NewCore(0, IntPtr.Zero);
             player = NewPlayer(instance);
         }
