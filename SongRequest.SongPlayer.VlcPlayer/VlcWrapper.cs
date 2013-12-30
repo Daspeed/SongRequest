@@ -86,7 +86,7 @@ namespace SongRequest.SongPlayer.VlcPlayer
 
         public string GetInstallDirFromRegistry()
         {
-            if(Environment.Is64BitOperatingSystem && Environment.Is64BitProcess)
+            if(Environment.Is64BitProcess)
                 return Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\VideoLAN\VLC", "InstallDir", string.Empty) as string;
 
             return Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\VideoLAN\VLC", "InstallDir", string.Empty) as string;
@@ -95,7 +95,7 @@ namespace SongRequest.SongPlayer.VlcPlayer
         public string GetProgramFilesPath()
         {
             //VLC gets installed in program files x86
-            if (Environment.Is64BitOperatingSystem && Environment.Is64BitProcess)
+            if (Environment.Is64BitProcess)
                 return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), @"VideoLAN\VLC\");
             return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), @"VideoLAN\VLC\");
         }
