@@ -47,6 +47,7 @@ namespace SongRequest.SongPlayer.VlcPlayer
         public static extern void Stop(IntPtr player);
 
         [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
         private static extern bool SetDllDirectory(string lpPathName);
         
 
