@@ -1,5 +1,8 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using SongRequest.Config;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -43,6 +46,10 @@ namespace SongRequest.SongPlayer.VlcPlayer
         [DllImport(@"libvlc", EntryPoint = "libvlc_media_player_pause", CallingConvention = CallingConvention.Cdecl)]
         public static extern void Stop(IntPtr player);
 
+        [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool SetDllDirectory(string lpPathName);
+        
 
 
         private IntPtr instance;
@@ -58,8 +65,39 @@ namespace SongRequest.SongPlayer.VlcPlayer
         }
         public VlcWrapper()
         {
+            // do runtime check for windows
+            if (Settings.IsRunningOnWindows())
+                InitializeWindowsPath();
+
             this.instance = VlcWrapper.NewCore(0, IntPtr.Zero);
             player = NewPlayer(instance);
+        }
+
+        public void InitializeWindowsPath()
+        {
+            string vlcPath = GetInstallDirFromRegistry() ?? GetProgramFilesPath();
+
+            if (Directory.Exists(vlcPath))
+            {
+                // set vlc path as search directory for loadlibrary function
+                SetDllDirectory(vlcPath);
+            }
+        }
+
+        public string GetInstallDirFromRegistry()
+        {
+            if(Environment.Is64BitProcess)
+                return Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\VideoLAN\VLC", "InstallDir", string.Empty) as string;
+
+            return Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\VideoLAN\VLC", "InstallDir", string.Empty) as string;
+        }
+
+        public string GetProgramFilesPath()
+        {
+            //VLC gets installed in program files x86
+            if (Environment.Is64BitProcess)
+                return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), @"VideoLAN\VLC\");
+            return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), @"VideoLAN\VLC\");
         }
 
         public void Pause()
