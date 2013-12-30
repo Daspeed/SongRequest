@@ -29,7 +29,6 @@ namespace SongRequest.SongPlayer
         /// </summary>
         public SongPlayer()
         {
-
             player = new VlcWrapper();
             
             _queue = new FairQueue();
