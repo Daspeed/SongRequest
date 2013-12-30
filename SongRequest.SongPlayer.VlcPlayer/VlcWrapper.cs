@@ -66,22 +66,15 @@ namespace SongRequest.SongPlayer.VlcPlayer
         {
             // do runtime check for windows
             if (Settings.IsRunningOnWindows())
-            {
-                // read vlc install directory from registry
-                string vlcPath = Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\VideoLAN\VLC", "InstallDir", string.Empty) as string;
-                if (string.IsNullOrEmpty(vlcPath))
-                {
-                    // if install directory cannot be found try to use a sensible default
-                    vlcPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), @"VideoLAN\VLC\");
-                }
-                if (Directory.Exists(vlcPath))
-                {
-                    // set vlc path as search directory for loadlibrary function
-                    SetDllDirectory(vlcPath);
-                }
-            }
+                InitializeWindowsPath();
+
             this.instance = VlcWrapper.NewCore(0, IntPtr.Zero);
             player = NewPlayer(instance);
+        }
+
+        public void InitializeWindowsPath()
+        {
+
         }
 
         public void Pause()
