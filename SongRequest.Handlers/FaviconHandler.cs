@@ -1,4 +1,7 @@
-﻿using System.Net;
+﻿using System;
+using System.IO;
+using System.Net;
+using System.Reflection;
 
 namespace SongRequest.Handlers
 {
@@ -6,7 +9,8 @@ namespace SongRequest.Handlers
     {
         public override void Process(HttpListenerRequest request, HttpListenerResponse response)
         {
-            using (var stream = typeof(StaticHandler).Assembly.GetManifestResourceStream("SongRequest.Static.favicon.ico"))
+            string fullPath = Path.Combine(Environment.CurrentDirectory, "SongRequest.exe");
+            using (var stream = Assembly.LoadFile(fullPath).GetManifestResourceStream("SongRequest.Static.favicon.ico"))
             {
                 stream.CopyTo(response.OutputStream);
             }
