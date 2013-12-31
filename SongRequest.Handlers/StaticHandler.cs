@@ -7,12 +7,12 @@ namespace SongRequest.Handlers
 {
     public class StaticHandler : BaseHandler
     {
-		private Func<string, Stream> _resourceGetter;
+        private Func<string, Stream> _resourceGetter;
 
         public StaticHandler(Func<string, Stream> resourceGetter)
-		{
+        {
             _resourceGetter = resourceGetter;
-		}
+        }
 
         public override void Process(HttpListenerRequest request, HttpListenerResponse response)
         {
@@ -88,9 +88,9 @@ namespace SongRequest.Handlers
             // When in debug mode, get files from hard disk instead of resources
 #if DEBUG
 #if __MonoCS__
-			string path = Path.GetFullPath(Environment.CurrentDirectory + @"/../../Static/" + name);
+            string path = Path.GetFullPath(Environment.CurrentDirectory + @"/../../Static/" + name);
 #else
-			string path = Path.GetFullPath(Environment.CurrentDirectory + @"\..\..\Static\" + name);
+            string path = Path.GetFullPath(Environment.CurrentDirectory + @"\..\..\Static\" + name);
 #endif
             return File.Open(path, FileMode.Open, FileAccess.Read, FileShare.Read);
 #else

@@ -36,9 +36,11 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Drawing" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BaseHandler.cs" />
+    <Compile Include="ImageHelper.cs" />
     <Compile Include="DynamicHandler.cs" />
     <Compile Include="FaviconHandler.cs" />
     <Compile Include="IHandler.cs" />

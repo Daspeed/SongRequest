@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.IO;
 
 namespace SongRequest.SongPlayer
 {
@@ -32,6 +33,11 @@ namespace SongRequest.SongPlayer
         /// Get playlist
         /// </summary>
         IEnumerable<Song> GetPlayList(string filter, string sortBy, bool ascending);
+
+        /// <summary>
+        /// Get image stream
+        /// </summary>
+        MemoryStream GetImageStream(string tempId);
 
         /// <summary>
         /// Play queue

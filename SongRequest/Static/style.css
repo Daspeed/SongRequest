@@ -80,14 +80,17 @@ div {
 }
 
 #controlCombineDiv {
-    border: 1px solid black;
+    border-bottom: 1px solid black;
     border-top: 0px;
     padding: 0;
     margin: 0;
 }
 
+#imageDiv {
+    text-align: center;
+}
+
 #statusDiv {
-    font-size: 1.2em;
 }
 
 #headerDiv {
@@ -148,6 +151,7 @@ p {
 }
 
 .statusArtistTitle {
+
 }
 
 .statusTime {
@@ -509,7 +513,19 @@ td {
     #controlCombineDiv {
     }
 
+    #imageDiv {
+        border: none;
+        vertical-align: bottom;
+    }
+
+    .statusImage {
+        height: 300px;
+        width: 300px;
+        border: 1px solid black;
+    }
+
     #statusDiv {
+        border: none;
     }
 
     .statusArtistTitle {

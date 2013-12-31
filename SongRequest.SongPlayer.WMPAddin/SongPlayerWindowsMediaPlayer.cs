@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using WMPLib;
@@ -230,6 +231,11 @@ namespace SongRequest.SongPlayer.WMPAddin
 
                 return playerStatus;
             }
+        }
+
+        public MemoryStream GetImageStream(string tempId)
+        {
+            return _songLibrary.GetImageStream(tempId);
         }
 
         /// <summary>

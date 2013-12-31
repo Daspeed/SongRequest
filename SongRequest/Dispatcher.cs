@@ -10,10 +10,10 @@ namespace SongRequest
     {
         private static Dictionary<string, IHandler> _mappings = new Dictionary<string, IHandler>
         {
-            {string.Empty, new IndexHandler(typeof(Dispatcher).Assembly.GetManifestResourceStream)},
-            {"static", new StaticHandler(typeof(Dispatcher).Assembly.GetManifestResourceStream)},
-            {"dynamic", new DynamicHandler()},            
-            {"favicon.ico", new FaviconHandler()}
+            { string.Empty, new IndexHandler(typeof(Dispatcher).Assembly.GetManifestResourceStream) },
+            { "static", new StaticHandler(typeof(Dispatcher).Assembly.GetManifestResourceStream) },
+            { "dynamic", new DynamicHandler() },            
+            { "favicon.ico", new FaviconHandler() }
         };
 
         public static void ProcessRequest(HttpListenerContext context)

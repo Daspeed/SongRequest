@@ -1,3 +1,5 @@
+using DoubleMetaphone;
+using SongRequest.Utils;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -6,8 +8,6 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using SongRequest.Utils;
-using DoubleMetaphone;
 
 namespace SongRequest.SongPlayer
 {
@@ -451,6 +451,32 @@ namespace SongRequest.SongPlayer
             {
                 song.TagRead = true;
             }
+        }
+
+        public Song GetSong(string tempId)
+        {
+            lock (lockObject)
+            {
+                return _songs.FirstOrDefault(x => x.Value.TempId.Equals(tempId)).Value;
+            }
+        }
+
+        public MemoryStream GetImageStream(string tempId)
+        {
+            Song song = GetSong(tempId);
+
+            if (song == null)
+                return null;
+
+            TagLib.File file = TagLib.File.Create(song.FileName);
+
+            if (file.Tag.Pictures.Length >= 1)
+            {
+                TagLib.IPicture picture = file.Tag.Pictures[0];
+                return new MemoryStream(picture.Data.Data);
+            }
+
+            return null;
         }
 
         public IEnumerable<Song> GetSongs(string filter, string sortBy, bool ascending)

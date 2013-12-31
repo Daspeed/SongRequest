@@ -139,6 +139,19 @@
                 return $scope.playerStatus.RequestedSong.RequesterName;
             };
 
+            $scope.getCurrentSongId = function () {
+                if (!$scope.playerStatus)
+                    return this.convertNumberToTime();
+
+                if (!$scope.playerStatus.RequestedSong)
+                    return '';
+
+                if (!$scope.playerStatus.RequestedSong.Song.TempId)
+                    return '';
+
+                return $scope.playerStatus.RequestedSong.Song.TempId;
+            };
+
             $scope.getVolume = function () {
                 if (!$scope.playerStatus)
                     return '0';

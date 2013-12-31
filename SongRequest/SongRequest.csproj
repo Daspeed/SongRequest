@@ -126,4 +126,7 @@
       <Name>SongRequest.Utils</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Static\empty.png" />
+  </ItemGroup>
 </Project>

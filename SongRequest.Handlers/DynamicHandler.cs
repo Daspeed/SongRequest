@@ -30,7 +30,7 @@ namespace SongRequest.Handlers
         {
             string[] actionPath = request.RawUrl.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
 
-            string action = actionPath[1];
+            string action = actionPath[1].ToLower();
 
             ISongplayer songPlayer = SongPlayerFactory.GetSongPlayer();
             string requester = GetRequester(request);
@@ -128,6 +128,22 @@ namespace SongRequest.Handlers
                             WriteUtf8String(response.OutputStream, JsonConvert.SerializeObject(songPlayer.Volume));
                         }
                     }
+                    break;
+                case "image":
+
+                    string tempId;
+                    if (actionPath.Length == 3)
+                    {
+                        tempId = actionPath[2];
+                        if (!string.IsNullOrEmpty(tempId))
+                        {
+                            tempId = WebUtility.HtmlDecode(tempId);
+                        }
+                    }
+                    else
+                        tempId = string.Empty;
+
+                    ImageHelper.HelpMe(request, response, tempId, songPlayer);
                     break;
                 default:
                     response.ContentType = "text/plain";
