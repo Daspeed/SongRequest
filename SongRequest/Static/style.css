@@ -153,9 +153,6 @@ p {
 .statusArtist {
 }
 
-.statusTitle {
-}
-
 .statusTime {
     color: gray;
 }
@@ -386,13 +383,13 @@ td {
     cursor: hand;
 }
 
-    .songNameColumn a,
-    .songNameColumn a:link,
-    .songNameColumn a:visited,
-    .songNameColumn a:hover {
-        color: black;
-        text-decoration: none;
-    }
+.songNameColumn a,
+.songNameColumn a:link,
+.songNameColumn a:visited,
+.songNameColumn a:hover {
+    color: black;
+    text-decoration: none;
+}
 
 .songArtistColumn {
     overflow: hidden;
@@ -562,6 +559,14 @@ td {
 
     .statusTitle {
         font-weight: bold;
+    }
+
+    .statusTitle a,
+    .statusTitle a:link,
+    .statusTitle a:visited,
+    .statusTitle a:hover {
+        color: black;
+        text-decoration: none;
     }
 
     .statusTime {

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.ComponentModel.Composition;
 using SongRequest.SongPlayer.VlcPlayer;
+using System.IO;
 
 namespace SongRequest.SongPlayer
 {
@@ -230,6 +231,11 @@ namespace SongRequest.SongPlayer
 
                 return playerStatus;
             }
+        }
+
+        public MemoryStream GetImageStream(string tempId, bool large)
+        {
+            return _songLibrary.GetImageStream(tempId, large);
         }
 
         /// <summary>

@@ -83,31 +83,19 @@
             };
 
             $scope.getSongArtist = function (song) {
-                if (song.Artist)
-                    return song.Artist;
-
-                return 'Unknown';
+                return song.Artist || 'Unknown';
             };
 
             $scope.getSongName = function (song) {
-                if (song.Name)
-                    return song.Name;
-
-                return 'Unknown';
+                return song.Name || 'Unknown';
             };
 
             $scope.getSongGenre = function (song) {
-                if (song.Genre)
-                    return song.Genre;
-
-                return 'Unknown';
+                return song.Genre || 'Unknown';
             };
 
             $scope.getSongAlbum = function (song) {
-                if (song.Album)
-                    return song.Album;
-
-                return 'Unknown';
+                return song.Album || 'Unknown';
             };
 
             $scope.getCurrentSongArtist = function () {
@@ -132,6 +120,16 @@
                 var requestedSong = $scope.playerStatus.RequestedSong.Song;
 
                 return $scope.getSongName(requestedSong);
+            };
+
+            $scope.getCurrentSongFileName = function () {
+                if (!$scope.playerStatus)
+                    return '';
+
+                if (!$scope.playerStatus.RequestedSong)
+                    return '';
+
+                return $scope.playerStatus.RequestedSong.Song.FileName;
             };
 
             $scope.getCurrentSongPosition = function () {

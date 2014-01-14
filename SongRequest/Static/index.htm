@@ -19,7 +19,7 @@
         <div id="controlsDiv">
             <input ng-click="next()" id="next" type="button" class="button nextButton" value="►►">
             <input ng-click="pause()" id="pause" type="button" class="button pauseButton" value="►">
-            <input ng-click="rescan()" id="rescan" type="button" class="button rescanButton" value="&#x21bb">
+            <input ng-click="rescan()" id="rescan" type="button" class="button rescanButton" value="↻">
             <input ng-click="changeVolume()" id="volume" type="button" class="button volumeButton" value="Volume&#13;&#10;{{getVolume()}}">
         </div>
     </div>
@@ -31,7 +31,9 @@
                         <span class="statusArtist">{{getCurrentSongArtist()}}</span>
                     </p>
                     <p>
-                        <span class="statusTitle">{{getCurrentSongName()}}</span>
+                        <span class="statusTitle">
+                            <a href="file://{{getCurrentSongFileName()}}" title="{{getCurrentSongFileName()}}">{{getCurrentSongName()}}</a>   
+                        </span>
                     </p>
                     <p>
                         <span class="statusTime">{{getCurrentSongAlbum()}}</span>
