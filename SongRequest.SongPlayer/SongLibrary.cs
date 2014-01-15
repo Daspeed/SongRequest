@@ -46,11 +46,11 @@ namespace SongRequest.SongPlayer
             if (!int.TryParse(SongPlayerFactory.GetConfigFile().GetValue("library.minutesbetweenscans"), out minutesBetweenScans))
                 minutesBetweenScans = 2;
 
-            int tagChanges = UpdateTags();
-            if (tagChanges > 0)
+            bool tagChanges = UpdateTags();
+            if (tagChanges)
             {
-                int songCount = _songs.Count();
                 int noTagCount = _songs.Values.Count(s => s.TagRead);
+                int songCount = _songs.Count();
                 OnStatusChanged(string.Format("Library updated: {0} songs. Tags read: {1}/{0}. Next scan: {2}.", songCount, noTagCount, (_lastFullUpdate + TimeSpan.FromMinutes(minutesBetweenScans)).ToShortTimeString()));
             }
             else
@@ -63,7 +63,7 @@ namespace SongRequest.SongPlayer
             // -> tag(s) are changed
             // -> song is marked dirty (last time played is changed)
             bool dirtySongs = _songs.Values.Any(x => x.IsDirty);
-            _unsavedChanges = _unsavedChanges || tagChanges > 0 || dirtySongs;
+            _unsavedChanges = _unsavedChanges || tagChanges || dirtySongs;
 
             //Save, but no more than once every 2 minutes
             if (_unsavedChanges && _lastSerialize + TimeSpan.FromMinutes(2) < DateTime.Now)
@@ -71,11 +71,10 @@ namespace SongRequest.SongPlayer
 
             //No need to scan...
             if (_lastFullUpdate + TimeSpan.FromMinutes(minutesBetweenScans) > DateTime.Now)
-                return tagChanges > 0;
+                return tagChanges;
 
-            int fileChanges = ScanSongs();
-
-            if (fileChanges > 0 || tagChanges > 0)
+            bool fileChanges = ScanSongs();
+            if (fileChanges || tagChanges)
             {
                 int songCount = _songs.Count();
                 int noTagCount = _songs.Values.Count(s => s.TagRead);
@@ -84,12 +83,12 @@ namespace SongRequest.SongPlayer
 
             _lastFullUpdate = DateTime.Now;
 
-            if (fileChanges == 0 || tagChanges == 0)
+            if (!fileChanges || !tagChanges)
                 OnStatusChanged("Library update completed (" + _songs.Count() + " songs). Next scan: " + (_lastFullUpdate + TimeSpan.FromMinutes(minutesBetweenScans)).ToShortTimeString());
 
-            _unsavedChanges = _unsavedChanges || fileChanges > 0 || tagChanges > 0;
+            _unsavedChanges = _unsavedChanges || fileChanges || tagChanges;
 
-            return fileChanges > 0 || tagChanges > 0;
+            return fileChanges || tagChanges;
         }
 
         private void Serialize()
@@ -288,9 +287,24 @@ namespace SongRequest.SongPlayer
             return false;
         }
 
-        private int ScanSongs()
+        private bool ScanSongs()
         {
-            int changesMade = 0;
+            if (!_scanRunning)
+            {
+                _scanFoundChange = false;
+                _scanRunning = true;
+                Thread scanThread = new Thread(new ThreadStart(ScanSongsThread));
+
+                scanThread.Start();
+            }
+
+            return _scanFoundChange;
+        }
+
+        private volatile bool _scanRunning = false;
+        private volatile bool _scanFoundChange = false;
+        private void ScanSongsThread()
+        {
             Config.ConfigFile config = SongPlayerFactory.GetConfigFile();
             string[] directories = config.GetValue("library.path").Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
             string[] extensions = config.GetValue("library.extensions").Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
@@ -323,7 +337,9 @@ namespace SongRequest.SongPlayer
                 foreach (string key in keysToRemove)
                 {
                     if (_songs.Remove(key))
-                        changesMade++;
+                    {
+                        _scanFoundChange = true;
+                    }
                 }
             }
 
@@ -352,20 +368,37 @@ namespace SongRequest.SongPlayer
                         _songs.Add(fileName, song);
                     }
 
-                    changesMade++;
+                    _scanFoundChange = true;
                 }
             });
 
-            return changesMade;
+            _scanRunning = false;
         }
 
-        private int UpdateTags()
+        private bool UpdateTags()
         {
+            // return false, not updating
             if (_songs.Count == 0)
-                return 0;
+                return false;
 
+            if (!_updateRunning)
+            {
+                _updatedTag = false;
+                _updateRunning = true;
+                Thread updateThread = new Thread(new ThreadStart(UpdateTagsThread));
+
+                updateThread.Start();
+            }
+
+            // if running, return true
+            return _updatedTag;
+        }
+
+        volatile bool _updateRunning = false;
+        volatile bool _updatedTag = false;
+        private void UpdateTagsThread()
+        {
             Song song;
-            int songsTagged = 0;
 
             bool fixErrors = DateTime.Now > _lastFixErrors + TimeSpan.FromMinutes(2);
             List<ManualResetEvent> doneEvents = new List<ManualResetEvent>();
@@ -386,26 +419,17 @@ namespace SongRequest.SongPlayer
                     if (song.ErrorReadingTag)
                         _lastFixErrors = DateTime.Now;
 
-                    ManualResetEvent manualResetEvent = new ManualResetEvent(false);
-                    doneEvents.Add(manualResetEvent);
+                    // update song
+                    UpdateSingleTag(song);
 
-                    SongLibrarySongUpdate songUpdate = new SongLibrarySongUpdate(manualResetEvent);
-                    ThreadPool.QueueUserWorkItem(songUpdate.ThreadPoolCallback, song);
-
-                    songsTagged++;
+                    _updatedTag = true;
                 }
 
-                // loop until no song found or more than 64 (max for threadpool!) will be tagged
-            } while (song != null && songsTagged < 64);
+                // loop until no song found
+            } while (song != null);
 
-            if (songsTagged > 0)
-            {
-                // Wait for all threads in pool to calculate.
-                // But only when song's need to be tagged
-                WaitHandle.WaitAll(doneEvents.ToArray());
-            }
-
-            return songsTagged;
+            // finished this run
+            _updateRunning = false;
         }
 
         /// <summary>
@@ -425,8 +449,6 @@ namespace SongRequest.SongPlayer
                         if (!string.IsNullOrEmpty(taglibFile.Tag.JoinedPerformers))
                             song.Artist = taglibFile.Tag.JoinedPerformers.Trim();
 
-                        song.GenerateSearchAndDoubleMetaphone();
-
                         if (!string.IsNullOrEmpty(taglibFile.Tag.JoinedGenres))
                             song.Genre = taglibFile.Tag.JoinedGenres.Trim();
 
@@ -437,6 +459,8 @@ namespace SongRequest.SongPlayer
 
                         FileInfo fileInfo = new FileInfo(song.FileName);
                         song.DateCreated = fileInfo.CreationTime.ToString("yyyy-MM-dd HH:mm");
+
+                        song.GenerateSearchAndDoubleMetaphone();
                     }
                 }
                 song.TagRead = true;
@@ -715,42 +739,6 @@ namespace SongRequest.SongPlayer
                     Song = randomSong,
                     RequesterName = "randomizer"
                 };
-            }
-        }
-
-        /// <summary>
-        /// Private class for containing some information when updating songs using thread pool
-        /// </summary>
-        private class SongLibrarySongUpdate
-        {
-            /// <summary>
-            /// Constructor
-            /// </summary>
-            /// <param name="doneEvent"></param>
-            public SongLibrarySongUpdate(ManualResetEvent doneEvent)
-            {
-                _doneEvent = doneEvent;
-            }
-
-            /// <summary>
-            /// Reset event for the thread pool
-            /// </summary>
-            private ManualResetEvent _doneEvent;
-
-            /// <summary>
-            /// Callback method
-            /// </summary>
-            /// <param name="threadContext"></param>
-            public void ThreadPoolCallback(object threadContext)
-            {
-                // get song
-                Song song = (Song)threadContext;
-
-                // update song
-                UpdateSingleTag(song);
-
-                // finish!
-                _doneEvent.Set();
             }
         }
     }
