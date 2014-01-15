@@ -25,19 +25,25 @@
     </div>
     <div id="outerCombineDiv">
         <div id="queueDiv">
-        <div id="controlCombineDiv">
-            <div id="statusDiv">
-                <p>
-                    <span class="statusArtistTitle">{{getCurrentSongName()}}</span>&nbsp;<span class="statusTime">({{getCurrentSongPosition()}}/{{getCurrentSongDuration()}})</span>
-                </p>
-                <p>
-                    <span class="statusRequester">Requested by: {{getCurrentSongRequester()}}</span>
-                </p>
+            <div id="controlCombineDiv">
+                <div id="statusDiv">
+                    <p>
+                        <span class="statusArtist">{{getCurrentSongArtist()}}</span>
+                    </p>
+                    <p>
+                        <span class="statusTitle">{{getCurrentSongName()}}</span>
+                    </p>
+                    <p>
+                        <span class="statusTime">{{getCurrentSongPosition()}} / {{getCurrentSongDuration()}}</span>
+                    </p>
+                    <p>
+                        <span class="statusRequester">Requested by: {{getCurrentSongRequester()}}</span>
+                    </p>
+                </div>
+                <div id="imageDiv">
+                    <img class="statusImage" ng-src="/dynamic/image/{{getCurrentSongId()}}" alt="{{getCurrentSongName()}}">
+                </div>
             </div>
-            <div id="imageDiv">
-                <img class="statusImage" ng-src="/dynamic/image/{{getCurrentSongId()}}" alt="{{getCurrentSongName()}}">
-            </div>
-        </div>
             <div id="queueHeaderDiv" class="gradient">
                 <h2 ng-pluralize count="queue.length" when="{'0': 'Queue | No songs',
                 'one': 'Queue | 1 song',

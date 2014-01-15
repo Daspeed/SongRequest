@@ -150,8 +150,10 @@ p {
     background-color: white;
 }
 
-.statusArtistTitle {
+.statusArtist {
+}
 
+.statusTitle {
 }
 
 .statusTime {
@@ -528,7 +530,16 @@ td {
         border: none;
     }
 
-    .statusArtistTitle {
+        #statusDiv p {
+            text-align: center;
+        }
+
+
+    .statusArtist {
+    }
+
+    .statusTitle {
+        font-weight: bold;
     }
 
     .statusTime {

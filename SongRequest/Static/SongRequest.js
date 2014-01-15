@@ -82,10 +82,6 @@
                 });
             };
 
-            $scope.getSongArtistAndName = function (song) {
-                return $scope.getSongArtist(song) + ' - ' + $scope.getSongName(song);
-            };
-
             $scope.getSongArtist = function (song) {
                 if (song.Artist)
                     return song.Artist;
@@ -100,6 +96,18 @@
                 return 'Unknown';
             };
 
+            $scope.getCurrentSongArtist = function () {
+                if (!$scope.playerStatus)
+                    return '';
+
+                if (!$scope.playerStatus.RequestedSong)
+                    return '';
+
+                var requestedSong = $scope.playerStatus.RequestedSong.Song;
+
+                return $scope.getSongArtist(requestedSong);
+            };
+
             $scope.getCurrentSongName = function () {
                 if (!$scope.playerStatus)
                     return '';
@@ -109,7 +117,7 @@
 
                 var requestedSong = $scope.playerStatus.RequestedSong.Song;
 
-                return $scope.getSongArtistAndName(requestedSong);
+                return $scope.getSongName(requestedSong);
             };
 
             $scope.getCurrentSongPosition = function () {
