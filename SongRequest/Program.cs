@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
@@ -53,7 +54,7 @@ namespace SongRequest
         {
             Console.Clear();
             DrawArt();
-			            using (HttpListener listener = new HttpListener())
+            using (HttpListener listener = new HttpListener())
             {
                 if (!int.TryParse(SongPlayerFactory.GetConfigFile().GetValue("server.port"), out port))
                     port = 8765;
@@ -105,12 +106,14 @@ namespace SongRequest
         {
             lock (consoleLock)
             {
-                string libraryPath = SongPlayerFactory.GetConfigFile().GetValue("library.path");
+                string[] directories = SongPlayerFactory.GetConfigFile().GetValue("library.path").Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+
+                string libraryPath = string.Join("';'", directories.Select(x => Directory.Exists(x) ? x : x + "- please create folder"));
 
                 Console.SetCursorPosition(0, 2);
                 Console.Write(new string(' ', Console.WindowWidth));
                 Console.SetCursorPosition(0, 2);
-                Console.Write("Library: {0} {1}", libraryPath, Directory.Exists(libraryPath) ? "" : "- please create folder");
+                Console.Write("Library: '{0}'", libraryPath);
                 Console.SetCursorPosition(0, 3);
                 Console.Write(new string(' ', Console.WindowWidth));
                 Console.SetCursorPosition(0, 3);
