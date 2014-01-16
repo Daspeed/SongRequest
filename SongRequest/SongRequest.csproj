@@ -129,4 +129,7 @@
   <ItemGroup>
     <EmbeddedResource Include="Static\empty.png" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Static\empty_small.png" />
+  </ItemGroup>
 </Project>

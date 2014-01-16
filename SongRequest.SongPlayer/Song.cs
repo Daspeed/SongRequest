@@ -1,8 +1,13 @@
-﻿using System;
+﻿using DoubleMetaphone;
+using SongRequest.Utils;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
 using System.Security.Cryptography;
 using System.Text;
-using DoubleMetaphone;
-using SongRequest.Utils;
+using System.Linq;
 
 namespace SongRequest.SongPlayer
 {
@@ -60,6 +65,21 @@ namespace SongRequest.SongPlayer
         /// </summary>
         public string NameDoubleMetaphone { get; set; }
 
+        /// <summary>
+        /// Album of song
+        /// </summary>
+        public string Album { get; set; }
+
+        /// <summary>
+        /// Album of song
+        /// </summary>
+        public string AlbumSearchValue { get; set; }
+
+        /// <summary>
+        /// Album of song
+        /// </summary>
+        public string AlbumDoubleMetaphone { get; set; }
+
         public void GenerateSearchAndDoubleMetaphone()
         {
             if (!string.IsNullOrEmpty(FileName))
@@ -91,6 +111,17 @@ namespace SongRequest.SongPlayer
                     NameDoubleMetaphone = FileNameSearchValue.GenerateDoubleMetaphone();
                 else
                     NameDoubleMetaphone = null;
+            }
+
+            if (!string.IsNullOrEmpty(Album))
+            {
+                AlbumSearchValue = Album.ToLower().ReplaceUniqueCharacters();
+                AlbumDoubleMetaphone = AlbumSearchValue.GenerateDoubleMetaphone();
+            }
+            else
+            {
+                AlbumSearchValue = null;
+                AlbumDoubleMetaphone = null;
             }
         }
 
@@ -138,6 +169,11 @@ namespace SongRequest.SongPlayer
         /// Last time song is played
         /// </summary>
         public string LastPlayTime { get; private set; }
+
+        /// <summary>
+        /// Name of last requester
+        /// </summary>
+        private bool _isDirty;
 
         /// <summary>
         /// If true, tag is read
@@ -207,6 +243,148 @@ namespace SongRequest.SongPlayer
                 return Name;
 
             return FileName;
+        }
+
+        public void ClearImageBuffer()
+        {
+            smallBuffer = null;
+        }
+
+        private byte[] smallBuffer = null;
+
+        public MemoryStream GetImageStream(bool large)
+        {
+            if (!large && smallBuffer != null)
+                return new MemoryStream(smallBuffer);
+
+            int size = large ? 300 : 20;
+            FileInfo fileInfo = new FileInfo(FileName);
+
+            List<FileInfo> coverFiles = new List<FileInfo>();
+            coverFiles.AddRange(fileInfo.Directory.GetFiles("Cover.*", SearchOption.TopDirectoryOnly));
+            coverFiles.AddRange(fileInfo.Directory.GetFiles("Artwork.*", SearchOption.TopDirectoryOnly));
+            coverFiles.AddRange(fileInfo.Directory.GetFiles("Front.*", SearchOption.TopDirectoryOnly));
+            string fileNameWithoutExtension = fileInfo.Name.Replace(fileInfo.Extension, string.Empty);
+            coverFiles.AddRange(fileInfo.Directory.GetFiles(fileNameWithoutExtension + ".*", SearchOption.TopDirectoryOnly));
+
+            HashSet<string> possibleExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+                {
+                    ".bmp",
+                    ".gif",
+                    ".jpg",
+                    ".jpeg",
+                    ".png",
+                    ".tiff"
+                };
+
+            // for saving data
+            byte[] thumbnailData = null;
+
+            // get possible cover files
+            List<FileInfo> possibleCoverFiles = coverFiles.Where(x =>
+                possibleExtensions.Any(ext =>
+                    ext.Equals(x.Extension, StringComparison.OrdinalIgnoreCase))).ToList();
+
+            // possible cover file
+            FileInfo imageFileInfo = possibleCoverFiles.FirstOrDefault();
+            if (imageFileInfo != null)
+            {
+                // create thumbnail and return it
+                Image fileImage = Image.FromFile(imageFileInfo.FullName);
+                thumbnailData = CreateThumbnail(fileImage, size);
+            }
+
+            // check if needed
+            if (thumbnailData == null || thumbnailData.Length == 0)
+            {
+                // try embedded file
+                using (TagLib.File taglibFile = TagLib.File.Create(FileName))
+                {
+                    if (taglibFile.Tag.Pictures.Length >= 1)
+                    {
+                        TagLib.IPicture picture = taglibFile.Tag.Pictures[0];
+
+                        if (picture.Data != null && picture.Data.Data != null && picture.Data.Data.Length > 0)
+                        {
+                            thumbnailData = CreateThumbnail(picture.Data.Data, size);
+                        }
+                    }
+                }
+            }
+
+            // return nothing, if nothing found
+            if (thumbnailData == null || thumbnailData.Length == 0)
+                return null;
+
+            // cache tumbnail
+            if (!large)
+                smallBuffer = thumbnailData;
+
+            MemoryStream stream = new MemoryStream(thumbnailData);
+            return stream;
+        }
+
+        private static byte[] CreateThumbnail(byte[] input, int maxSize)
+        {
+            using (MemoryStream memoryStream = new MemoryStream(input))
+            {
+                return CreateThumbnail(memoryStream, maxSize);
+            }
+        }
+
+        private static byte[] CreateThumbnail(MemoryStream imageStream, int maxSize)
+        {
+            Image image;
+            try
+            {
+                image = Image.FromStream(imageStream);
+            }
+            catch (Exception)
+            {
+                image = null;
+            }
+
+            if (image != null)
+                return CreateThumbnail(image, maxSize);
+
+            return null;
+        }
+
+        private static byte[] CreateThumbnail(Image image, int maxSize)
+        {
+            // create tumbnail
+            int width = maxSize;
+            int maxHeight = maxSize;
+
+            // Prevent using images internal thumbnail
+            image.RotateFlip(System.Drawing.RotateFlipType.Rotate180FlipNone);
+            image.RotateFlip(System.Drawing.RotateFlipType.Rotate180FlipNone);
+
+            if (image.Width <= width)
+            {
+                width = image.Width;
+            }
+
+            int height = image.Height * width / image.Width;
+            if (height > maxHeight)
+            {
+                // Resize with height instead
+                width = image.Width * maxHeight / image.Height;
+                height = maxHeight;
+            }
+
+            System.Drawing.Image thumbnail = image.GetThumbnailImage(width, height, null, IntPtr.Zero);
+            image.Dispose();
+
+            byte[] bytes;
+            using (MemoryStream stream = new MemoryStream())
+            {
+                thumbnail.Save(stream, ImageFormat.Png);
+
+                bytes = stream.ToArray();
+            }
+
+            return bytes;
         }
     }
 }

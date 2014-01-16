@@ -34,6 +34,7 @@
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Drawing" />
     <Reference Include="taglib-sharp">
       <HintPath>..\dlls\taglib-sharp.dll</HintPath>
     </Reference>

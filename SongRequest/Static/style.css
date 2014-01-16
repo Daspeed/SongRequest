@@ -365,6 +365,17 @@ td {
     cursor: default;
 }
 
+.artColumn {
+    text-align: center;
+    vertical-align: central;
+    width: 2em;
+    cursor: default;
+}
+
+.artColumn img {
+    height: 100%;
+}
+
 .songNameColumn {
     overflow: hidden;
     -ms-text-overflow: ellipsis;
@@ -518,12 +529,23 @@ td {
     #imageDiv {
         border: none;
         vertical-align: bottom;
+        margin: 0 auto;
+    }
+
+    #imageDiv2 {
+        border: 1px solid black;
+        vertical-align: central;
+        height: 23.5em;
+        width: 23.5em;
+        padding:0;
+        overflow: hidden;
+        margin: 0 auto;
     }
 
     .statusImage {
-        height: 300px;
-        width: 300px;
-        border: 1px solid black;
+        width: 23.5em;
+        overflow: hidden;
+        margin: 0 auto;
     }
 
     #statusDiv {
@@ -656,6 +678,10 @@ td {
     }
 
     .actionColumn {
+        width: 3em;
+    }
+
+    .artColumn {
         width: 3em;
     }
 

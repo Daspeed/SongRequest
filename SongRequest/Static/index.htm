@@ -34,6 +34,13 @@
                         <span class="statusTitle">{{getCurrentSongName()}}</span>
                     </p>
                     <p>
+                        <span class="statusTime">{{getCurrentSongAlbum()}}</span>
+                    </p>
+                    <p>
+                        <span class="statusTime">{{getCurrentSongGenre()}}</span>
+                    </p>
+                    <br />
+                    <p>
                         <span class="statusTime">{{getCurrentSongPosition()}} / {{getCurrentSongDuration()}}</span>
                     </p>
                     <p>
@@ -41,7 +48,9 @@
                     </p>
                 </div>
                 <div id="imageDiv">
-                    <img class="statusImage" ng-src="/dynamic/image/{{getCurrentSongId()}}" alt="{{getCurrentSongName()}}">
+                    <div id="imageDiv2">
+                        <img class="statusImage" ng-src="/dynamic/image/{{getCurrentSongId()}}/large" alt="{{getCurrentSongName()}}">
+                    </div>
                 </div>
             </div>
             <div id="queueHeaderDiv" class="gradient">
@@ -88,6 +97,7 @@
                     <table class="songsTable">
                         <tr class="gradient headerrow">
                             <th class="actionColumn">Action</th>
+                            <th class="artColumn">&nbsp;</th>
                             <th ng-click="sort('name')" id="nameHeader" class="songNameColumn {{getHeaderClass('name')}}">Name</th>
                             <th ng-click="sort('artist')" id="artistHeader" class="songArtistColumn {{getHeaderClass('artist')}}">Artist</th>
                             <th class="songDurationColumn">Length</th>
@@ -101,6 +111,9 @@
                         <tr class="songRow" ng-repeat="song in searchResult" ng-class-even="'evenrow'" ng-class-odd="'oddrow'">
                             <td class="actionColumn">
                                 <input type="button" class="button addButton" value="+" ng-click="addToQueue(song)" title="Add song to queue" />
+                            </td>
+                            <td class="artColumn">
+                                <img class="" ng-src="/dynamic/image/{{song.TempId}}/small">
                             </td>
                             <td class="songNameColumn"><a class="songlink" href="file://{{song.FileName}}" title="{{song.FileName}}">{{song.Name}}</a></td>
                             <td class="songArtistColumn">{{song.Artist}}</td>

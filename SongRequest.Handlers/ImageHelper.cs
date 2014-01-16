@@ -1,109 +1,101 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.IO;
-using System.Linq;
 using System.Net;
 using SongRequest.SongPlayer;
-using SongRequest.Utils;
-using System.Drawing;
 using System.Reflection;
 
 namespace SongRequest.Handlers
 {
     public class ImageHelper
     {
-        static byte[] _emptyImage = null;
+        static byte[] _emptyImageLarge = null;
+        static byte[] _emptyImageSmall = null;
+
         static byte[] _lastImage = null;
         static string _lastId = null;
 
-        public static void HelpMe(HttpListenerRequest request, HttpListenerResponse response, string tempId, ISongplayer songPlayer)
+        public static void HelpMe(HttpListenerRequest request, HttpListenerResponse response, string tempId, ISongplayer songPlayer, bool large)
         {
             // if no temp id, return
             if (string.IsNullOrEmpty(tempId))
+            {
+                response.StatusCode = (int)HttpStatusCode.NotFound;
                 return;
+            }
+
+            MemoryStream streamToCopy = null;
 
             // use cached image if possible
-            if (tempId.Equals(_lastId, StringComparison.OrdinalIgnoreCase) && _lastImage != null)
+            if (large && tempId.Equals(_lastId, StringComparison.OrdinalIgnoreCase) && _lastImage != null)
             {
-                using (MemoryStream memoryStream = new MemoryStream(_lastImage))
-                {
-                    memoryStream.CopyTo(response.OutputStream);
-                }
-
-                // done
-                return;
+                streamToCopy = new MemoryStream(_lastImage);
             }
 
-            MemoryStream imageStream = songPlayer.GetImageStream(tempId);
-            if (imageStream == null)
+            if (streamToCopy == null)
             {
-                if (_emptyImage == null)
+                streamToCopy = songPlayer.GetImageStream(tempId, large);
+                if (streamToCopy == null)
                 {
-                    // load empty image
-                    string fullPath = Path.Combine(Environment.CurrentDirectory, "SongRequest.exe");
-                    using (Stream stream = Assembly.LoadFile(fullPath).GetManifestResourceStream("SongRequest.Static.empty.png"))
-                    using (MemoryStream memoryStream = new MemoryStream())
+                    if (large)
                     {
-                        response.ContentType = "image/png";
-                        stream.CopyTo(memoryStream);
+                        if (_emptyImageLarge == null)
+                        {
+                            // load empty image
+                            string fullPath = Path.Combine(Environment.CurrentDirectory, "SongRequest.exe");
+                            using (Stream stream = Assembly.LoadFile(fullPath).GetManifestResourceStream("SongRequest.Static.empty.png"))
+                            using (MemoryStream memoryStream = new MemoryStream())
+                            {
+                                stream.CopyTo(memoryStream);
 
-                        // cache image
-                        _emptyImage = memoryStream.ToArray();
+                                // cache image
+                                _emptyImageLarge = memoryStream.ToArray();
+                            }
+                        }
+
+                        // use cached image
+                        streamToCopy = new MemoryStream(_emptyImageLarge);
+                    }
+                    else
+                    {
+                        if (_emptyImageSmall == null)
+                        {
+                            // load empty image
+                            string fullPath = Path.Combine(Environment.CurrentDirectory, "SongRequest.exe");
+                            using (Stream stream = Assembly.LoadFile(fullPath).GetManifestResourceStream("SongRequest.Static.empty_small.png"))
+                            using (MemoryStream memoryStream = new MemoryStream())
+                            {
+                                stream.CopyTo(memoryStream);
+
+                                // cache image
+                                _emptyImageSmall = memoryStream.ToArray();
+                            }
+                        }
+
+                        // use cached image
+                        streamToCopy = new MemoryStream(_emptyImageSmall);
                     }
                 }
-
-                // use cached image
-                using (MemoryStream memoryStream = new MemoryStream(_emptyImage))
+                else
                 {
-                    memoryStream.CopyTo(response.OutputStream);
+                    // set last id if large image
+                    if (large)
+                    {
+                        _lastId = tempId;
+                        _lastImage = streamToCopy.ToArray();
+                    }
+
+                    // reset position
+                    streamToCopy.Position = 0;
                 }
-
-                return;
             }
-
-            // set last id
-            _lastId = tempId;
-
-            // create tumbnail
-            int width = 300;
-            int maxHeight = 300;
-
-            Image thumbnail = Image.FromStream(imageStream);
-
-            // Prevent using images internal thumbnail
-            thumbnail.RotateFlip(System.Drawing.RotateFlipType.Rotate180FlipNone);
-            thumbnail.RotateFlip(System.Drawing.RotateFlipType.Rotate180FlipNone);
-
-            if (thumbnail.Width <= width)
-            {
-                width = thumbnail.Width;
-            }
-
-            int height = thumbnail.Height * width / thumbnail.Width;
-            if (height > maxHeight)
-            {
-                // Resize with height instead
-                width = thumbnail.Width * maxHeight / thumbnail.Height;
-                height = maxHeight;
-            }
-
-            System.Drawing.Image NewImage = thumbnail.GetThumbnailImage(width, height, null, IntPtr.Zero);
-            thumbnail.Dispose();
 
             // Save resized picture
+            response.StatusCode = (int)HttpStatusCode.OK;
+            response.ContentLength64 = streamToCopy.Length;
             response.ContentType = "image/png";
 
-            using (MemoryStream cacheStream = new MemoryStream())
-            {
-                // cache it
-                NewImage.Save(cacheStream, System.Drawing.Imaging.ImageFormat.Png);
-                _lastImage = cacheStream.ToArray();
-
-                // copy to response
-                cacheStream.Position = 0;
-                cacheStream.CopyTo(response.OutputStream);
-            }
+            // copy to response
+            streamToCopy.CopyTo(response.OutputStream);
         }
     }
 }

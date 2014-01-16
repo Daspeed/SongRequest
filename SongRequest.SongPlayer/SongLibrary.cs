@@ -452,6 +452,9 @@ namespace SongRequest.SongPlayer
                         if (!string.IsNullOrEmpty(taglibFile.Tag.JoinedGenres))
                             song.Genre = taglibFile.Tag.JoinedGenres.Trim();
 
+                        if (!string.IsNullOrEmpty(taglibFile.Tag.Album))
+                            song.Album = taglibFile.Tag.Album.Trim();
+
                         song.Duration = (int)taglibFile.Properties.Duration.TotalSeconds;
 
                         uint year = taglibFile.Tag.Year;
@@ -461,6 +464,7 @@ namespace SongRequest.SongPlayer
                         song.DateCreated = fileInfo.CreationTime.ToString("yyyy-MM-dd HH:mm");
 
                         song.GenerateSearchAndDoubleMetaphone();
+                        song.ClearImageBuffer();
                     }
                 }
                 song.TagRead = true;
@@ -485,22 +489,14 @@ namespace SongRequest.SongPlayer
             }
         }
 
-        public MemoryStream GetImageStream(string tempId)
+        public MemoryStream GetImageStream(string tempId, bool large)
         {
             Song song = GetSong(tempId);
 
             if (song == null)
                 return null;
 
-            TagLib.File file = TagLib.File.Create(song.FileName);
-
-            if (file.Tag.Pictures.Length >= 1)
-            {
-                TagLib.IPicture picture = file.Tag.Pictures[0];
-                return new MemoryStream(picture.Data.Data);
-            }
-
-            return null;
+            return song.GetImageStream(large);
         }
 
         public IEnumerable<Song> GetSongs(string filter, string sortBy, bool ascending)
@@ -594,11 +590,15 @@ namespace SongRequest.SongPlayer
                 return true;
             if (!string.IsNullOrEmpty(song.ArtistDoubleMetaphone) && song.ArtistDoubleMetaphone.Equals(searchValueDoubleMetaphone, StringComparison.Ordinal))
                 return true;
+            if (!string.IsNullOrEmpty(song.AlbumDoubleMetaphone) && song.AlbumDoubleMetaphone.Equals(searchValueDoubleMetaphone, StringComparison.Ordinal))
+                return true;
 
             // contains
             if (!string.IsNullOrEmpty(song.NameSearchValue) && song.NameSearchValue.ContainsIgnoreCaseNonSpace(searchValue))
                 return true;
             if (!string.IsNullOrEmpty(song.ArtistSearchValue) && song.ArtistSearchValue.ContainsIgnoreCaseNonSpace(searchValue))
+                return true;
+            if (!string.IsNullOrEmpty(song.AlbumSearchValue) && song.AlbumSearchValue.ContainsIgnoreCaseNonSpace(searchValue))
                 return true;
 
             // file name?

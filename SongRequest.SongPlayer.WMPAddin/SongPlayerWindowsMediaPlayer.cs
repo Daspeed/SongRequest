@@ -202,7 +202,9 @@ namespace SongRequest.SongPlayer.WMPAddin
                 }
 
                 if (!_songLibrary.ScanLibrary())
-                    Thread.Sleep(500);
+                    Thread.Sleep(200);
+                else
+                    Thread.Sleep(10);
             }
         }
 
@@ -233,9 +235,9 @@ namespace SongRequest.SongPlayer.WMPAddin
             }
         }
 
-        public MemoryStream GetImageStream(string tempId)
+        public MemoryStream GetImageStream(string tempId, bool large)
         {
-            return _songLibrary.GetImageStream(tempId);
+            return _songLibrary.GetImageStream(tempId, large);
         }
 
         /// <summary>

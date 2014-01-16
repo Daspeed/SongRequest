@@ -96,6 +96,20 @@
                 return 'Unknown';
             };
 
+            $scope.getSongGenre = function (song) {
+                if (song.Genre)
+                    return song.Genre;
+
+                return 'Unknown';
+            };
+
+            $scope.getSongAlbum = function (song) {
+                if (song.Album)
+                    return song.Album;
+
+                return 'Unknown';
+            };
+
             $scope.getCurrentSongArtist = function () {
                 if (!$scope.playerStatus)
                     return '';
@@ -135,6 +149,30 @@
                     return convertNumberToTime(0);
 
                 return convertNumberToTime($scope.playerStatus.RequestedSong.Song.Duration);
+            };
+
+            $scope.getCurrentSongGenre = function () {
+                if (!$scope.playerStatus)
+                    return '';
+
+                if (!$scope.playerStatus.RequestedSong)
+                    return '';
+
+                var requestedSong = $scope.playerStatus.RequestedSong.Song;
+
+                return $scope.getSongGenre(requestedSong);
+            };
+
+            $scope.getCurrentSongAlbum = function () {
+                if (!$scope.playerStatus)
+                    return '';
+
+                if (!$scope.playerStatus.RequestedSong)
+                    return '';
+
+                var requestedSong = $scope.playerStatus.RequestedSong.Song;
+
+                return $scope.getSongAlbum(requestedSong);
             };
 
             $scope.getCurrentSongRequester = function () {

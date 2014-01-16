@@ -132,18 +132,26 @@ namespace SongRequest.Handlers
                 case "image":
 
                     string tempId;
-                    if (actionPath.Length == 3)
+                    bool large = false;
+                    if (actionPath.Length == 4)
                     {
                         tempId = actionPath[2];
                         if (!string.IsNullOrEmpty(tempId))
                         {
                             tempId = WebUtility.HtmlDecode(tempId);
                         }
+
+                        if (actionPath[3].Equals("large", StringComparison.OrdinalIgnoreCase))
+                        {
+                            large = true;
+                        }
                     }
                     else
+                    {
                         tempId = string.Empty;
+                    }
 
-                    ImageHelper.HelpMe(request, response, tempId, songPlayer);
+                    ImageHelper.HelpMe(request, response, tempId, songPlayer, large);
                     break;
                 default:
                     response.ContentType = "text/plain";
