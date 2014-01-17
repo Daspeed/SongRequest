@@ -9,9 +9,9 @@ namespace SongRequest.Handlers
     {
         public override void Process(HttpListenerRequest request, HttpListenerResponse response)
         {
-            string fullPath = Path.Combine(Environment.CurrentDirectory, "SongRequest.exe");
-            using (var stream = Assembly.LoadFile(fullPath).GetManifestResourceStream("SongRequest.Static.favicon.ico"))
+            using (var stream = Assembly.GetEntryAssembly().GetManifestResourceStream("SongRequest.Static.favicon.ico"))
             {
+                response.ContentType = "image/x-icon";
                 stream.CopyTo(response.OutputStream);
             }
         }

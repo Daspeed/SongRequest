@@ -151,7 +151,7 @@ namespace SongRequest.Handlers
                         tempId = string.Empty;
                     }
 
-                    ImageHelper.HelpMe(request, response, tempId, songPlayer, large);
+                    ImageHelper.HelpMe(response, tempId, songPlayer, large);
                     break;
                 default:
                     response.ContentType = "text/plain";
