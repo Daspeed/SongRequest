@@ -80,6 +80,11 @@ namespace SongRequest.SongPlayer
         /// </summary>
         public string AlbumDoubleMetaphone { get; set; }
 
+        /// <summary>
+        /// Rating of song
+        /// </summary>
+        public string Rating { get; set; }
+
         public void GenerateSearchAndDoubleMetaphone()
         {
             if (!string.IsNullOrEmpty(FileName))

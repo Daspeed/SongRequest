@@ -105,6 +105,7 @@
                             <th class="songDurationColumn">Length</th>
                             <th ng-click="sort('genre')" class="songGenreColumn {{getHeaderClass('genre')}}">Genre</th>
                             <th ng-click="sort('year')" class="songYearColumn {{getHeaderClass('year')}}">Year</th>
+                            <th class="songRatingColumn">Rating</th>
                             <th ng-click="sort('date')" id="dateHeader" class="songDateCreatedColumn {{getHeaderClass('date')}}">Date added</th>
                             <th ng-click="sort('playdate')" id="playedHeader" class="songDatePlayedColumn {{getHeaderClass('playdate')}}">Last played</th>
                             <th class="songRequesterColumn">Requester</th>
@@ -122,6 +123,7 @@
                             <td class="songDurationColumn">{{convertNumberToTime(song.Duration)}}</td>
                             <td class="songGenreColumn">{{song.Genre}}</td>
                             <td class="songYearColumn">{{song.Year}}</td>
+                            <td class="songRatingColumn">{{song.Rating}}</td>
                             <td class="songDateCreatedColumn">{{song.DateCreated}}</td>
                             <td class="songDatePlayedColumn">{{song.LastPlayTime}}</td>
                             <td class="songRequesterColumn">{{song.LastRequester}}</td>

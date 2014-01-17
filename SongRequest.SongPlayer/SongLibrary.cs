@@ -62,7 +62,11 @@ namespace SongRequest.SongPlayer
             // -> unsaved changes
             // -> tag(s) are changed
             // -> song is marked dirty (last time played is changed)
-            bool dirtySongs = _songs.Values.Any(x => x.IsDirty);
+            bool dirtySongs;
+            lock (lockObject)
+            {
+                dirtySongs = _songs.Values.Any(x => x.IsDirty);
+            }
             _unsavedChanges = _unsavedChanges || tagChanges || dirtySongs;
 
             //Save, but no more than once every 2 minutes
@@ -76,15 +80,22 @@ namespace SongRequest.SongPlayer
             bool fileChanges = ScanSongs();
             if (fileChanges || tagChanges)
             {
-                int songCount = _songs.Count();
-                int noTagCount = _songs.Values.Count(s => s.TagRead);
+                int songCount;
+                int noTagCount;
+                lock (lockObject)
+                {
+                    songCount = _songs.Count();
+                    noTagCount = _songs.Values.Count(s => s.TagRead);
+                }
                 OnStatusChanged(string.Format("Library updated: {0} songs. Tags read: {1}/{0}. Next scan: {2}.", songCount, noTagCount, (_lastFullUpdate + TimeSpan.FromMinutes(minutesBetweenScans)).ToShortTimeString()));
             }
 
             _lastFullUpdate = DateTime.Now;
 
             if (!fileChanges || !tagChanges)
+            {
                 OnStatusChanged("Library update completed (" + _songs.Count() + " songs). Next scan: " + (_lastFullUpdate + TimeSpan.FromMinutes(minutesBetweenScans)).ToShortTimeString());
+            }
 
             _unsavedChanges = _unsavedChanges || fileChanges || tagChanges;
 
@@ -454,6 +465,53 @@ namespace SongRequest.SongPlayer
 
                         if (!string.IsNullOrEmpty(taglibFile.Tag.Album))
                             song.Album = taglibFile.Tag.Album.Trim();
+
+                        int rating = int.MinValue;
+                        if (taglibFile.Tag.TagTypes.HasFlag(TagLib.TagTypes.Id3v2))
+                        {
+                            TagLib.Id3v2.Tag id3v2Tag = (TagLib.Id3v2.Tag)taglibFile.GetTag(TagLib.TagTypes.Id3v2);
+
+                            List<TagLib.Id3v2.PopularimeterFrame> popularimeterFrames = id3v2Tag
+                                .Where(x => x is TagLib.Id3v2.PopularimeterFrame)
+                                .Cast<TagLib.Id3v2.PopularimeterFrame>()
+                                .OrderBy(y => y.User)
+                                .ToList();
+
+                            if (popularimeterFrames != null && popularimeterFrames.Count > 0)
+                            {
+                                foreach (TagLib.Id3v2.PopularimeterFrame popularimeterFrame in popularimeterFrames)
+                                {
+                                    if (popularimeterFrame.Rating > 0)
+                                    {
+                                        rating = popularimeterFrame.Rating;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+
+                        if (rating == 0)
+                            song.Rating = "1";
+                        else if (rating == 1)
+                            song.Rating = "2";
+                        else if (rating > 1 && rating < 64)
+                            song.Rating = "3";
+                        else if (rating == 64)
+                            song.Rating = "4";
+                        else if (rating > 64 && rating < 128)
+                            song.Rating = "5";
+                        else if (rating == 128)
+                            song.Rating = "6";
+                        else if (rating > 128 && rating < 196)
+                            song.Rating = "7";
+                        else if (rating == 196)
+                            song.Rating = "8";
+                        else if (rating > 196 && rating < 255)
+                            song.Rating = "9";
+                        else if (rating == 255)
+                            song.Rating = "10";
+                        else
+                            song.Rating = string.Empty;
 
                         song.Duration = (int)taglibFile.Properties.Duration.TotalSeconds;
 

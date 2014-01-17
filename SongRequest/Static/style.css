@@ -369,9 +369,9 @@ td {
     cursor: default;
 }
 
-.artColumn img {
-    height: 100%;
-}
+    .artColumn img {
+        height: 100%;
+    }
 
 .songNameColumn {
     overflow: hidden;
@@ -425,6 +425,17 @@ td {
 }
 
 .songYearColumn {
+    overflow: hidden;
+    -ms-text-overflow: ellipsis;
+    -o-text-overflow: ellipsis;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 3em;
+    cursor: pointer;
+    cursor: hand;
+}
+
+.songRatingColumn {
     overflow: hidden;
     -ms-text-overflow: ellipsis;
     -o-text-overflow: ellipsis;
@@ -534,7 +545,7 @@ td {
         vertical-align: central;
         height: 23.5em;
         width: 23.5em;
-        padding:0;
+        padding: 0;
         overflow: hidden;
         margin: 0 auto;
     }
@@ -703,6 +714,10 @@ td {
     }
 
     .songGenreColumn {
+        display: table-cell;
+    }
+
+    .songRatingColumn {
         display: table-cell;
     }
 
