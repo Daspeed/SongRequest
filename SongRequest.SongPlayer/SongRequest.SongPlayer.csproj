@@ -41,6 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="FairQueue.cs" />
+    <Compile Include="IMediaDevice.cs" />
     <Compile Include="ISongPlayer.cs" />
     <Compile Include="PlayerStatus.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -48,6 +49,7 @@
     <Compile Include="Song.cs" />
     <Compile Include="SongLibrary.cs" />
     <Compile Include="SongPlayerFactory.cs" />
+    <Compile Include="SongPlayer.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SongRequest.Config\SongRequest.Config.csproj">

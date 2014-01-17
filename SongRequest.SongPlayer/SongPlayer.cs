@@ -4,16 +4,14 @@ using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
 using System.Threading;
-using WMPLib;
 
-namespace SongRequest.SongPlayer.WMPAddin
-{
-    [Export(typeof(ISongplayer))]
-    public class SongPlayerWindowsMediaPlayer : ISongplayer, IDisposable
+namespace SongRequest.SongPlayer
+{   
+    public class SongPlayer : ISongPlayer, IDisposable
     {
         private static object lockObject = new object();
         private SongLibrary _songLibrary;
-        private WindowsMediaPlayer player;
+        private IMediaDevice _mediaDevice;
 
         private FairQueue _queue;
         private RequestedSong _currentSong;
@@ -27,10 +25,9 @@ namespace SongRequest.SongPlayer.WMPAddin
         /// <summary>
         /// Constructor
         /// </summary>
-        public SongPlayerWindowsMediaPlayer()
+        public SongPlayer(IMediaDevice mediaDevice)
         {
-            player = new WindowsMediaPlayer();
-            player.settings.volume = 75;
+            _mediaDevice = mediaDevice;
 
             _queue = new FairQueue();
             _songLibrary = new SongLibrary();
@@ -64,7 +61,7 @@ namespace SongRequest.SongPlayer.WMPAddin
                 {
                     lock (lockObject)
                     {
-                        return player.settings.volume;
+                        return _mediaDevice.Volume;
                     }
                 }
                 catch
@@ -95,7 +92,7 @@ namespace SongRequest.SongPlayer.WMPAddin
 
                     lock (lockObject)
                     {
-                        player.settings.volume = Math.Max(Math.Min(value, maximumVolume), minimumVolume);
+                        _mediaDevice.Volume = Math.Max(Math.Min(value, maximumVolume), minimumVolume);
                     }
                 }
                 catch
@@ -136,7 +133,7 @@ namespace SongRequest.SongPlayer.WMPAddin
                 {
                     try
                     {
-                        player.URL = _currentSong.Song.FileName;
+                        _mediaDevice.PlaySong(_currentSong.Song.FileName);
                         _currentSong.Song.LastRequester = _currentSong.RequesterName.Equals("randomizer", StringComparison.OrdinalIgnoreCase) ? string.Empty : _currentSong.RequesterName;
                         _currentSong.Song.SkippedBy = string.Empty;
                         _currentSong.Song.LastPlayDateTime = DateTime.Now;
@@ -146,7 +143,7 @@ namespace SongRequest.SongPlayer.WMPAddin
                         try
                         {
                             Thread.Sleep(50);
-                            player.controls.stop();
+                            _mediaDevice.Stop();
                             //Try to stop the player... if this fails, just ignore...
                         }
                         catch
@@ -167,13 +164,13 @@ namespace SongRequest.SongPlayer.WMPAddin
             {
                 try
                 {
-                    WMPPlayState playState;
+                    bool isPlaying;
                     lock (lockObject)
                     {
-                        playState = player.playState;
+                        isPlaying = _mediaDevice.IsPlaying;
                     }
 
-                    if (playState == WMPPlayState.wmppsStopped || playState == WMPPlayState.wmppsUndefined)
+                    if (!isPlaying)
                         Next("randomizer");
                 }
                 catch
@@ -223,7 +220,7 @@ namespace SongRequest.SongPlayer.WMPAddin
                 {
                     try
                     {
-                        playerStatus.Position = (int)player.controls.currentPosition;
+                        playerStatus.Position = (int)_mediaDevice.Position;
                     }
                     catch
                     {
@@ -321,10 +318,7 @@ namespace SongRequest.SongPlayer.WMPAddin
         {
             lock (lockObject)
             {
-                if (player.playState == WMPPlayState.wmppsPaused)
-                    player.controls.play();
-                else
-                    player.controls.pause();
+                _mediaDevice.Pause();
             }
         }
 

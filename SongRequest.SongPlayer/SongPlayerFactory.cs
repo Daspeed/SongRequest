@@ -9,6 +9,8 @@ namespace SongRequest.SongPlayer
         private static object _lockObject = new object();
         private static SongPlayerFactory _factory;
 
+        private SongPlayer _songPlayer;
+
         private static SongPlayerFactory Instance
         {
             get
@@ -16,24 +18,29 @@ namespace SongRequest.SongPlayer
                 lock (_lockObject)
                 {
                     if (_factory == null)
+                    {
                         _factory = new SongPlayerFactory();
+                        _factory._songPlayer = new SongPlayer(_factory.MediaDevice);
+                    }
                 }
 
                 return _factory;
             }
         }
 
-        public static ISongplayer GetSongPlayer()
+        public static ISongPlayer GetSongPlayer()
         {
-            return Instance.SongPlayer;
+            return Instance._songPlayer;
         }
 
-        [Import(typeof(ISongplayer))]
-        public ISongplayer SongPlayer { get; set; }
+        [Import(typeof(IMediaDevice))]
+        public IMediaDevice MediaDevice { get; set; }
         
         private SongPlayerFactory()
         {
-            InitializeAddinCatalog();
+            DirectoryCatalog catalog = new DirectoryCatalog("addins");
+            CompositionContainer container = new CompositionContainer(catalog);
+            container.ComposeParts(this);
         }
         
         public static ConfigFile GetConfigFile()
@@ -58,13 +65,6 @@ namespace SongRequest.SongPlayer
             }
 
             return new ConfigFile("songrequest.config");
-        }
-
-        public void InitializeAddinCatalog()
-        {
-            DirectoryCatalog catalog = new DirectoryCatalog("addins");
-            CompositionContainer container = new CompositionContainer(catalog);
-            container.ComposeParts(this);
         }
     }
 }

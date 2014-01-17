@@ -32,7 +32,7 @@ namespace SongRequest.Handlers
 
             string action = actionPath[1].ToLower();
 
-            ISongplayer songPlayer = SongPlayerFactory.GetSongPlayer();
+            ISongPlayer songPlayer = SongPlayerFactory.GetSongPlayer();
             string requester = GetRequester(request);
             if (!ClientAllowed(requester))
                 return;

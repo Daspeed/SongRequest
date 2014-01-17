@@ -14,7 +14,7 @@ namespace SongRequest.Handlers
         static byte[] _lastImage = null;
         static string _lastId = null;
 
-        public static void HelpMe(HttpListenerRequest request, HttpListenerResponse response, string tempId, ISongplayer songPlayer, bool large)
+        public static void HelpMe(HttpListenerRequest request, HttpListenerResponse response, string tempId, ISongPlayer songPlayer, bool large)
         {
             // if no temp id, return
             if (string.IsNullOrEmpty(tempId))

@@ -2,6 +2,7 @@
 using SongRequest.Config;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -10,7 +11,8 @@ using System.Threading;
 
 namespace SongRequest.SongPlayer.VlcPlayer
 {
-    public class VlcWrapper
+    [Export(typeof(IMediaDevice))]
+    public class VlcWrapper : IMediaDevice
     {
         [DllImport(@"libvlc", EntryPoint = "libvlc_new", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr NewCore(int argc, IntPtr argv);
@@ -50,27 +52,26 @@ namespace SongRequest.SongPlayer.VlcPlayer
         [return: MarshalAs(UnmanagedType.Bool)]
         private static extern bool SetDllDirectory(string lpPathName);
         
+        private IntPtr _instance;
+        private IntPtr _player;
 
-
-        private IntPtr instance;
-        private IntPtr player;
-
-        public bool Playing
-        {
-            get
-            {
-                int state = GetState(player);
-                return (state == 1 || state == 2 || state == 3 || state == 4);
-            }
-        }
         public VlcWrapper()
         {
             // do runtime check for windows
             if (Settings.IsRunningOnWindows())
                 InitializeWindowsPath();
 
-            this.instance = VlcWrapper.NewCore(0, IntPtr.Zero);
-            player = NewPlayer(instance);
+            this._instance = VlcWrapper.NewCore(0, IntPtr.Zero);
+            _player = NewPlayer(_instance);
+        }
+
+        public bool IsPlaying
+        {
+            get
+            {
+                int state = GetState(_player);
+                return (state == 1 || state == 2 || state == 3 || state == 4);
+            }
         }
 
         public void InitializeWindowsPath()
@@ -97,54 +98,54 @@ namespace SongRequest.SongPlayer.VlcPlayer
 
         public void Pause()
         {
-            Pause(player);
+            Pause(_player);
         }
 
         public void Stop()
         {
-            Stop(player);
+            Stop(_player);
         }
 
         public long Position
         {
             get
             {
-                return GetPosition(player);
+                return GetPosition(_player);
             }
         }
 
         public void PlaySong(string name)
         {
-            IntPtr media = NewMedia(instance, Encoding.UTF8.GetBytes(name));
-            SetMedia(player, media);
-            Play(player);
+            IntPtr media = NewMedia(_instance, Encoding.UTF8.GetBytes(name));
+            SetMedia(_player, media);
+            Play(_player);
         }
 
         public int Volume
         {
             get
             {
-                return GetVolume(player);
+                return GetVolume(_player);
             }
             set
             {
                 HashSet<int> invalidStates = new HashSet<int> { 0, 1, 2, 5, 6, 7 };
-                int state = GetState(player);
+                int state = GetState(_player);
                 if (invalidStates.Contains(state)) // not ready at this time
                 {
                     new Thread(x => {
                         do
                         {
-                            state = GetState(player);
+                            state = GetState(_player);
                             Thread.Sleep(10);
                         }
                         while (invalidStates.Contains(state));
-                        SetVolume(player, value);
+                        SetVolume(_player, value);
                     }).Start();
                 }
                 else
                 {
-                    SetVolume(player, value);
+                    SetVolume(_player, value);
                 }
             }
         }

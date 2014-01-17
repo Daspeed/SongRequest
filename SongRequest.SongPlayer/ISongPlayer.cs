@@ -12,7 +12,7 @@ namespace SongRequest.SongPlayer
     /// <summary>
     /// Songplayer event
     /// </summary>
-    public interface ISongplayer
+    public interface ISongPlayer
     {
         /// <summary>
         /// Library status changed
