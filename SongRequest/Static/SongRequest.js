@@ -26,25 +26,25 @@
             $scope.convertNumberToTime = convertNumberToTime;
 
             var convertRating = function (num) {
-                if (num === '10')
+                if (num === 10)
                     return '★★★★★';
-                if (num === '9')
+                if (num === 9)
                     return '★★★★☆';
-                if (num === '8')
+                if (num === 8)
                     return '★★★★';
-                if (num === '7')
+                if (num === 7)
                     return '★★★☆';
-                if (num === '6')
+                if (num === 6)
                     return '★★★';
-                if (num === '5')
+                if (num === 5)
                     return '★★☆';
-                if (num === '4')
+                if (num === 4)
                     return '★★';
-                if (num === '3')
+                if (num === 3)
                     return '★☆';
-                if (num === '2')
+                if (num === 2)
                     return '★';
-                if (num === '1')
+                if (num === 1)
                     return '☆';
 
                 return '';

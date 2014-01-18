@@ -491,27 +491,27 @@ namespace SongRequest.SongPlayer
                         }
 
                         if (rating == 0)
-                            song.Rating = "1";
+                            song.Rating = 1;
                         else if (rating == 1)
-                            song.Rating = "2";
+                            song.Rating = 2;
                         else if (rating > 1 && rating < 64)
-                            song.Rating = "3";
+                            song.Rating = 3;
                         else if (rating == 64)
-                            song.Rating = "4";
+                            song.Rating = 4;
                         else if (rating > 64 && rating < 128)
-                            song.Rating = "5";
+                            song.Rating = 5;
                         else if (rating == 128)
-                            song.Rating = "6";
+                            song.Rating = 6;
                         else if (rating > 128 && rating < 196)
-                            song.Rating = "7";
+                            song.Rating = 7;
                         else if (rating == 196)
-                            song.Rating = "8";
+                            song.Rating = 8;
                         else if (rating > 196 && rating < 255)
-                            song.Rating = "9";
+                            song.Rating = 9;
                         else if (rating == 255)
-                            song.Rating = "10";
+                            song.Rating = 10;
                         else
-                            song.Rating = string.Empty;
+                            song.Rating = -1;
 
                         song.Duration = (int)taglibFile.Properties.Duration.TotalSeconds;
 
@@ -616,6 +616,10 @@ namespace SongRequest.SongPlayer
                     importantSort = SortBy.Genre;
                 else if (sortBy.Equals("year", StringComparison.OrdinalIgnoreCase))
                     importantSort = SortBy.Year;
+                else if (sortBy.Equals("rating", StringComparison.OrdinalIgnoreCase))
+                    importantSort = SortBy.Rating;
+                else if (sortBy.Equals("album", StringComparison.OrdinalIgnoreCase))
+                    importantSort = SortBy.Album;
                 else
                     importantSort = SortBy.Name;
 
@@ -745,6 +749,30 @@ namespace SongRequest.SongPlayer
                         return song.Name;
                 }
             }
+            else if (sortBy == SortBy.Rating)
+            {
+                switch (level)
+                {
+                    case 0:
+                        return song.Rating.ToString("00");
+                    case 1:
+                        return song.Name;
+                    case 2:
+                        return song.Artist;
+                }
+            }
+            else if (sortBy == SortBy.Album)
+            {
+                switch (level)
+                {
+                    case 0:
+                        return song.Album;
+                    case 1:
+                        return song.Name;
+                    case 2:
+                        return song.Artist;
+                }
+            }
 
             return string.Empty;
         }
@@ -756,7 +784,9 @@ namespace SongRequest.SongPlayer
             Date,
             PlayDate,
             Genre,
-            Year
+            Year,
+            Rating,
+            Album
         }
 
         public void Rescan()

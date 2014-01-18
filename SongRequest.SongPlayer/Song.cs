@@ -83,7 +83,7 @@ namespace SongRequest.SongPlayer
         /// <summary>
         /// Rating of song
         /// </summary>
-        public string Rating { get; set; }
+        public int Rating { get; set; }
 
         public void GenerateSearchAndDoubleMetaphone()
         {

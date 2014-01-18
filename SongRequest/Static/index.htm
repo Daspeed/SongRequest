@@ -104,11 +104,11 @@
                             <th class="artColumn">&nbsp;</th>
                             <th ng-click="sort('name')" id="nameHeader" class="songNameColumn {{getHeaderClass('name')}}">Name</th>
                             <th ng-click="sort('artist')" id="artistHeader" class="songArtistColumn {{getHeaderClass('artist')}}">Artist</th>
-                            <th class="songAlbumColumn">Album</th>
+                            <th ng-click="sort('album')" class="songAlbumColumn {{getHeaderClass('album')}}">Album</th>
                             <th class="songDurationColumn">Length</th>
                             <th ng-click="sort('genre')" class="songGenreColumn {{getHeaderClass('genre')}}">Genre</th>
                             <th ng-click="sort('year')" class="songYearColumn {{getHeaderClass('year')}}">Year</th>
-                            <th class="songRatingColumn">Rating</th>
+                            <th ng-click="sort('rating')" class="songRatingColumn {{getHeaderClass('rating')}}">Rating</th>
                             <th ng-click="sort('date')" id="dateHeader" class="songDateCreatedColumn {{getHeaderClass('date')}}">Date added</th>
                             <th ng-click="sort('playdate')" id="playedHeader" class="songDatePlayedColumn {{getHeaderClass('playdate')}}">Last played</th>
                             <th class="songRequesterColumn">Requester</th>

@@ -450,7 +450,8 @@ td {
     white-space: nowrap;
     width: 15%;
     display: none;
-    cursor: default;
+    cursor: pointer;
+    cursor: hand;
 }
 
 .songDurationColumn {
