@@ -266,21 +266,21 @@ namespace SongRequest.SongPlayer
             FileInfo fileInfo = new FileInfo(FileName);
 
             List<FileInfo> coverFiles = new List<FileInfo>();
-            coverFiles.AddRange(fileInfo.Directory.GetFiles("Cover.*", SearchOption.TopDirectoryOnly));
-            coverFiles.AddRange(fileInfo.Directory.GetFiles("Artwork.*", SearchOption.TopDirectoryOnly));
-            coverFiles.AddRange(fileInfo.Directory.GetFiles("Front.*", SearchOption.TopDirectoryOnly));
+            coverFiles.AddRange(fileInfo.Directory.GetFiles("*Cover.*", SearchOption.TopDirectoryOnly));
+            coverFiles.AddRange(fileInfo.Directory.GetFiles("*Artwork.*", SearchOption.TopDirectoryOnly));
+            coverFiles.AddRange(fileInfo.Directory.GetFiles("*Front.*", SearchOption.TopDirectoryOnly));
             string fileNameWithoutExtension = fileInfo.Name.Replace(fileInfo.Extension, string.Empty);
             coverFiles.AddRange(fileInfo.Directory.GetFiles(fileNameWithoutExtension + ".*", SearchOption.TopDirectoryOnly));
 
             HashSet<string> possibleExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
-                {
-                    ".bmp",
-                    ".gif",
-                    ".jpg",
-                    ".jpeg",
-                    ".png",
-                    ".tiff"
-                };
+            {
+                ".bmp",
+                ".gif",
+                ".jpg",
+                ".jpeg",
+                ".png",
+                ".tiff"
+            };
 
             // for saving data
             byte[] thumbnailData = null;
