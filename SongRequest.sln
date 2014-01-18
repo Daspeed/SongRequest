@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2010
+# Visual Studio 2013
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dlls", "dlls", "{996BB787-D9A5-43CF-A480-142179769986}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SongRequest", "SongRequest\SongRequest.csproj", "{3156BF98-361E-4C62-A228-01E0F233BA9E}"
