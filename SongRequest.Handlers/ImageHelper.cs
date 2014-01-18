@@ -35,7 +35,17 @@ namespace SongRequest.Handlers
                 }
 
                 // get from player
-                using (MemoryStream streamFromSongPlayer = songPlayer.GetImageStream(tempId, large))
+                MemoryStream imageStream;
+                try
+                {
+                    imageStream = songPlayer.GetImageStream(tempId, large);
+                }
+                catch (Exception)
+                {
+                    imageStream = null;
+                }
+
+                using (MemoryStream streamFromSongPlayer = imageStream)
                 {
                     if (streamFromSongPlayer != null)
                     {
