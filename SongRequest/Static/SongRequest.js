@@ -1,4 +1,4 @@
-(function () {
+﻿(function () {
     angular
         .module('SongRequest', [])
         .config(function ($compileProvider) {
@@ -24,6 +24,32 @@
                 return String(minutes) + ((seconds < 10) ? ':0' : ':') + String(seconds);
             };
             $scope.convertNumberToTime = convertNumberToTime;
+
+            var convertRating = function (num) {
+                if (num === '10')
+                    return '★★★★★';
+                if (num === '9')
+                    return '★★★★☆';
+                if (num === '8')
+                    return '★★★★';
+                if (num === '7')
+                    return '★★★☆';
+                if (num === '6')
+                    return '★★★';
+                if (num === '5')
+                    return '★★☆';
+                if (num === '4')
+                    return '★★';
+                if (num === '3')
+                    return '★☆';
+                if (num === '2')
+                    return '★';
+                if (num === '1')
+                    return '☆';
+
+                return '';
+            };
+            $scope.convertRating = convertRating;
 
             var fixer = function (num) {
                 return (num < 10 ? '0' : '') + String(num);
@@ -83,19 +109,19 @@
             };
 
             $scope.getSongArtist = function (song) {
-                return song.Artist || 'Unknown';
+                return song.Artist || 'Unknown artist';
             };
 
             $scope.getSongName = function (song) {
-                return song.Name || 'Unknown';
+                return song.Name || 'Unknown title';
             };
 
             $scope.getSongGenre = function (song) {
-                return song.Genre || 'Unknown';
+                return song.Genre || 'Unknown genre';
             };
 
             $scope.getSongAlbum = function (song) {
-                return song.Album || 'Unknown';
+                return song.Album || 'Unknown album';
             };
 
             $scope.getCurrentSongArtist = function () {
@@ -159,6 +185,18 @@
                 var requestedSong = $scope.playerStatus.RequestedSong.Song;
 
                 return $scope.getSongGenre(requestedSong);
+            };
+
+            $scope.getCurrentSongRating = function () {
+                if (!$scope.playerStatus)
+                    return '';
+
+                if (!$scope.playerStatus.RequestedSong)
+                    return '';
+
+                var requestedSong = $scope.playerStatus.RequestedSong.Song;
+
+                return $scope.convertRating(requestedSong.Rating);
             };
 
             $scope.getCurrentSongAlbum = function () {

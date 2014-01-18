@@ -87,10 +87,54 @@ div {
 }
 
 #imageDiv {
-    text-align: center;
+    border: none;
+    vertical-align: bottom;
+    margin: 0 auto;
 }
 
+#imageDiv2 {
+    border: 1px solid black;
+    vertical-align: central;
+    height: 23.5em;
+    width: 23.5em;
+    padding: 0;
+    overflow: hidden;
+    margin: 0 auto;
+}
+
+.statusImage {
+    width: 23.5em;
+    overflow: hidden;
+    margin: 0 auto;
+}
+
+    #statusDiv p {
+        text-align: center;
+    }
+
 #statusDiv {
+    border: none;
+}
+
+.statusArtist {
+}
+
+.statusTitle {
+    font-weight: bold;
+}
+
+    .statusTitle a,
+    .statusTitle a:link,
+    .statusTitle a:visited,
+    .statusTitle a:hover {
+        color: black;
+        text-decoration: none;
+    }
+
+.statusTime {
+}
+
+.statusRequester {
 }
 
 #headerDiv {
@@ -369,10 +413,6 @@ td {
     cursor: default;
 }
 
-    .artColumn img {
-        height: 100%;
-    }
-
 .songNameColumn {
     overflow: hidden;
     -ms-text-overflow: ellipsis;
@@ -383,13 +423,13 @@ td {
     cursor: hand;
 }
 
-.songNameColumn a,
-.songNameColumn a:link,
-.songNameColumn a:visited,
-.songNameColumn a:hover {
-    color: black;
-    text-decoration: none;
-}
+    .songNameColumn a,
+    .songNameColumn a:link,
+    .songNameColumn a:visited,
+    .songNameColumn a:hover {
+        color: black;
+        text-decoration: none;
+    }
 
 .songArtistColumn {
     overflow: hidden;
@@ -400,6 +440,17 @@ td {
     width: 25%;
     cursor: pointer;
     cursor: hand;
+}
+
+.songAlbumColumn {
+    overflow: hidden;
+    -ms-text-overflow: ellipsis;
+    -o-text-overflow: ellipsis;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 15%;
+    display: none;
+    cursor: default;
 }
 
 .songDurationColumn {
@@ -441,7 +492,8 @@ td {
     -o-text-overflow: ellipsis;
     text-overflow: ellipsis;
     white-space: nowrap;
-    width: 3em;
+    width: 4.5em;
+    display: none;
     cursor: pointer;
     cursor: hand;
 }
@@ -517,6 +569,10 @@ td {
         height: 4.0em;
     }
 
+    .artColumn img {
+        height: 100%;
+    }
+
     #headerDiv {
         display: inline-block;
         background-color: transparent;
@@ -532,58 +588,6 @@ td {
     }
 
     #controlCombineDiv {
-    }
-
-    #imageDiv {
-        border: none;
-        vertical-align: bottom;
-        margin: 0 auto;
-    }
-
-    #imageDiv2 {
-        border: 1px solid black;
-        vertical-align: central;
-        height: 23.5em;
-        width: 23.5em;
-        padding: 0;
-        overflow: hidden;
-        margin: 0 auto;
-    }
-
-    .statusImage {
-        width: 23.5em;
-        overflow: hidden;
-        margin: 0 auto;
-    }
-
-    #statusDiv {
-        border: none;
-    }
-
-        #statusDiv p {
-            text-align: center;
-        }
-
-
-    .statusArtist {
-    }
-
-    .statusTitle {
-        font-weight: bold;
-    }
-
-    .statusTitle a,
-    .statusTitle a:link,
-    .statusTitle a:visited,
-    .statusTitle a:hover {
-        color: black;
-        text-decoration: none;
-    }
-
-    .statusTime {
-    }
-
-    .statusRequester {
     }
 
     #controlsDiv {
@@ -733,6 +737,10 @@ td {
     }
 
     .songSkippedByColumn {
+        display: table-cell;
+    }
+
+    .songAlbumColumn {
         display: table-cell;
     }
 }

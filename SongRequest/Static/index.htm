@@ -41,7 +41,9 @@
                     <p>
                         <span class="statusTime">{{getCurrentSongGenre()}}</span>
                     </p>
-                    <br />
+                    <p>
+                        <span class="statusTime">{{getCurrentSongRating()}}</span>
+                    </p>
                     <p>
                         <span class="statusTime">{{getCurrentSongPosition()}} / {{getCurrentSongDuration()}}</span>
                     </p>
@@ -102,6 +104,7 @@
                             <th class="artColumn">&nbsp;</th>
                             <th ng-click="sort('name')" id="nameHeader" class="songNameColumn {{getHeaderClass('name')}}">Name</th>
                             <th ng-click="sort('artist')" id="artistHeader" class="songArtistColumn {{getHeaderClass('artist')}}">Artist</th>
+                            <th class="songAlbumColumn">Album</th>
                             <th class="songDurationColumn">Length</th>
                             <th ng-click="sort('genre')" class="songGenreColumn {{getHeaderClass('genre')}}">Genre</th>
                             <th ng-click="sort('year')" class="songYearColumn {{getHeaderClass('year')}}">Year</th>
@@ -120,10 +123,11 @@
                             </td>
                             <td class="songNameColumn"><a class="songlink" href="file://{{song.FileName}}" title="{{song.FileName}}">{{song.Name}}</a></td>
                             <td class="songArtistColumn">{{song.Artist}}</td>
+                            <td class="songAlbumColumn">{{song.Album}}</td>
                             <td class="songDurationColumn">{{convertNumberToTime(song.Duration)}}</td>
                             <td class="songGenreColumn">{{song.Genre}}</td>
                             <td class="songYearColumn">{{song.Year}}</td>
-                            <td class="songRatingColumn">{{song.Rating}}</td>
+                            <td class="songRatingColumn">{{convertRating(song.Rating)}}</td>
                             <td class="songDateCreatedColumn">{{song.DateCreated}}</td>
                             <td class="songDatePlayedColumn">{{song.LastPlayTime}}</td>
                             <td class="songRequesterColumn">{{song.LastRequester}}</td>
