@@ -110,7 +110,7 @@ namespace SongRequest.SongPlayer.VlcPlayer
         {
             get
             {
-                return GetPosition(_player);
+                return GetPosition(_player)/1000;
             }
         }
 
