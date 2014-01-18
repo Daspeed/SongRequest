@@ -545,6 +545,11 @@ td {
     cursor: default;
 }
 
+.searchbox, .pagebox {
+    display:block;
+    margin-bottom:3px;
+}
+
 @media screen and (min-width: 590px) {
 
     .songDateCreatedColumn {
@@ -565,6 +570,11 @@ td {
 }
 
 @media screen and (min-width: 768px) {
+
+    .searchbox, .pagebox {
+        display:inline-block;
+        margin-bottom:1px;
+    }
 
     #currentStatusDiv {
         height: 4.0em;

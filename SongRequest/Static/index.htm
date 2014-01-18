@@ -83,18 +83,19 @@
                     <h2>Songs</h2>
                 </div>
                 <div id="songsSearchDiv">
-                    <form ng-submit="search()">
+                    <form class="searchbox" ng-submit="search()">
                         <input type="text" class="searchtext" name="searchtext" id="searchtext" ng-model="filter" value="{{filter}}">
                         <input type="submit" class="button searchbutton" name="searchbutton" id="searchbutton" value="Search">
                         <input ng-click="clear()" type="button" class="button clearbutton" name="clearbutton" id="clearbutton" value="Reset">
                     </form>
-                    <form id="pageForm" ng-submit="getPlayList()">
+                    <form class="pagebox" id="pageForm" ng-submit="getPlayList()">
                         Page:&nbsp;
                         <input type="text" name="pagetext" class="pagetext" id="currentPage" ng-model="currentPage" value="{{currentPage}}">
                         of&nbsp;<span class="pageCount">{{pageCount}}</span>
+
+                        <input ng-disabled="currentPage <= 1" ng-click="previousPage()" type="button" class="button previousbutton" name="previousbutton" id="previousbutton" value="Previous">
+                        <input ng-disabled="currentPage >= pageCount" ng-click="nextPage()" type="button" class="button nextbutton" name="nextbutton" id="nextbutton" value="Next">
                     </form>
-                    <input ng-disabled="currentPage <= 1" ng-click="previousPage()" type="button" class="button previousbutton" name="previousbutton" id="previousbutton" value="Previous">
-                    <input ng-disabled="currentPage >= pageCount" ng-click="nextPage()" type="button" class="button nextbutton" name="nextbutton" id="nextbutton" value="Next">
                 </div>
                 <div id="songsDiv">
 
