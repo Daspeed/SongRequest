@@ -1,4 +1,4 @@
-# SongRequest
+# SongRequest [![Build Status](https://travis-ci.org/Daspeed/SongRequest.png?branch=master)](https://travis-ci.org/Daspeed/SongRequest)
 
 ## Introduction
 
