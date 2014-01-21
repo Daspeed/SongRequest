@@ -242,11 +242,15 @@
             }
 
             $scope.getQueueDuration = function () {
-                return convertNumberToTime(
-                    _.chain($scope.queue)
-                    .map(function (requestedSong) { return requestedSong.Song.Duration; })
-                    .reduce(function (state, value) { return state + value; }, 0)
-                    .value());
+                var totalDuration = 0;
+                var i = 0;
+                var queueLength = $scope.queue.length;
+
+                for (i = 0; i < queueLength; i++) {
+                    totalDuration += $scope.queue[i].Song.Duration;
+                }
+
+                return convertNumberToTime(totalDuration);
             };
 
             $scope.getQueueItemClass = function (item, index) {
