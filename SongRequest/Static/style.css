@@ -108,9 +108,9 @@ div {
     margin: 0 auto;
 }
 
-    #statusDiv p {
-        text-align: center;
-    }
+#statusDiv p {
+    text-align: center;
+}
 
 #statusDiv {
     border: none;
@@ -408,9 +408,16 @@ td {
 
 .artColumn {
     text-align: center;
-    vertical-align: central;
+    vertical-align: middle;
     width: 2em;
     cursor: default;
+    padding: 0px;
+}
+
+.artImage {
+    height: 1.75em;
+    width: 1.75em;
+    border: 1px solid darkgray;
 }
 
 .songNameColumn {
@@ -546,8 +553,8 @@ td {
 }
 
 .searchbox, .pagebox {
-    display:block;
-    margin-bottom:3px;
+    display: block;
+    margin-bottom: 3px;
 }
 
 @media screen and (min-width: 590px) {
@@ -572,16 +579,12 @@ td {
 @media screen and (min-width: 768px) {
 
     .searchbox, .pagebox {
-        display:inline-block;
-        margin-bottom:1px;
+        display: inline-block;
+        margin-bottom: 1px;
     }
 
     #currentStatusDiv {
         height: 4.0em;
-    }
-
-    .artColumn img {
-        height: 100%;
     }
 
     #headerDiv {
@@ -750,6 +753,10 @@ td {
     .songSkippedByColumn {
         display: table-cell;
     }
+}
+
+@media screen and (min-width: 1600px) {
+
 
     .songAlbumColumn {
         display: table-cell;
