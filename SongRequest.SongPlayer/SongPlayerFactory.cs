@@ -48,6 +48,7 @@ namespace SongRequest.SongPlayer
             if (!System.IO.File.Exists("songrequest.config"))
             {
                 ConfigFile configFile = new ConfigFile("songrequest.config");
+                configFile.SetValue("server.host", "*");
                 configFile.SetValue("server.port", "8765");
                 configFile.SetValue("server.clients", "all");
                 

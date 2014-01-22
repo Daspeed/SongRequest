@@ -10,10 +10,9 @@ namespace SongRequest
     class Program
     {
         internal volatile static bool _running = true;
+
+        private static string host;
         private static int port;
-
-        static string prefix = "http://*:8765/";
-
 
         static void Main(string[] args)
         {
@@ -30,7 +29,7 @@ namespace SongRequest
 
                     Console.SetCursorPosition(0, Console.WindowHeight - 10);
                     Console.WriteLine("You need to run the following command (as admin):");
-                    Console.WriteLine("  netsh http add urlacl url={0} user={1}\\{2} listen=yes", prefix, userdomain, username);
+                    Console.WriteLine("  netsh http add urlacl url={0} user={1}\\{2} listen=yes", Prefix, userdomain, username);
                     Console.SetCursorPosition(0, 0);
                 }
                 else
@@ -50,16 +49,26 @@ namespace SongRequest
             }
         }
 
+        private static string Prefix
+        {
+            get
+            {
+                return string.Format("http://{0}:{1}/", host, port);
+            }
+        }
+
         private static void Run()
         {
             Console.Clear();
             DrawArt();
             using (HttpListener listener = new HttpListener())
             {
+                host = SongPlayerFactory.GetConfigFile().GetValue("server.host");
+                if (string.IsNullOrWhiteSpace(host))
+                    host = "*";
+                
                 if (!int.TryParse(SongPlayerFactory.GetConfigFile().GetValue("server.port"), out port))
                     port = 8765;
-
-                prefix = string.Format("http://*:{0}/", port);
 
                 DrawProgramStatus();
 
@@ -72,7 +81,7 @@ namespace SongRequest
                 SongPlayerFactory.GetSongPlayer().LibraryStatusChanged += new StatusChangedEventHandler(Program_LibraryStatusChanged);
                 SongPlayerFactory.GetSongPlayer().PlayerStatusChanged += new StatusChangedEventHandler(Program_PlayerStatusChanged);
 
-                listener.Prefixes.Add(prefix);
+                listener.Prefixes.Add(Prefix);
 
                 listener.Start();
 
@@ -148,7 +157,7 @@ namespace SongRequest
             lock (consoleLock)
             {
                 Console.SetCursorPosition(0, 1);
-                Console.Write("Listening on port: {0}", port);
+                Console.Write("Listening on: {0}", Prefix);
             }
         }
 
