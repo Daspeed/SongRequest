@@ -12,10 +12,10 @@ namespace SongRequest.Config
         public static bool IsRunningOnWindows()
         {
             return Environment.OSVersion.Platform == PlatformID.Win32NT ||
-		            Environment.OSVersion.Platform == PlatformID.Win32S ||
-		            Environment.OSVersion.Platform == PlatformID.Win32Windows ||
-		            Environment.OSVersion.Platform == PlatformID.WinCE ||
-		            Environment.OSVersion.Platform == PlatformID.Xbox;
+                    Environment.OSVersion.Platform == PlatformID.Win32S ||
+                    Environment.OSVersion.Platform == PlatformID.Win32Windows ||
+                    Environment.OSVersion.Platform == PlatformID.WinCE ||
+                    Environment.OSVersion.Platform == PlatformID.Xbox;
         }
 
         public static bool IsRunningOnUnix()

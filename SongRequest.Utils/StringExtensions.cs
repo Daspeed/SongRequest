@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Globalization;
 using System.Threading;
-using DoubleMetaphone;
 
 namespace SongRequest.Utils
 {

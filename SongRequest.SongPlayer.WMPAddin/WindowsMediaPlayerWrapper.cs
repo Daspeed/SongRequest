@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.Composition;
-using System.Linq;
-using System.Text;
+﻿using System.ComponentModel.Composition;
 using WMPLib;
 
 namespace SongRequest.SongPlayer.WMPAddin
@@ -16,7 +12,7 @@ namespace SongRequest.SongPlayer.WMPAddin
         {
             _player = new WindowsMediaPlayer();
         }
-        
+
         public void Pause()
         {
             if (_player.playState == WMPPlayState.wmppsPaused)

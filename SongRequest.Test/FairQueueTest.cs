@@ -1,9 +1,7 @@
-﻿using System;
-using System.Text;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SongRequest.SongPlayer;
+using System;
+using System.Linq;
 
 namespace SongRequest.Test
 {
@@ -17,7 +15,7 @@ namespace SongRequest.Test
         {
             FairQueue queue = new FairQueue();
 
-            var first = new RequestedSong() { RequestedDate = DateTime.Now, Song = new Song() { FileName="A.mp3"  }, RequesterName="A" };
+            var first = new RequestedSong() { RequestedDate = DateTime.Now, Song = new Song() { FileName = "A.mp3" }, RequesterName = "A" };
             queue.Add(first);
 
             Assert.AreEqual(queue.Count, 1);
@@ -53,7 +51,7 @@ namespace SongRequest.Test
             Assert.AreEqual("C.mp3", queue.Current.ElementAt(0).Song.FileName);
             Assert.AreEqual("D.mp3", queue.Current.ElementAt(1).Song.FileName);
             Assert.AreEqual("B.mp3", queue.Current.ElementAt(2).Song.FileName);
- 
+
         }
 
         [TestMethod]
@@ -67,10 +65,11 @@ namespace SongRequest.Test
             {
                 foreach (int songForUser in Enumerable.Range(1, 3))
                 {
-                    queue.Add(new RequestedSong() {
+                    queue.Add(new RequestedSong()
+                    {
                         RequestedDate = dateTime.AddDays(userNumber).AddMinutes(songForUser),
                         Song = new Song() { FileName = songForUser + "_Song.mp3" },
-                        RequesterName =  userNumber + "_User" 
+                        RequesterName = userNumber + "_User"
                     });
                 }
             }

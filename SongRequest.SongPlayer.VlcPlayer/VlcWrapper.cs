@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
@@ -51,7 +50,7 @@ namespace SongRequest.SongPlayer.VlcPlayer
         [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         private static extern bool SetDllDirectory(string lpPathName);
-        
+
         private IntPtr _instance;
         private IntPtr _player;
 
@@ -110,7 +109,7 @@ namespace SongRequest.SongPlayer.VlcPlayer
         {
             get
             {
-                return GetPosition(_player)/1000;
+                return GetPosition(_player) / 1000;
             }
         }
 
@@ -133,7 +132,8 @@ namespace SongRequest.SongPlayer.VlcPlayer
                 int state = GetState(_player);
                 if (invalidStates.Contains(state)) // not ready at this time
                 {
-                    new Thread(x => {
+                    new Thread(x =>
+                    {
                         do
                         {
                             state = GetState(_player);
