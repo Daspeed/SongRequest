@@ -120,7 +120,11 @@
                                 <input type="button" class="button addButton" value="+" ng-click="addToQueue(song)" title="Add song to queue" />
                             </td>
                             <td class="artColumn">
-                                <img class="artImage" ng-src="/dynamic/image/{{song.TempId}}/small">
+                                <div class="artDiv">
+                                    <div class="artDiv2">
+                                        <img class="artImage" ng-src="/dynamic/image/{{song.TempId}}/small">
+                                    </div>
+                                </div>
                             </td>
                             <td class="songNameColumn"><a class="songlink" href="file://{{song.FileName}}" title="{{song.FileName}}">{{song.Name}}</a></td>
                             <td class="songArtistColumn">{{song.Artist}}</td>

@@ -106,6 +106,7 @@ namespace SongRequest.Handlers
                 case "rescan":
                     response.ContentType = "application/json";
                     songPlayer.Rescan();
+                    ImageHelper.Purge();
                     break;
                 case "pause":
                     response.ContentType = "application/json";

@@ -549,7 +549,6 @@ namespace SongRequest.SongPlayer
                         song.DateCreated = fileInfo.CreationTime.ToString("yyyy-MM-dd HH:mm");
 
                         song.GenerateSearchAndDoubleMetaphone();
-                        song.ClearImageBuffer();
                     }
                 }
                 song.TagRead = true;

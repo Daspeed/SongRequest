@@ -411,13 +411,30 @@ td {
     vertical-align: middle;
     width: 2em;
     cursor: default;
-    padding: 0px;
+    margin: 0 auto;
+}
+
+.artDiv {
+    border: none;
+    vertical-align: bottom;
+    padding: 0;
+    margin: 0 auto;
+    background: none;
+}
+
+.artDiv2 {
+    border: 1px solid darkgray;
+    vertical-align: central;
+    height: 1.75em;
+    width: 1.75em;
+    overflow: hidden;
+    padding: 0;
+    margin: 0 auto;
 }
 
 .artImage {
     height: 1.75em;
     width: 1.75em;
-    border: 1px solid darkgray;
 }
 
 .songNameColumn {
@@ -444,7 +461,7 @@ td {
     -o-text-overflow: ellipsis;
     text-overflow: ellipsis;
     white-space: nowrap;
-    width: 25%;
+    width: 15%;
     cursor: pointer;
     cursor: hand;
 }

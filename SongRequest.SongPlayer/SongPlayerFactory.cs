@@ -1,6 +1,6 @@
+using SongRequest.Config;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
-using SongRequest.Config;
 
 namespace SongRequest.SongPlayer
 {
@@ -35,14 +35,14 @@ namespace SongRequest.SongPlayer
 
         [Import(typeof(IMediaDevice))]
         public IMediaDevice MediaDevice { get; set; }
-        
+
         private SongPlayerFactory()
         {
             DirectoryCatalog catalog = new DirectoryCatalog("addins");
             CompositionContainer container = new CompositionContainer(catalog);
             container.ComposeParts(this);
         }
-        
+
         public static ConfigFile GetConfigFile()
         {
             if (!System.IO.File.Exists("songrequest.config"))
@@ -51,11 +51,11 @@ namespace SongRequest.SongPlayer
                 configFile.SetValue("server.host", "*");
                 configFile.SetValue("server.port", "8765");
                 configFile.SetValue("server.clients", "all");
-                
+
                 if (Settings.IsRunningOnWindows())
-                    configFile.SetValue ("library.path", "c:\\music");
+                    configFile.SetValue("library.path", "c:\\music");
                 else
-                    configFile.SetValue ("library.path", "~/Music");
+                    configFile.SetValue("library.path", "~/Music");
 
                 configFile.SetValue("library.minutesbetweenscans", "1");
                 configFile.SetValue("library.extensions", "mp3");

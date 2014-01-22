@@ -3,6 +3,7 @@ using System.IO;
 using System.Net;
 using SongRequest.SongPlayer;
 using System.Reflection;
+using System.Collections.Generic;
 
 namespace SongRequest.Handlers
 {
@@ -16,84 +17,130 @@ namespace SongRequest.Handlers
 
         private static object _lockObject = new object();
 
-        public static void HelpMe(HttpListenerResponse response, string tempId, ISongPlayer songPlayer, bool large)
+        private static Dictionary<string, byte[]> thumbnailBuffer = new Dictionary<string, byte[]>();
+
+        public static void Purge()
         {
             lock (_lockObject)
             {
-                // if no temp id, return
-                if (string.IsNullOrEmpty(tempId))
-                {
-                    response.StatusCode = (int)HttpStatusCode.NotFound;
-                    return;
-                }
+                thumbnailBuffer.Clear();
+            }
+        }
 
-                // use cached image if possible
-                if (large && tempId.Equals(_lastId, StringComparison.OrdinalIgnoreCase) && _lastImage != null)
-                {
-                    WriteImage(response, _lastImage);
-                    return;
-                }
+        public static void HelpMe(HttpListenerResponse response, string tempId, ISongPlayer songPlayer, bool large)
+        {
+            // if no temp id, return
+            if (string.IsNullOrEmpty(tempId))
+            {
+                response.StatusCode = (int)HttpStatusCode.NotFound;
+                return;
+            }
 
-                // get from player
-                MemoryStream imageStream;
-                try
+            lock (_lockObject)
+            {
+                if (!large)
                 {
-                    imageStream = songPlayer.GetImageStream(tempId, large);
-                }
-                catch (Exception)
-                {
-                    imageStream = null;
-                }
-
-                using (MemoryStream streamFromSongPlayer = imageStream)
-                {
-                    if (streamFromSongPlayer != null)
-                    {
-                        // set last id if large image
-                        if (large)
-                        {
-                            _lastId = tempId;
-                            _lastImage = streamFromSongPlayer.ToArray();
-                            WriteImage(response, _lastImage);
-                        }
-                        else
-                        {
-                            WriteImage(response, streamFromSongPlayer);
-                        }
-                        return;
-                    }
-                }
-
-                // cache large if not present
-                if (large && _emptyImageLarge == null)
-                {
-                    using (Stream stream = Assembly.GetEntryAssembly().GetManifestResourceStream("SongRequest.Static.empty.png"))
-                    using (MemoryStream memoryStream = new MemoryStream())
-                    {
-                        stream.CopyTo(memoryStream);
-                        _emptyImageLarge = memoryStream.ToArray();
-                    }
-                }
-                // cache small if not present
-                else if (!large && _emptyImageSmall == null)
-                {
-                    using (Stream stream = Assembly.GetEntryAssembly().GetManifestResourceStream("SongRequest.Static.empty_small.png"))
-                    using (MemoryStream memoryStream = new MemoryStream())
-                    {
-                        stream.CopyTo(memoryStream);
-                        _emptyImageSmall = memoryStream.ToArray();
-                    }
-                }
-
-                if (large)
-                {
-                    WriteImage(response, _emptyImageLarge);
+                    HelpMeSmall(response, tempId, songPlayer);
                 }
                 else
                 {
-                    WriteImage(response, _emptyImageSmall);
+                    HelpMeLarge(response, tempId, songPlayer);
                 }
             }
+        }
+
+        private static void HelpMeLarge(HttpListenerResponse response, string tempId, ISongPlayer songPlayer)
+        {
+            // use cached image if possible
+            if (tempId.Equals(_lastId, StringComparison.OrdinalIgnoreCase) && _lastImage != null)
+            {
+                WriteImage(response, _lastImage);
+                return;
+            }
+
+            // get from player
+            MemoryStream imageStream;
+            try
+            {
+                // this is locked in function
+                imageStream = songPlayer.GetImageStream(tempId, true);
+            }
+            catch (Exception)
+            {
+                imageStream = null;
+            }
+
+            using (MemoryStream streamFromSongPlayer = imageStream)
+            {
+                if (streamFromSongPlayer != null)
+                {
+                    // set last id
+                    _lastId = tempId;
+                    _lastImage = streamFromSongPlayer.ToArray();
+                    WriteImage(response, _lastImage);
+                    return;
+                }
+            }
+
+            // cache large if not present
+            if (_emptyImageLarge == null)
+            {
+                using (Stream stream = Assembly.GetEntryAssembly().GetManifestResourceStream("SongRequest.Static.empty.png"))
+                using (MemoryStream memoryStream = new MemoryStream())
+                {
+                    stream.CopyTo(memoryStream);
+                    _emptyImageLarge = memoryStream.ToArray();
+                }
+            }
+
+            WriteImage(response, _emptyImageLarge);
+        }
+
+        private static void HelpMeSmall(HttpListenerResponse response, string tempId, ISongPlayer songPlayer)
+        {
+            if (thumbnailBuffer.ContainsKey(tempId))
+            {
+                WriteImage(response, thumbnailBuffer[tempId]);
+                return;
+            }
+
+            // get from player
+            MemoryStream imageStream;
+            try
+            {
+                // this is locked in function
+                imageStream = songPlayer.GetImageStream(tempId, false);
+            }
+            catch (Exception)
+            {
+                imageStream = null;
+            }
+
+            using (MemoryStream streamFromSongPlayer = imageStream)
+            {
+                if (streamFromSongPlayer != null)
+                {
+                    if (!thumbnailBuffer.ContainsKey(tempId))
+                        thumbnailBuffer.Add(tempId, streamFromSongPlayer.ToArray());
+                    WriteImage(response, streamFromSongPlayer);
+                    return;
+                }
+            }
+
+            // cache small if not present
+            if (_emptyImageSmall == null)
+            {
+                using (Stream stream = Assembly.GetEntryAssembly().GetManifestResourceStream("SongRequest.Static.empty_small.png"))
+                using (MemoryStream memoryStream = new MemoryStream())
+                {
+                    stream.CopyTo(memoryStream);
+                    _emptyImageSmall = memoryStream.ToArray();
+                }
+            }
+
+            if (!thumbnailBuffer.ContainsKey(tempId))
+                thumbnailBuffer.Add(tempId, _emptyImageSmall);
+            WriteImage(response, _emptyImageSmall);
         }
 
         private static void WriteImage(HttpListenerResponse response, MemoryStream streamToCopy)

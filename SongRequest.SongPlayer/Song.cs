@@ -5,9 +5,9 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
-using System.Linq;
 
 namespace SongRequest.SongPlayer
 {
@@ -245,26 +245,8 @@ namespace SongRequest.SongPlayer
             return FileName;
         }
 
-        public void ClearImageBuffer()
-        {
-            _hasCover = true;
-            smallBuffer = null;
-        }
-
-        private byte[] smallBuffer = null;
-        private bool _hasCover = true;
-
         public MemoryStream GetImageStream(bool large)
         {
-            if (!large)
-            {
-                if (smallBuffer != null)
-                    return new MemoryStream(smallBuffer);
-
-                if (!_hasCover)
-                    return null;
-            }
-
             int size = large ? 300 : 25;
             FileInfo fileInfo = new FileInfo(FileName);
 
@@ -329,16 +311,10 @@ namespace SongRequest.SongPlayer
             // return nothing, if nothing found
             if (thumbnailData == null || thumbnailData.Length == 0)
             {
-                _hasCover = false;
                 return null;
             }
 
-            // cache tumbnail
-            if (!large)
-                smallBuffer = thumbnailData;
-
-            _hasCover = true;
-
+            // return image
             MemoryStream stream = new MemoryStream(thumbnailData);
             return stream;
         }
@@ -390,12 +366,6 @@ namespace SongRequest.SongPlayer
                 // Resize with height instead
                 width = image.Width * maxHeight / image.Height;
                 height = maxHeight;
-            }
-
-            if (maxSize < 50)
-            {
-                width = maxSize;
-                height = maxSize;
             }
 
             System.Drawing.Image thumbnail = image.GetThumbnailImage(width, height, null, IntPtr.Zero);
