@@ -176,11 +176,6 @@ namespace SongRequest.SongPlayer
         public string LastPlayTime { get; private set; }
 
         /// <summary>
-        /// Name of last requester
-        /// </summary>
-        private bool _isDirty;
-
-        /// <summary>
         /// If true, tag is read
         /// </summary>
         public bool IsDirty { get; set; }

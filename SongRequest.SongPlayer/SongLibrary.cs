@@ -22,6 +22,17 @@ namespace SongRequest.SongPlayer
         private bool _unsavedChanges;
         public event StatusChangedEventHandler StatusChanged;
 
+        public HashSet<string> GetTempIds()
+        {
+            HashSet<string> values = new HashSet<string>();
+            lock (lockObject)
+            {
+                if (_songs != null)
+                    values.UnionWith(_songs.Select(x => x.Value.TempId));
+            }
+            return values;
+        }
+
         public SongLibrary()
         {
             _songs = new Dictionary<string, Song>(StringComparer.OrdinalIgnoreCase);
@@ -312,6 +323,7 @@ namespace SongRequest.SongPlayer
             return _scanFoundChange;
         }
 
+        public bool ScanRunning { get { return _scanRunning; } }
         private volatile bool _scanRunning = false;
         private volatile bool _scanFoundChange = false;
         private void ScanSongsThread()
