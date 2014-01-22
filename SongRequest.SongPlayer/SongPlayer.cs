@@ -6,7 +6,7 @@ using System.Linq;
 using System.Threading;
 
 namespace SongRequest.SongPlayer
-{   
+{
     public class SongPlayer : ISongPlayer, IDisposable
     {
         private static object lockObject = new object();
@@ -193,10 +193,52 @@ namespace SongRequest.SongPlayer
                         Enqueue(requestedSong.Song, requestedSong.RequesterName);
                 }
 
+                // when not scanning for songs, clear the queue of unavailable songs
+                if (!_songLibrary.ScanRunning)
+                {
+                    ClearQueue();
+                }
+
                 if (!_songLibrary.ScanLibrary())
+                {
                     Thread.Sleep(200);
+                }
                 else
-                    Thread.Sleep(10);
+                {
+                    Thread.Sleep(50);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Clears queue of unavailable songs
+        /// </summary>
+        private void ClearQueue()
+        {
+            // remove songs from queue that aren't available anymore
+            if (_queue.Count > 0)
+            {
+                // all songs
+                HashSet<string> allTempIds = _songLibrary.GetTempIds();
+
+                // songs in queue
+                HashSet<string> queueTempIds;
+                lock (lockObject)
+                {
+                    queueTempIds = new HashSet<string>(_queue.Current.Select(x => x.Song.TempId));
+                }
+
+                // remove available ids
+                queueTempIds.ExceptWith(allTempIds);
+
+                // if any, remove them
+                if (queueTempIds.Count > 0)
+                {
+                    foreach (string idToRemove in queueTempIds)
+                    {
+                        _queue.Remove(idToRemove, "randomizer", null);
+                    }
+                }
             }
         }
 

@@ -1,4 +1,4 @@
-﻿<!DOCTYPE HTML>
+﻿<!DOCTYPE html>
 <html ng-app="SongRequest">
 <head>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -32,7 +32,7 @@
                     </p>
                     <p>
                         <span class="statusTitle">
-                            <a href="file://{{getCurrentSongFileName()}}" title="{{getCurrentSongFileName()}}">{{getCurrentSongName()}}</a>   
+                            <a href="file://{{getCurrentSongFileName()}}" title="{{getCurrentSongFileName()}}">{{getCurrentSongName()}}</a>
                         </span>
                     </p>
                     <p>
@@ -120,7 +120,7 @@
                                 <input type="button" class="button addButton" value="+" ng-click="addToQueue(song)" title="Add song to queue" />
                             </td>
                             <td class="artColumn">
-                                <img class="" ng-src="/dynamic/image/{{song.TempId}}/small">
+                                <img class="artImage" ng-src="/dynamic/image/{{song.TempId}}/small">
                             </td>
                             <td class="songNameColumn"><a class="songlink" href="file://{{song.FileName}}" title="{{song.FileName}}">{{song.Name}}</a></td>
                             <td class="songArtistColumn">{{song.Artist}}</td>

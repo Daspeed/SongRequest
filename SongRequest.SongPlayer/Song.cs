@@ -176,11 +176,6 @@ namespace SongRequest.SongPlayer
         public string LastPlayTime { get; private set; }
 
         /// <summary>
-        /// Name of last requester
-        /// </summary>
-        private bool _isDirty;
-
-        /// <summary>
         /// If true, tag is read
         /// </summary>
         public bool IsDirty { get; set; }
@@ -252,25 +247,36 @@ namespace SongRequest.SongPlayer
 
         public void ClearImageBuffer()
         {
+            _hasCover = true;
             smallBuffer = null;
         }
 
         private byte[] smallBuffer = null;
+        private bool _hasCover = true;
 
         public MemoryStream GetImageStream(bool large)
         {
-            if (!large && smallBuffer != null)
-                return new MemoryStream(smallBuffer);
+            if (!large)
+            {
+                if (smallBuffer != null)
+                    return new MemoryStream(smallBuffer);
 
-            int size = large ? 300 : 20;
+                if (!_hasCover)
+                    return null;
+            }
+
+            int size = large ? 300 : 25;
             FileInfo fileInfo = new FileInfo(FileName);
 
             List<FileInfo> coverFiles = new List<FileInfo>();
-            coverFiles.AddRange(fileInfo.Directory.GetFiles("*Cover.*", SearchOption.TopDirectoryOnly));
-            coverFiles.AddRange(fileInfo.Directory.GetFiles("*Artwork.*", SearchOption.TopDirectoryOnly));
-            coverFiles.AddRange(fileInfo.Directory.GetFiles("*Front.*", SearchOption.TopDirectoryOnly));
-            string fileNameWithoutExtension = fileInfo.Name.Replace(fileInfo.Extension, string.Empty);
-            coverFiles.AddRange(fileInfo.Directory.GetFiles(fileNameWithoutExtension + ".*", SearchOption.TopDirectoryOnly));
+            if (fileInfo.Exists && fileInfo.Directory.Exists)
+            {
+                coverFiles.AddRange(fileInfo.Directory.GetFiles("*Cover.*", SearchOption.TopDirectoryOnly));
+                coverFiles.AddRange(fileInfo.Directory.GetFiles("*Artwork.*", SearchOption.TopDirectoryOnly));
+                coverFiles.AddRange(fileInfo.Directory.GetFiles("*Front.*", SearchOption.TopDirectoryOnly));
+                string fileNameWithoutExtension = fileInfo.Name.Replace(fileInfo.Extension, string.Empty);
+                coverFiles.AddRange(fileInfo.Directory.GetFiles(fileNameWithoutExtension + ".*", SearchOption.TopDirectoryOnly));
+            }
 
             HashSet<string> possibleExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
             {
@@ -302,16 +308,19 @@ namespace SongRequest.SongPlayer
             // check if needed
             if (thumbnailData == null || thumbnailData.Length == 0)
             {
-                // try embedded file
-                using (TagLib.File taglibFile = TagLib.File.Create(FileName))
+                if (File.Exists(FileName))
                 {
-                    if (taglibFile.Tag.Pictures.Length >= 1)
+                    // try embedded file
+                    using (TagLib.File taglibFile = TagLib.File.Create(FileName))
                     {
-                        TagLib.IPicture picture = taglibFile.Tag.Pictures[0];
-
-                        if (picture.Data != null && picture.Data.Data != null && picture.Data.Data.Length > 0)
+                        if (taglibFile.Tag.Pictures.Length >= 1)
                         {
-                            thumbnailData = CreateThumbnail(picture.Data.Data, size);
+                            TagLib.IPicture picture = taglibFile.Tag.Pictures[0];
+
+                            if (picture.Data != null && picture.Data.Data != null && picture.Data.Data.Length > 0)
+                            {
+                                thumbnailData = CreateThumbnail(picture.Data.Data, size);
+                            }
                         }
                     }
                 }
@@ -319,11 +328,16 @@ namespace SongRequest.SongPlayer
 
             // return nothing, if nothing found
             if (thumbnailData == null || thumbnailData.Length == 0)
+            {
+                _hasCover = false;
                 return null;
+            }
 
             // cache tumbnail
             if (!large)
                 smallBuffer = thumbnailData;
+
+            _hasCover = true;
 
             MemoryStream stream = new MemoryStream(thumbnailData);
             return stream;
@@ -376,6 +390,12 @@ namespace SongRequest.SongPlayer
                 // Resize with height instead
                 width = image.Width * maxHeight / image.Height;
                 height = maxHeight;
+            }
+
+            if (maxSize < 50)
+            {
+                width = maxSize;
+                height = maxSize;
             }
 
             System.Drawing.Image thumbnail = image.GetThumbnailImage(width, height, null, IntPtr.Zero);

@@ -102,7 +102,7 @@ namespace SongRequest.SongPlayer
         /// <summary>
         /// Current queue
         /// </summary>
-        public IEnumerable<RequestedSong> Current
+        public List<RequestedSong> Current
         {
             get
             {
