@@ -292,10 +292,7 @@ namespace SongRequest.SongPlayer
         /// </summary>
         public void Dequeue(string id, string requester)
         {
-            Song song = _songLibrary.GetSongs(string.Empty, null, true).FirstOrDefault(x => x.TempId == id);
-
-            if (song != null)
-                Dequeue(song, requester);
+            _queue.Remove(id, requester, _currentSong.Song.TempId);
         }
 
         /// <summary>
@@ -303,7 +300,7 @@ namespace SongRequest.SongPlayer
         /// </summary>
         public void Dequeue(Song song, string requester)
         {
-            _queue.Remove(song.TempId, requester, _currentSong.Song.TempId);
+            Dequeue(song.TempId, requester);
         }
 
         /// <summary>
