@@ -1,9 +1,11 @@
-﻿using System;
-using System.Linq;
-using System.Diagnostics;
+﻿using SongRequest.SongPlayer;
+using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
-using SongRequest.SongPlayer;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SongRequest
 {
@@ -57,16 +59,17 @@ namespace SongRequest
             }
         }
 
-        private static void Run()
+        private async static void Run()
         {
             Console.Clear();
             DrawArt();
+
             using (HttpListener listener = new HttpListener())
             {
                 host = SongPlayerFactory.GetConfigFile().GetValue("server.host");
                 if (string.IsNullOrWhiteSpace(host))
                     host = "*";
-                
+
                 if (!int.TryParse(SongPlayerFactory.GetConfigFile().GetValue("server.port"), out port))
                     port = 8765;
 
@@ -85,27 +88,51 @@ namespace SongRequest
 
                 listener.Start();
 
-                while (_running)
+                // maximum number of tasks
+                int maximumNumberOfTasks = 4 * Environment.ProcessorCount;
+                Program_LastRequestChanged(string.Format("Asynchronous handles a maximum of {0} requests.", maximumNumberOfTasks));
+
+                // list of tasks
+                List<Task> tasks = new List<Task>();
+
+                using (SemaphoreSlim semaphore = new SemaphoreSlim(maximumNumberOfTasks, maximumNumberOfTasks))
                 {
-                    HttpListenerContext context = listener.GetContext();
-                    Stopwatch watch = Stopwatch.StartNew();
-
-                    Program_LastRequestChanged(string.Format("{0} - {1}\t{2}", DateTime.Now.ToString("HH:mm:ss"), context.Request.UserHostAddress, context.Request.RawUrl));
-
-                    try
+                    while (_running)
                     {
-                        Dispatcher.ProcessRequest(context);
+                        // wait until a semaphore request is released
+                        await semaphore.WaitAsync();
 
-                        watch.Stop();
-                    }
-                    catch (Exception ex)
-                    {
-                        context.Response.StatusCode = 500;
+                        tasks.Add(Task.Run(() =>
+                        {
+                            listener.GetContextAsync().ContinueWith(async (t) =>
+                            {
+                                HttpListenerContext context = await t;
 
-                        using (var writer = new StreamWriter(context.Response.OutputStream))
-                            writer.Write(ex.ToString());
+                                try
+                                {
+                                    Program_LastRequestChanged(string.Format("{0} - {1}\t{2}", DateTime.Now.ToString("HH:mm:ss"), context.Request.UserHostAddress, context.Request.RawUrl));
+
+                                    Dispatcher.ProcessRequest(context);
+                                    return;
+                                }
+                                catch (Exception ex)
+                                {
+                                    context.Response.StatusCode = 500;
+
+                                    using (var writer = new StreamWriter(context.Response.OutputStream))
+                                        writer.Write(ex.ToString());
+                                }
+                                finally
+                                {
+                                    // release semaphore request
+                                    semaphore.Release();
+                                }
+                            });
+                        }));
                     }
                 }
+
+                await Task.WhenAll(tasks);
             }
         }
 
