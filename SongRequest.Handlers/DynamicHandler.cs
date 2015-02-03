@@ -34,8 +34,6 @@ namespace SongRequest.Handlers
 
             ISongPlayer songPlayer = SongPlayerFactory.GetSongPlayer();
             string requester = GetRequester(request);
-            if (!ClientAllowed(requester))
-                return;
 
             response.AppendHeader("Cache-Control", "no-cache");
 
@@ -56,12 +54,18 @@ namespace SongRequest.Handlers
                             ));
                             break;
                         case "POST":
+                            if (!ClientAllowed(requester))
+                                return;
+
                             using (var reader = new StreamReader(request.InputStream))
                             {
                                 songPlayer.Enqueue(reader.ReadToEnd(), requester);
                             }
                             break;
                         case "DELETE":
+                            if (!ClientAllowed(requester))
+                                return;
+
                             using (var reader = new StreamReader(request.InputStream))
                             {
                                 songPlayer.Dequeue(reader.ReadToEnd(), requester);
@@ -71,6 +75,9 @@ namespace SongRequest.Handlers
                     break;
                 case "playlist":
                     {
+                        if (!ClientAllowed(requester))
+                            return;
+
                         if (request.HttpMethod == "POST")
                         {
                             using (var reader = new StreamReader(request.InputStream))
@@ -100,19 +107,31 @@ namespace SongRequest.Handlers
                         break;
                     }
                 case "next":
+                    if (!ClientAllowed(requester))
+                        return;
+
                     response.ContentType = "application/json";
                     songPlayer.Next(requester);
                     break;
                 case "rescan":
+                    if (!ClientAllowed(requester))
+                        return;
+
                     response.ContentType = "application/json";
                     songPlayer.Rescan();
                     ImageHelper.Purge();
                     break;
                 case "pause":
+                    if (!ClientAllowed(requester))
+                        return;
+
                     response.ContentType = "application/json";
                     songPlayer.Pause();
                     break;
                 case "volume":
+                    if (!ClientAllowed(requester))
+                        return;
+
                     response.ContentType = "application/json";
                     if (request.HttpMethod == "POST")
                     {
@@ -131,7 +150,6 @@ namespace SongRequest.Handlers
                     }
                     break;
                 case "image":
-
                     string tempId;
                     bool large = false;
                     if (actionPath.Length == 4)

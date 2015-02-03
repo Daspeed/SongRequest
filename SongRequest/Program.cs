@@ -102,6 +102,8 @@ namespace SongRequest
                         // wait until a semaphore request is released
                         await semaphore.WaitAsync();
 
+                        tasks.RemoveAll(x => x.Status == TaskStatus.RanToCompletion);
+
                         tasks.Add(Task.Run(() =>
                         {
                             listener.GetContextAsync().ContinueWith(async (t) =>
