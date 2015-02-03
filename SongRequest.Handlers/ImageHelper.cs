@@ -29,22 +29,15 @@ namespace SongRequest.Handlers
 
         public static void HelpMe(HttpListenerResponse response, string tempId, ISongPlayer songPlayer, bool large)
         {
-            // if no temp id, return
-            if (string.IsNullOrEmpty(tempId))
-            {
-                response.StatusCode = (int)HttpStatusCode.NotFound;
-                return;
-            }
-
             lock (_lockObject)
             {
                 if (!large)
                 {
-                    HelpMeSmall(response, tempId, songPlayer);
+                    HelpMeSmall(response, tempId ?? string.Empty, songPlayer);
                 }
                 else
                 {
-                    HelpMeLarge(response, tempId, songPlayer);
+                    HelpMeLarge(response, tempId ?? string.Empty, songPlayer);
                 }
             }
         }
@@ -59,26 +52,29 @@ namespace SongRequest.Handlers
             }
 
             // get from player
-            MemoryStream imageStream;
-            try
+            MemoryStream imageStream = null;
+            if (!string.IsNullOrEmpty(tempId))
             {
-                // this is locked in function
-                imageStream = songPlayer.GetImageStream(tempId, true);
-            }
-            catch (Exception)
-            {
-                imageStream = null;
-            }
-
-            using (MemoryStream streamFromSongPlayer = imageStream)
-            {
-                if (streamFromSongPlayer != null)
+                try
                 {
-                    // set last id
-                    _lastId = tempId;
-                    _lastImage = streamFromSongPlayer.ToArray();
-                    WriteImage(response, _lastImage);
-                    return;
+                    // this is locked in function
+                    imageStream = songPlayer.GetImageStream(tempId, true);
+                }
+                catch (Exception)
+                {
+                    imageStream = null;
+                }
+
+                using (MemoryStream streamFromSongPlayer = imageStream)
+                {
+                    if (streamFromSongPlayer != null)
+                    {
+                        // set last id
+                        _lastId = tempId;
+                        _lastImage = streamFromSongPlayer.ToArray();
+                        WriteImage(response, _lastImage);
+                        return;
+                    }
                 }
             }
 
@@ -105,25 +101,28 @@ namespace SongRequest.Handlers
             }
 
             // get from player
-            MemoryStream imageStream;
-            try
+            MemoryStream imageStream = null;
+            if (!string.IsNullOrEmpty(tempId))
             {
-                // this is locked in function
-                imageStream = songPlayer.GetImageStream(tempId, false);
-            }
-            catch (Exception)
-            {
-                imageStream = null;
-            }
-
-            using (MemoryStream streamFromSongPlayer = imageStream)
-            {
-                if (streamFromSongPlayer != null)
+                try
                 {
-                    if (!thumbnailBuffer.ContainsKey(tempId))
-                        thumbnailBuffer.Add(tempId, streamFromSongPlayer.ToArray());
-                    WriteImage(response, streamFromSongPlayer);
-                    return;
+                    // this is locked in function
+                    imageStream = songPlayer.GetImageStream(tempId, false);
+                }
+                catch (Exception)
+                {
+                    imageStream = null;
+                }
+
+                using (MemoryStream streamFromSongPlayer = imageStream)
+                {
+                    if (streamFromSongPlayer != null)
+                    {
+                        if (!thumbnailBuffer.ContainsKey(tempId))
+                            thumbnailBuffer.Add(tempId, streamFromSongPlayer.ToArray());
+                        WriteImage(response, streamFromSongPlayer);
+                        return;
+                    }
                 }
             }
 

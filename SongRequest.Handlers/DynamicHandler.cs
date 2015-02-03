@@ -150,6 +150,11 @@ namespace SongRequest.Handlers
                     else
                     {
                         tempId = string.Empty;
+
+                        if (actionPath[2].Equals("large", StringComparison.OrdinalIgnoreCase))
+                        {
+                            large = true;
+                        }
                     }
 
                     ImageHelper.HelpMe(response, tempId, songPlayer, large);

@@ -1,8 +1,7 @@
-﻿using System.Net;
-using SongRequest.Config;
-using SongRequest.SongPlayer;
+﻿using SongRequest.SongPlayer;
 using System;
 using System.IO;
+using System.Net;
 
 namespace SongRequest.Handlers
 {
@@ -10,9 +9,8 @@ namespace SongRequest.Handlers
     {
         public IndexHandler(Func<string, Stream> resourceGetter) :
             base(resourceGetter)
-		{
-			
-		}
+        {
+        }
 
         public override void Process(HttpListenerRequest request, HttpListenerResponse response)
         {

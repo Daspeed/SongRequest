@@ -68,7 +68,11 @@ namespace SongRequest.Test
                     queue.Add(new RequestedSong()
                     {
                         RequestedDate = dateTime.AddDays(userNumber).AddMinutes(songForUser),
-                        Song = new Song() { FileName = songForUser + "_Song.mp3" },
+                        Song = new Song()
+                        {
+                            FileName = songForUser + "_Song.mp3",
+                            Extension = ".mp3"
+                        },
                         RequesterName = userNumber + "_User"
                     });
                 }

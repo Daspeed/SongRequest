@@ -16,7 +16,7 @@ namespace SongRequest.Handlers
 
         public override void Process(HttpListenerRequest request, HttpListenerResponse response)
         {
-            Match match = Regex.Match(request.RawUrl, "^/static/(.+)$");
+            Match match = Regex.Match(request.RawUrl, "^/Static/(.+)$", RegexOptions.IgnoreCase);
 
             string resource = match.Groups[1].Value;
 

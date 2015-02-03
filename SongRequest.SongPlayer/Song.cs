@@ -131,6 +131,11 @@ namespace SongRequest.SongPlayer
         }
 
         /// <summary>
+        /// Extension
+        /// </summary>
+        public string Extension { get; set; }
+
+        /// <summary>
         /// File name
         /// </summary>
         public string FileName { get; set; }

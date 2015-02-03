@@ -164,6 +164,15 @@ namespace SongRequest.SongPlayer
                 {
                     if (File.Exists("library.bin"))
                     {
+                        Config.ConfigFile config = SongPlayerFactory.GetConfigFile();
+                        string[] extensionsArray = config.GetValue("library.extensions").Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries)
+                            .Select(x => x.StartsWith(".", StringComparison.OrdinalIgnoreCase) ? x : "." + x)
+                            .ToArray();
+                        HashSet<string> extensions = new HashSet<string>(extensionsArray, StringComparer.OrdinalIgnoreCase);
+
+                        if (extensions.Count == 0)
+                            extensions.Add(".mp3");
+
                         using (Stream stream = File.Open("library.bin", FileMode.Open))
                         {
                             if (stream.Length > 0)
@@ -176,17 +185,26 @@ namespace SongRequest.SongPlayer
                                     List<Song> songs = (List<Song>)fromLibrary;
                                     foreach (Song song in songs)
                                     {
-                                        song.GenerateSearchAndDoubleMetaphone();
-                                        _songs.Add(song.FileName, song);
+                                        // only add supported songs
+                                        if (extensions.Contains(song.Extension))
+                                        {
+                                            song.GenerateSearchAndDoubleMetaphone();
+                                            _songs.Add(song.FileName, song);
+                                        }
                                     }
                                 }
                                 else if (fromLibrary is Dictionary<string, Song>)
                                 {
-                                    _songs = (Dictionary<string, Song>)fromLibrary;
+                                    Dictionary<string, Song> songs = (Dictionary<string, Song>)fromLibrary;
 
-                                    foreach (Song song in _songs.Values)
+                                    foreach (Song song in songs.Values)
                                     {
-                                        song.GenerateSearchAndDoubleMetaphone();
+                                        // only add supported songs
+                                        if (extensions.Contains(song.Extension))
+                                        {
+                                            song.GenerateSearchAndDoubleMetaphone();
+                                            _songs.Add(song.FileName, song);
+                                        }
                                     }
                                 }
                                 else if (fromLibrary is Dictionary<string, Song>.ValueCollection)
@@ -196,8 +214,12 @@ namespace SongRequest.SongPlayer
                                     List<Song> songs = valueCollection.ToList();
                                     foreach (Song song in songs)
                                     {
-                                        song.GenerateSearchAndDoubleMetaphone();
-                                        _songs.Add(song.FileName, song);
+                                        // only add supported songs
+                                        if (extensions.Contains(song.Extension))
+                                        {
+                                            song.GenerateSearchAndDoubleMetaphone();
+                                            _songs.Add(song.FileName, song);
+                                        }
                                     }
                                 }
                                 else
@@ -211,6 +233,7 @@ namespace SongRequest.SongPlayer
                                     song.IsDirty = false;
                             }
                         }
+
                     }
                 }
 
@@ -227,7 +250,7 @@ namespace SongRequest.SongPlayer
         /// <summary>
         /// Get all matching files in a folder
         /// </summary>
-        private HashSet<string> GetFilesRecursive(string directory, IList<string> extensions)
+        private HashSet<string> GetFilesRecursive(string directory, HashSet<string> extensions)
         {
             // big list with (at the end) all extension matching files of this folder and it's subfolders
             HashSet<string> files = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
@@ -247,10 +270,13 @@ namespace SongRequest.SongPlayer
                     HashSet<string> currentDirectoryFiles = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
                     // loop trough files
-                    FileInfo[] directoryFiles = currentDirectory.GetFiles("*." + extension, SearchOption.TopDirectoryOnly);
+                    FileInfo[] directoryFiles = currentDirectory.GetFiles("*" + extension, SearchOption.TopDirectoryOnly);
 
                     foreach (FileInfo fileInfo in directoryFiles)
                     {
+                        if (!fileInfo.Extension.Equals(extension, StringComparison.OrdinalIgnoreCase))
+                            continue;
+
                         // skip hidden files
                         if (SkipFileOrFolder(fileInfo.FullName))
                             continue;
@@ -345,10 +371,13 @@ namespace SongRequest.SongPlayer
         {
             Config.ConfigFile config = SongPlayerFactory.GetConfigFile();
             string[] directories = config.GetValue("library.path").Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
-            string[] extensions = config.GetValue("library.extensions").Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+            string[] extensionsArray = config.GetValue("library.extensions").Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries)
+                .Select(x => x.StartsWith(".", StringComparison.OrdinalIgnoreCase) ? x : "." + x)
+                .ToArray();
+            HashSet<string> extensions = new HashSet<string>(extensionsArray, StringComparer.OrdinalIgnoreCase);
 
-            if (extensions.Length == 0)
-                extensions = new string[] { "mp3" };
+            if (extensions.Count == 0)
+                extensions.Add(".mp3");
 
             HashSet<string> files = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
@@ -397,6 +426,7 @@ namespace SongRequest.SongPlayer
                     FileInfo fileInfo = new FileInfo(fileName);
                     Song song = new Song();
                     song.FileName = fileName;
+                    song.Extension = fileInfo.Extension;
                     song.Name = Regex.Replace(fileInfo.Name, @"\" + fileInfo.Extension + "$", string.Empty, RegexOptions.IgnoreCase);
                     song.DateCreated = fileInfo.CreationTime.ToString("yyyy-MM-dd HH:mm");
                     song.GenerateSearchAndDoubleMetaphone();
@@ -441,6 +471,15 @@ namespace SongRequest.SongPlayer
             bool fixErrors = DateTime.Now > _lastFixErrors + TimeSpan.FromMinutes(2);
             List<ManualResetEvent> doneEvents = new List<ManualResetEvent>();
 
+            Config.ConfigFile config = SongPlayerFactory.GetConfigFile();
+            string[] extensionsArray = config.GetValue("library.extensions").Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries)
+                .Select(x => x.StartsWith(".", StringComparison.OrdinalIgnoreCase) ? x : "." + x)
+                .ToArray();
+            HashSet<string> extensions = new HashSet<string>(extensionsArray, StringComparer.OrdinalIgnoreCase);
+
+            if (extensions.Count == 0)
+                extensions.Add(".mp3");
+
             do
             {
                 //Lock collection as short as possible
@@ -454,13 +493,16 @@ namespace SongRequest.SongPlayer
 
                 if (song != null)
                 {
-                    if (song.ErrorReadingTag)
-                        _lastFixErrors = DateTime.Now;
+                    if (extensions.Contains(song.Extension))
+                    {
+                        if (song.ErrorReadingTag)
+                            _lastFixErrors = DateTime.Now;
 
-                    // update song
-                    UpdateSingleTag(song);
+                        // update song
+                        UpdateSingleTag(song);
 
-                    _updatedTag = true;
+                        _updatedTag = true;
+                    }
                 }
 
                 // loop until no song found
