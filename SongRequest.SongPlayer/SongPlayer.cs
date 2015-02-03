@@ -200,11 +200,11 @@ namespace SongRequest.SongPlayer
 
                 if (!_songLibrary.ScanLibrary())
                 {
-                    Thread.Sleep(200);
+                    Thread.Sleep(50);
                 }
                 else
                 {
-                    Thread.Sleep(50);
+                    Thread.Sleep(10);
                 }
             }
         }
